@@ -83,7 +83,7 @@ export default function CampaignsSection() {
 
   if (loading) {
     return (
-      <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-4 sm:py-10">
+      <div className="w-full sm:container sm:mx-auto px-2 sm:px-4 py-4 sm:py-10">
         <h2 className="hidden sm:block text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
@@ -99,7 +99,7 @@ export default function CampaignsSection() {
   }
 
   return (
-    <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-4 sm:py-10">
+    <div className="w-full sm:container sm:mx-auto px-2 sm:px-4 py-4 sm:py-10">
       <h2 className="hidden sm:block text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {campaigns.map((campaign) => (
