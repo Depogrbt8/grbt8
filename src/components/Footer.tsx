@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-50 mt-24">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-base font-semibold text-gray-600 mb-4">Şirket</h3>
             <ul className="space-y-2">
@@ -14,14 +14,14 @@ export default function Footer() {
             </ul>
           </div>
           
-          <div className="col-start-2">
+          <div>
             <h3 className="text-base font-semibold text-gray-600 mb-4">Yardım ve Destek</h3>
             <ul className="space-y-2">
               <li><Link href="/yardim" className="text-sm text-gray-700 hover:text-gray-900">Yardım ve İletişim</Link></li>
             </ul>
           </div>
           
-          <div className="col-start-3">
+          <div>
             <h3 className="text-base font-semibold text-gray-600 mb-4">Gizlilik ve Güvenlik</h3>
             <ul className="space-y-2">
               <li><Link href="/kullanim-sartlari" className="text-sm text-gray-700 hover:text-gray-900">Kullanım Şartları</Link></li>
@@ -32,7 +32,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="col-start-4">
+          <div>
             <h3 className="text-base font-semibold text-gray-600 mb-4">İletişim</h3>
             <ul className="space-y-2">
               <li className="text-sm text-gray-700">
@@ -54,8 +54,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-200">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-6">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="flex items-baseline">
                 <span className="text-[17px] font-bold text-gray-700">gurbet</span>
                 <span className="text-[17px] font-bold text-green-500">biz</span>
@@ -87,7 +87,7 @@ export default function Footer() {
                 />
               </div>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 text-center md:text-right">
               © {new Date().getFullYear()} gurbetbiz. Tüm hakları saklıdır.
             </p>
           </div>
