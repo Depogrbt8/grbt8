@@ -95,3 +95,20 @@ input:focus {
   flex-direction: row !important;
   gap: 2rem;
 }
+
+/* Mobilde scrollbar gizle */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Firefox için */
+  html {
+    scrollbar-width: none;
+  }
+  
+  /* IE/Edge için */
+  body {
+    -ms-overflow-style: none;
+  }
+}
