@@ -83,8 +83,8 @@ export default function CampaignsSection() {
 
   if (loading) {
     return (
-      <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-10">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
+      <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-4 sm:py-10">
+        <h2 className="hidden sm:block text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-gray-200 rounded-lg h-64 animate-pulse"></div>
@@ -99,8 +99,8 @@ export default function CampaignsSection() {
   }
 
   return (
-    <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-10">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
+    <div className="w-full sm:container sm:mx-auto px-0 sm:px-4 py-4 sm:py-10">
+      <h2 className="hidden sm:block text-2xl font-semibold text-gray-800 mb-8">Kampanyalar</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {campaigns.map((campaign) => (
           <div key={campaign.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">

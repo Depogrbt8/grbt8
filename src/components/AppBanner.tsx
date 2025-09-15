@@ -2,7 +2,7 @@ export default function AppBanner() {
   return (
     <>
       {/* Mobil App Banner - sadece mobilde */}
-      <div className="block sm:hidden w-full px-2 mt-6">
+      <div className="block sm:hidden w-full px-2 mt-4">
         <div className="w-full bg-gradient-to-r from-green-700 via-teal-600 to-green-800 rounded-2xl shadow-lg px-3 py-3 flex flex-col sm:flex-col items-center text-center relative">
           {/* Mobilde yatay hizalama */}
           <div className="flex flex-row sm:flex-col items-center w-full justify-center">
