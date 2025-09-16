@@ -2,62 +2,137 @@
 
 import AccountSidebar from '@/components/AccountSidebar';
 import { Building2, Home, Plus, Trash2, Edit } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { User, Plane, Users, Star, Receipt, Search, Bell, Heart } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+interface Address {
+  id: string;
+  type: 'personal' | 'corporate';
+  title: string;
+  name?: string;
+  tcNo?: string;
+  companyName?: string;
+  taxOffice?: string;
+  taxNo?: string;
+  address: string;
+  city: string;
+  district: string;
+}
 
 export default function FaturaPage() {
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      type: 'personal',
-      title: 'Ev Adresi',
-      name: 'Ahmet Yılmaz',
-      tcNo: '12345678901',
-      address: 'Atatürk Mah. Cumhuriyet Cad. No:123 D:4',
-      city: 'İstanbul',
-      district: 'Kadıköy'
-    },
-    {
-      id: 2,
-      type: 'corporate',
-      title: 'İş Adresi',
-      companyName: 'ABC Teknoloji Ltd. Şti.',
-      taxOffice: 'Kadıköy',
-      taxNo: '1234567890',
-      address: 'Kozyatağı Mah. İş Cad. No:45 K:3',
-      city: 'İstanbul',
-      district: 'Kadıköy'
-    }
-  ]);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const { data: session } = useSession();
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<any>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const inputClass = "w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-[16px]";
   const selectClass = "w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-[16px]";
+
+  // API fonksiyonları
+  const fetchAddresses = async () => {
+    try {
+      const response = await fetch('/api/user/addresses');
+      if (response.ok) {
+        const data = await response.json();
+        setAddresses(data);
+      } else {
+        toast.error('Adresler yüklenirken hata oluştu');
+      }
+    } catch (error) {
+      toast.error('Adresler yüklenirken hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveAddress = async (addressData: any) => {
+    try {
+      const url = editingId ? `/api/user/addresses/${editingId}` : '/api/user/addresses';
+      const method = editingId ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(addressData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (editingId) {
+          setAddresses(addresses.map(a => a.id === editingId ? data : a));
+          toast.success('Adres güncellendi');
+        } else {
+          setAddresses([data, ...addresses]);
+          toast.success('Adres eklendi');
+        }
+        return true;
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Adres kaydedilirken hata oluştu');
+        return false;
+      }
+    } catch (error) {
+      toast.error('Adres kaydedilirken hata oluştu');
+      return false;
+    }
+  };
+
+  const deleteAddress = async (id: string) => {
+    try {
+      const response = await fetch(`/api/user/addresses/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setAddresses(addresses.filter(a => a.id !== id));
+        toast.success('Adres silindi');
+      } else {
+        const error = await response.json();
+        toast.error(error.error || 'Adres silinirken hata oluştu');
+      }
+    } catch (error) {
+      toast.error('Adres silinirken hata oluştu');
+    }
+  };
+
+  // Sayfa yüklendiğinde adresleri getir
+  useEffect(() => {
+    if (session) {
+      fetchAddresses();
+    }
+  }, [session]);
 
   const handleEdit = (address: any) => {
     setEditingId(address.id);
     setForm({ ...address });
     setIsAdding(false);
   };
-  const handleDelete = (id: number) => {
-    setAddresses(addresses.filter(a => a.id !== id));
-    if (editingId === id) {
-      setEditingId(null);
-      setForm(null);
+  const handleDelete = async (id: string) => {
+    if (confirm('Bu adresi silmek istediğinizden emin misiniz?')) {
+      await deleteAddress(id);
+      if (editingId === id) {
+        setEditingId(null);
+        setForm(null);
+      }
     }
   };
-  const handleSave = () => {
-    if (editingId) {
-      setAddresses(addresses.map(a => a.id === editingId ? { ...form, id: editingId } : a));
-    } else {
-      setAddresses([...addresses, { ...form, id: Date.now() }]);
+
+  const handleSave = async () => {
+    if (!form.title || !form.address || !form.city || !form.district) {
+      toast.error('Lütfen tüm zorunlu alanları doldurun');
+      return;
     }
-    setEditingId(null);
-    setForm(null);
-    setIsAdding(false);
+
+    const success = await saveAddress(form);
+    if (success) {
+      setEditingId(null);
+      setForm(null);
+      setIsAdding(false);
+    }
   };
   const handleAdd = () => {
     setIsAdding(true);
@@ -105,8 +180,19 @@ export default function FaturaPage() {
               </button>
             </div>
             
-            <div className="sm:space-y-4 space-y-2">
-              {addresses.map((address) => (
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <div className="text-gray-500">Adresler yükleniyor...</div>
+              </div>
+            ) : (
+              <div className="sm:space-y-4 space-y-2">
+                {addresses.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Henüz adres eklememişsiniz.</p>
+                    <p className="text-sm mt-2">Yeni adres eklemek için yukarıdaki butonu kullanabilirsiniz.</p>
+                  </div>
+                ) : (
+                  addresses.map((address) => (
                 <div 
                   key={address.id}
                   className="border rounded-lg sm:p-4 p-2 hover:bg-gray-50 transition-colors"
@@ -180,9 +266,10 @@ export default function FaturaPage() {
                       </div>
                     </>
                   )}
-                </div>
-              ))}
-              {/* Yeni adres ekleme formu */}
+                  </div>
+                ))
+                )}
+                {/* Yeni adres ekleme formu */}
               {isAdding && (
                 <div className="border rounded-lg sm:p-4 p-2 bg-gray-50 mt-2 sm:mt-4">
                   <div className="sm:space-y-2 space-y-1">
@@ -217,7 +304,8 @@ export default function FaturaPage() {
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            )}
 
             <div className="mt-4 sm:mt-6 p-2 sm:p-4 bg-gray-50 rounded-lg">
               <p className="text-xs sm:text-sm text-gray-600">
