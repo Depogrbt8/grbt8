@@ -29,9 +29,9 @@ export default function FaturaPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const inputClass = "w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:ring-0 transition-colors text-[16px] bg-white";
-  const selectClass = "w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-green-500 focus:ring-0 transition-colors text-[16px] bg-white";
-  const labelClass = "block text-sm font-semibold text-gray-700 mb-2";
+  const inputClass = "w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-0 transition-colors text-[16px] bg-white";
+  const selectClass = "w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-0 transition-colors text-[16px] bg-white";
+  const labelClass = "block text-sm font-medium text-gray-600 mb-1";
 
   // API fonksiyonları
   const fetchAddresses = async () => {
@@ -140,12 +140,19 @@ export default function FaturaPage() {
   };
 
   const handleSave = async () => {
-    if (!form.title || !form.address || !form.city || !form.district) {
-      toast.error('Lütfen tüm zorunlu alanları doldurun');
+    if (!form.address || !form.city || !form.district) {
+      toast.error('Lütfen adres, şehir ve ilçe alanlarını doldurun');
       return;
     }
 
-    const success = await saveAddress(form);
+    // Otomatik başlık oluştur
+    const autoTitle = form.type === 'personal' 
+      ? `${form.firstName || ''} ${form.lastName || ''}`.trim() || 'Bireysel Adres'
+      : form.companyName || 'Kurumsal Adres';
+    
+    const formWithTitle = { ...form, title: autoTitle };
+
+    const success = await saveAddress(formWithTitle);
     if (success) {
       setEditingId(null);
       setForm(null);
@@ -157,7 +164,7 @@ export default function FaturaPage() {
     setEditingId(null);
     setForm({
       type: 'personal',
-      title: '',
+      title: 'Fatura Adresi', // Otomatik başlık
       name: '',
       firstName: '',
       lastName: '',
@@ -219,90 +226,79 @@ export default function FaturaPage() {
                   addresses.map((address) => (
                 <div 
                   key={address.id}
-                  className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 hover:shadow-md transition-all duration-300"
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-all duration-200"
                 >
                   {editingId === address.id ? (
-                    <div className="bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
-                      <div className="space-y-6">
-                        {/* Adres Tipi ve Başlık */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className={labelClass}>Adres Tipi</label>
-                            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
-                              <option value="personal">Bireysel</option>
-                              <option value="corporate">Kurumsal</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className={labelClass}>Adres Başlığı *</label>
-                            <input 
-                              value={form.title} 
-                              onChange={e => setForm({ ...form, title: e.target.value })} 
-                              placeholder="Örn: Ev Adresi, İş Adresi" 
-                              className={inputClass} 
-                            />
-                          </div>
+                    <div className="bg-white p-4 rounded-lg border border-gray-200">
+                      <div className="space-y-4">
+                        {/* Adres Tipi */}
+                        <div>
+                          <label className={labelClass}>Adres Tipi</label>
+                          <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
+                            <option value="personal">Bireysel</option>
+                            <option value="corporate">Kurumsal</option>
+                          </select>
                         </div>
 
                         {/* Bireysel/Kurumsal Bilgiler */}
                         {form.type === 'personal' ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className={labelClass}>Ad *</label>
+                              <label className={labelClass}>Ad</label>
                               <input 
                                 value={form.firstName || ''} 
                                 onChange={e => setForm({ ...form, firstName: e.target.value, name: (e.target.value + ' ' + (form.lastName || '')).trim() })} 
-                                placeholder="Adınız" 
+                                placeholder="Ad" 
                                 className={inputClass} 
                               />
                             </div>
                             <div>
-                              <label className={labelClass}>Soyad *</label>
+                              <label className={labelClass}>Soyad</label>
                               <input 
                                 value={form.lastName || ''} 
                                 onChange={e => setForm({ ...form, lastName: e.target.value, name: ((form.firstName || '') + ' ' + e.target.value).trim() })} 
-                                placeholder="Soyadınız" 
+                                placeholder="Soyad" 
                                 className={inputClass} 
                               />
                             </div>
-                            <div className="md:col-span-2">
-                              <label className={labelClass}>TC Kimlik No *</label>
+                            <div className="col-span-2">
+                              <label className={labelClass}>TC Kimlik No</label>
                               <input 
                                 value={form.tcNo} 
                                 onChange={e => setForm({ ...form, tcNo: e.target.value })} 
-                                placeholder="11 haneli TC kimlik numaranız" 
+                                placeholder="TC Kimlik No" 
                                 className={inputClass} 
                                 maxLength={11}
                               />
                             </div>
                           </div>
                         ) : (
-                          <div className="space-y-4">
+                          <div className="space-y-3">
                             <div>
-                              <label className={labelClass}>Şirket Adı *</label>
+                              <label className={labelClass}>Şirket Adı</label>
                               <input 
                                 value={form.companyName} 
                                 onChange={e => setForm({ ...form, companyName: e.target.value })} 
-                                placeholder="Şirket unvanı" 
+                                placeholder="Şirket Adı" 
                                 className={inputClass} 
                               />
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-3">
                               <div>
-                                <label className={labelClass}>Vergi Dairesi *</label>
+                                <label className={labelClass}>Vergi Dairesi</label>
                                 <input 
                                   value={form.taxOffice} 
                                   onChange={e => setForm({ ...form, taxOffice: e.target.value })} 
-                                  placeholder="Vergi dairesi adı" 
+                                  placeholder="Vergi Dairesi" 
                                   className={inputClass} 
                                 />
                               </div>
                               <div>
-                                <label className={labelClass}>Vergi No *</label>
+                                <label className={labelClass}>Vergi No</label>
                                 <input 
                                   value={form.taxNo} 
                                   onChange={e => setForm({ ...form, taxNo: e.target.value })} 
-                                  placeholder="10 haneli vergi numarası" 
+                                  placeholder="Vergi No" 
                                   className={inputClass} 
                                   maxLength={10}
                                 />
@@ -312,50 +308,48 @@ export default function FaturaPage() {
                         )}
 
                         {/* Adres Bilgileri */}
-                        <div className="space-y-4">
+                        <div>
+                          <label className={labelClass}>Adres</label>
+                          <textarea 
+                            value={form.address} 
+                            onChange={e => setForm({ ...form, address: e.target.value })} 
+                            placeholder="Adres" 
+                            className={inputClass + " min-h-[60px] resize-none"} 
+                            rows={2}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className={labelClass}>Adres *</label>
-                            <textarea 
-                              value={form.address} 
-                              onChange={e => setForm({ ...form, address: e.target.value })} 
-                              placeholder="Mahalle, sokak, cadde, bina no, daire no" 
-                              className={inputClass + " min-h-[80px] resize-none"} 
-                              rows={3}
+                            <label className={labelClass}>İlçe</label>
+                            <input 
+                              value={form.district} 
+                              onChange={e => setForm({ ...form, district: e.target.value })} 
+                              placeholder="İlçe" 
+                              className={inputClass} 
                             />
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className={labelClass}>İlçe *</label>
-                              <input 
-                                value={form.district} 
-                                onChange={e => setForm({ ...form, district: e.target.value })} 
-                                placeholder="İlçe seçiniz" 
-                                className={inputClass} 
-                              />
-                            </div>
-                            <div>
-                              <label className={labelClass}>Şehir *</label>
-                              <input 
-                                value={form.city} 
-                                onChange={e => setForm({ ...form, city: e.target.value })} 
-                                placeholder="Şehir seçiniz" 
-                                className={inputClass} 
-                              />
-                            </div>
+                          <div>
+                            <label className={labelClass}>Şehir</label>
+                            <input 
+                              value={form.city} 
+                              onChange={e => setForm({ ...form, city: e.target.value })} 
+                              placeholder="Şehir" 
+                              className={inputClass} 
+                            />
                           </div>
                         </div>
 
                         {/* Butonlar */}
-                        <div className="flex gap-3 pt-4 border-t border-gray-300">
+                        <div className="flex gap-2 pt-3">
                           <button 
                             onClick={handleSave} 
-                            className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors flex-1 md:flex-none"
+                            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
                           >
                             Kaydet
                           </button>
                           <button 
                             onClick={() => { setEditingId(null); setForm(null); }} 
-                            className="px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-semibold transition-colors flex-1 md:flex-none"
+                            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors"
                           >
                             Vazgeç
                           </button>
@@ -364,81 +358,74 @@ export default function FaturaPage() {
                     </div>
                   ) : (
                     <>
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-start gap-4">
-                          <div className={`p-3 rounded-full ${address.type === 'personal' ? 'bg-blue-100' : 'bg-purple-100'}`}>
-                            {address.type === 'personal' ? (
-                              <Home className="w-6 h-6 text-blue-600" />
-                            ) : (
-                              <Building2 className="w-6 h-6 text-purple-600" />
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-lg text-gray-800 mb-1">{address.title}</h3>
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              address.type === 'personal' 
-                                ? 'bg-blue-100 text-blue-800' 
-                                : 'bg-purple-100 text-purple-800'
-                            }`}>
-                              {address.type === 'personal' ? 'Bireysel' : 'Kurumsal'}
-                            </span>
-                          </div>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          {address.type === 'personal' ? (
+                            <Home className="w-4 h-4 text-gray-600" />
+                          ) : (
+                            <Building2 className="w-4 h-4 text-gray-600" />
+                          )}
+                          <span className="text-sm text-gray-600">
+                            {address.type === 'personal' ? 'Bireysel' : 'Kurumsal'}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <button 
-                            className="p-2 text-gray-600 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors" 
+                            className="p-1 text-gray-600 hover:text-blue-600 transition-colors" 
                             onClick={() => handleEdit(address)}
                             title="Düzenle"
                           >
-                            <Edit className="w-5 h-5" />
+                            <Edit className="w-4 h-4" />
                           </button>
                           <button 
-                            className="p-2 text-gray-600 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors" 
+                            className="p-1 text-gray-600 hover:text-red-600 transition-colors" 
                             onClick={() => handleDelete(address.id)}
                             title="Sil"
                           >
-                            <Trash2 className="w-5 h-5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                       
-                      <div className="mt-6 bg-gray-50 rounded-lg p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          {address.type === 'personal' ? (
-                            <>
+                      <div className="mt-3 space-y-2 text-sm">
+                        {address.type === 'personal' ? (
+                          <>
+                            <div className="grid grid-cols-2 gap-4">
                               <div>
-                                <span className="font-semibold text-gray-700">Ad Soyad:</span>
-                                <p className="text-gray-900 mt-1">{address.name}</p>
-                              </div>
-                              <div>
-                                <span className="font-semibold text-gray-700">TC Kimlik No:</span>
-                                <p className="text-gray-900 mt-1">{address.tcNo}</p>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div>
-                                <span className="font-semibold text-gray-700">Şirket Adı:</span>
-                                <p className="text-gray-900 mt-1">{address.companyName}</p>
+                                <span className="text-gray-600">Ad Soyad:</span>
+                                <p className="text-gray-900">{address.name}</p>
                               </div>
                               <div>
-                                <span className="font-semibold text-gray-700">Vergi Dairesi:</span>
-                                <p className="text-gray-900 mt-1">{address.taxOffice}</p>
+                                <span className="text-gray-600">TC:</span>
+                                <p className="text-gray-900">{address.tcNo}</p>
                               </div>
-                              <div className="md:col-span-2">
-                                <span className="font-semibold text-gray-700">Vergi No:</span>
-                                <p className="text-gray-900 mt-1">{address.taxNo}</p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <span className="text-gray-600">Şirket:</span>
+                              <p className="text-gray-900">{address.companyName}</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <span className="text-gray-600">Vergi Dairesi:</span>
+                                <p className="text-gray-900">{address.taxOffice}</p>
                               </div>
-                            </>
-                          )}
-                          <div className="md:col-span-2">
-                            <span className="font-semibold text-gray-700">Adres:</span>
-                            <p className="text-gray-900 mt-1">{address.address}</p>
-                          </div>
-                          <div className="md:col-span-2">
-                            <span className="font-semibold text-gray-700">Şehir / İlçe:</span>
-                            <p className="text-gray-900 mt-1">{address.city} / {address.district}</p>
-                          </div>
+                              <div>
+                                <span className="text-gray-600">Vergi No:</span>
+                                <p className="text-gray-900">{address.taxNo}</p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        <div>
+                          <span className="text-gray-600">Adres:</span>
+                          <p className="text-gray-900">{address.address}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Şehir/İlçe:</span>
+                          <p className="text-gray-900">{address.city} / {address.district}</p>
                         </div>
                       </div>
                     </>
@@ -448,95 +435,76 @@ export default function FaturaPage() {
                 )}
                 {/* Yeni adres ekleme formu */}
               {isAdding && (
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl border-2 border-green-200 mt-6">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                      <Plus className="w-5 h-5 text-green-600" />
-                      Yeni Adres Ekle
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">Fatura bilgilerinizi ekleyerek hızlı rezervasyon yapabilirsiniz.</p>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    {/* Adres Tipi ve Başlık */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className={labelClass}>Adres Tipi</label>
-                        <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
-                          <option value="personal">Bireysel</option>
-                          <option value="corporate">Kurumsal</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className={labelClass}>Adres Başlığı *</label>
-                        <input 
-                          value={form.title} 
-                          onChange={e => setForm({ ...form, title: e.target.value })} 
-                          placeholder="Örn: Ev Adresi, İş Adresi" 
-                          className={inputClass} 
-                        />
-                      </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-4 mt-4">
+                  <div className="space-y-4">
+                    {/* Adres Tipi */}
+                    <div>
+                      <label className={labelClass}>Adres Tipi</label>
+                      <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
+                        <option value="personal">Bireysel</option>
+                        <option value="corporate">Kurumsal</option>
+                      </select>
                     </div>
 
                     {/* Bireysel/Kurumsal Bilgiler */}
                     {form.type === 'personal' ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className={labelClass}>Ad *</label>
+                          <label className={labelClass}>Ad</label>
                           <input 
                             value={form.firstName || ''} 
                             onChange={e => setForm({ ...form, firstName: e.target.value, name: (e.target.value + ' ' + (form.lastName || '')).trim() })} 
-                            placeholder="Adınız" 
+                            placeholder="Ad" 
                             className={inputClass} 
                           />
                         </div>
                         <div>
-                          <label className={labelClass}>Soyad *</label>
+                          <label className={labelClass}>Soyad</label>
                           <input 
                             value={form.lastName || ''} 
                             onChange={e => setForm({ ...form, lastName: e.target.value, name: ((form.firstName || '') + ' ' + e.target.value).trim() })} 
-                            placeholder="Soyadınız" 
+                            placeholder="Soyad" 
                             className={inputClass} 
                           />
                         </div>
-                        <div className="md:col-span-2">
-                          <label className={labelClass}>TC Kimlik No *</label>
+                        <div className="col-span-2">
+                          <label className={labelClass}>TC Kimlik No</label>
                           <input 
                             value={form.tcNo} 
                             onChange={e => setForm({ ...form, tcNo: e.target.value })} 
-                            placeholder="11 haneli TC kimlik numaranız" 
+                            placeholder="TC Kimlik No" 
                             className={inputClass} 
                             maxLength={11}
                           />
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         <div>
-                          <label className={labelClass}>Şirket Adı *</label>
+                          <label className={labelClass}>Şirket Adı</label>
                           <input 
                             value={form.companyName} 
                             onChange={e => setForm({ ...form, companyName: e.target.value })} 
-                            placeholder="Şirket unvanı" 
+                            placeholder="Şirket Adı" 
                             className={inputClass} 
                           />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className={labelClass}>Vergi Dairesi *</label>
+                            <label className={labelClass}>Vergi Dairesi</label>
                             <input 
                               value={form.taxOffice} 
                               onChange={e => setForm({ ...form, taxOffice: e.target.value })} 
-                              placeholder="Vergi dairesi adı" 
+                              placeholder="Vergi Dairesi" 
                               className={inputClass} 
                             />
                           </div>
                           <div>
-                            <label className={labelClass}>Vergi No *</label>
+                            <label className={labelClass}>Vergi No</label>
                             <input 
                               value={form.taxNo} 
                               onChange={e => setForm({ ...form, taxNo: e.target.value })} 
-                              placeholder="10 haneli vergi numarası" 
+                              placeholder="Vergi No" 
                               className={inputClass} 
                               maxLength={10}
                             />
@@ -546,51 +514,48 @@ export default function FaturaPage() {
                     )}
 
                     {/* Adres Bilgileri */}
-                    <div className="space-y-4">
+                    <div>
+                      <label className={labelClass}>Adres</label>
+                      <textarea 
+                        value={form.address} 
+                        onChange={e => setForm({ ...form, address: e.target.value })} 
+                        placeholder="Adres" 
+                        className={inputClass + " min-h-[60px] resize-none"} 
+                        rows={2}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className={labelClass}>Adres *</label>
-                        <textarea 
-                          value={form.address} 
-                          onChange={e => setForm({ ...form, address: e.target.value })} 
-                          placeholder="Mahalle, sokak, cadde, bina no, daire no" 
-                          className={inputClass + " min-h-[80px] resize-none"} 
-                          rows={3}
+                        <label className={labelClass}>İlçe</label>
+                        <input 
+                          value={form.district} 
+                          onChange={e => setForm({ ...form, district: e.target.value })} 
+                          placeholder="İlçe" 
+                          className={inputClass} 
                         />
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className={labelClass}>İlçe *</label>
-                          <input 
-                            value={form.district} 
-                            onChange={e => setForm({ ...form, district: e.target.value })} 
-                            placeholder="İlçe seçiniz" 
-                            className={inputClass} 
-                          />
-                        </div>
-                        <div>
-                          <label className={labelClass}>Şehir *</label>
-                          <input 
-                            value={form.city} 
-                            onChange={e => setForm({ ...form, city: e.target.value })} 
-                            placeholder="Şehir seçiniz" 
-                            className={inputClass} 
-                          />
-                        </div>
+                      <div>
+                        <label className={labelClass}>Şehir</label>
+                        <input 
+                          value={form.city} 
+                          onChange={e => setForm({ ...form, city: e.target.value })} 
+                          placeholder="Şehir" 
+                          className={inputClass} 
+                        />
                       </div>
                     </div>
 
                     {/* Butonlar */}
-                    <div className="flex gap-3 pt-4 border-t border-gray-300">
+                    <div className="flex gap-2 pt-3">
                       <button 
                         onClick={handleSave} 
-                        className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors flex-1 md:flex-none shadow-lg"
+                        className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
                       >
-                        <Plus className="w-4 h-4 inline mr-2" />
-                        Adres Ekle
+                        Kaydet
                       </button>
                       <button 
                         onClick={() => { setIsAdding(false); setForm(null); }} 
-                        className="px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg font-semibold transition-colors flex-1 md:flex-none"
+                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors"
                       >
                         Vazgeç
                       </button>
