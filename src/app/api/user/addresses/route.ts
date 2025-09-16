@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
 
@@ -19,7 +20,7 @@ const addressSchema = z.object({
 // GET - Kullanıcının adreslerini getir
 export async function GET() {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Oturum gerekli' }, { status: 401 });
@@ -48,7 +49,7 @@ export async function GET() {
 // POST - Yeni adres ekle
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Oturum gerekli' }, { status: 401 });
