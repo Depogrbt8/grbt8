@@ -57,13 +57,35 @@ export default function FaturaPage() {
 
   const saveAddress = async (addressData: any) => {
     try {
+      // Form verilerini backend formatına çevir
+      const backendData: any = {
+        type: addressData.type,
+        title: addressData.title,
+        address: addressData.address,
+        city: addressData.city,
+        district: addressData.district,
+      };
+
+      // Bireysel adres için
+      if (addressData.type === 'personal') {
+        backendData.name = `${addressData.firstName || ''} ${addressData.lastName || ''}`.trim();
+        backendData.tcNo = addressData.tcNo;
+      }
+
+      // Kurumsal adres için
+      if (addressData.type === 'corporate') {
+        backendData.companyName = addressData.companyName;
+        backendData.taxOffice = addressData.taxOffice;
+        backendData.taxNo = addressData.taxNo;
+      }
+
       const url = editingId ? `/api/user/addresses/${editingId}` : '/api/user/addresses';
       const method = editingId ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(addressData),
+        body: JSON.stringify(backendData),
       });
 
       if (response.ok) {
@@ -82,6 +104,7 @@ export default function FaturaPage() {
         return false;
       }
     } catch (error) {
+      console.error('Adres kaydetme hatası:', error);
       toast.error('Adres kaydedilirken hata oluştu');
       return false;
     }
