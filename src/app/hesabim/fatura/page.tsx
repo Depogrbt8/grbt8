@@ -39,11 +39,16 @@ export default function FaturaPage() {
       if (response.ok) {
         const data = await response.json();
         setAddresses(data);
+      } else if (response.status === 401) {
+        // Oturum hatası - popup gösterme, sadece sessizce loading'i bitir
+        console.log('Kullanıcı oturumu gerekli');
       } else {
+        // Diğer hatalar için popup göster
         toast.error('Adresler yüklenirken hata oluştu');
       }
     } catch (error) {
-      toast.error('Adresler yüklenirken hata oluştu');
+      // Network hatası vs. - sadece console'a yaz, popup gösterme
+      console.error('Adres yükleme hatası:', error);
     } finally {
       setLoading(false);
     }
@@ -103,6 +108,9 @@ export default function FaturaPage() {
   useEffect(() => {
     if (session) {
       fetchAddresses();
+    } else {
+      // Session yoksa loading'i bitir
+      setLoading(false);
     }
   }, [session]);
 
@@ -183,6 +191,10 @@ export default function FaturaPage() {
             {loading ? (
               <div className="flex justify-center py-8">
                 <div className="text-gray-500">Adresler yükleniyor...</div>
+              </div>
+            ) : !session ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>Adres bilgilerinizi görüntülemek için giriş yapmanız gerekmektedir.</p>
               </div>
             ) : (
               <div className="sm:space-y-4 space-y-2">
