@@ -51,10 +51,7 @@ export async function POST(req: Request) {
                     firstName,
                     lastName,
                     phone,
-                    birthDay: '', // Bu alanlar daha sonra kullanıcı tarafından doldurulabilir
-                    birthMonth: '',
-                    birthYear: '',
-                    gender: '',
+                    // Bu alanlar optional olduğu için boş bırakabiliriz
                     isAccountOwner: true,
                 },
             });

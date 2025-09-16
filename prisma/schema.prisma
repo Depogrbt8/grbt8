@@ -118,10 +118,10 @@ model Passenger {
   lastName       String
   identityNumber String?
   isForeigner    Boolean   @default(false)
-  birthDay       String
-  birthMonth     String
-  birthYear      String
-  gender         String
+  birthDay       String?
+  birthMonth     String?
+  birthYear      String?
+  gender         String?
   countryCode    String?
   phone          String?
   hasMilCard     Boolean   @default(false)
