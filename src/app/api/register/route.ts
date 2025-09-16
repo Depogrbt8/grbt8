@@ -50,8 +50,11 @@ export async function POST(req: Request) {
                     userId: newUser.id,
                     firstName,
                     lastName,
-                    phone,
-                    // Bu alanlar optional olduğu için boş bırakabiliriz
+                    phone: phone || '',
+                    birthDay: '',
+                    birthMonth: '',
+                    birthYear: '',
+                    gender: '',
                     isAccountOwner: true,
                 },
             });
