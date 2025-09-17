@@ -81,17 +81,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // TC Kimlik validasyonu (basit)
-    if (!data.isForeigner && data.identityNumber && data.identityNumber.length !== 11) {
-      return NextResponse.json(
-        { error: 'TC Kimlik numarası 11 haneli olmalıdır' },
-        { status: 400 }
-      );
-    }
-    
     // TC vatandaşı değilse TC No'yu temizle
     if (data.isForeigner) {
       data.identityNumber = '';
+    } else {
+      // TC vatandaşı ise TC Kimlik validasyonu yap
+      if (!data.identityNumber || data.identityNumber.length !== 11) {
+        return NextResponse.json(
+          { error: 'TC vatandaşları için TC Kimlik numarası 11 haneli olmalıdır' },
+          { status: 400 }
+        );
+      }
     }
 
     // Yolcu verilerini hazırla
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       userId: user.id,
       firstName: data.firstName,
       lastName: data.lastName,
-      identityNumber: data.identityNumber,
+      identityNumber: data.isForeigner ? null : (data.identityNumber || null),
       isForeigner: data.isForeigner || false,
       birthDay: data.birthDay,
       birthMonth: data.birthMonth,

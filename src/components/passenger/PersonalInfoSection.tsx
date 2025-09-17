@@ -11,6 +11,9 @@ export default function PersonalInfoSection({ formData, onFormDataChange }: Pers
         [field]: value,
         identityNumber: '' // TC No'yu temizle
       });
+    } else if (field === 'isForeigner' && value === false) {
+      // TC vatandaşı seçildiğinde sadece isForeigner'ı güncelle
+      onFormDataChange({ [field]: value });
     } else {
       onFormDataChange({ [field]: value });
     }
