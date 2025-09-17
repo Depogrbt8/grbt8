@@ -73,9 +73,9 @@ export default function FaturaPage() {
 
       // Kurumsal adres için
       if (addressData.type === 'corporate') {
-        backendData.companyName = addressData.companyName;
-        backendData.taxOffice = addressData.taxOffice;
-        backendData.taxNo = addressData.taxNo;
+        backendData.companyName = addressData.companyName || '';
+        backendData.taxOffice = addressData.taxOffice || '';
+        backendData.taxNo = addressData.taxNo || '';
       }
 
       const url = editingId ? `/api/user/addresses/${editingId}` : '/api/user/addresses';
@@ -165,6 +165,22 @@ export default function FaturaPage() {
     if (!form.address || !form.city || !form.district) {
       toast.error('Lütfen adres, şehir ve ilçe alanlarını doldurun');
       return;
+    }
+
+    // Kurumsal adres için ek kontroller
+    if (form.type === 'corporate') {
+      if (!form.companyName || !form.taxOffice || !form.taxNo) {
+        toast.error('Kurumsal adres için şirket adı, vergi dairesi ve vergi no gereklidir');
+        return;
+      }
+    }
+
+    // Bireysel adres için ek kontroller
+    if (form.type === 'personal') {
+      if (!form.firstName || !form.lastName) {
+        toast.error('Bireysel adres için ad ve soyad gereklidir');
+        return;
+      }
     }
 
     // Otomatik başlık oluştur
