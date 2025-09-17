@@ -69,7 +69,6 @@ export default function FaturaPage() {
       // Bireysel adres için
       if (addressData.type === 'personal') {
         backendData.name = `${addressData.firstName || ''} ${addressData.lastName || ''}`.trim();
-        backendData.tcNo = ''; // Boş string gönder
       }
 
       // Kurumsal adres için
