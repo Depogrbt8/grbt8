@@ -58,11 +58,16 @@ export async function POST(request: Request) {
     }
 
     // TC Kimlik validasyonu (basit)
-    if (data.identityNumber && !data.isForeigner && data.identityNumber.length !== 11) {
+    if (!data.isForeigner && data.identityNumber && data.identityNumber.length !== 11) {
       return NextResponse.json(
         { error: 'TC Kimlik numarası 11 haneli olmalıdır' },
         { status: 400 }
       );
+    }
+    
+    // TC vatandaşı değilse TC No'yu temizle
+    if (data.isForeigner) {
+      data.identityNumber = '';
     }
 
     // Yolcu verilerini hazırla
