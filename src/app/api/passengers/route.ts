@@ -8,16 +8,28 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
       );
     }
 
+    // Kullanıcıyı email ile bul
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı' },
+        { status: 404 }
+      );
+    }
+
     const passengers = await prisma.passenger.findMany({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         status: 'active'
       },
       orderBy: {
@@ -40,10 +52,22 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
+      );
+    }
+
+    // Kullanıcıyı email ile bul
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı' },
+        { status: 404 }
       );
     }
 
@@ -72,7 +96,7 @@ export async function POST(request: Request) {
 
     // Yolcu verilerini hazırla
     const passengerData = {
-      userId: session.user.id,
+      userId: user.id,
       firstName: data.firstName,
       lastName: data.lastName,
       identityNumber: data.identityNumber,

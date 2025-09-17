@@ -11,17 +11,29 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
       );
     }
 
+    // Kullanıcıyı email ile bul
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı' },
+        { status: 404 }
+      );
+    }
+
     const passenger = await prisma.passenger.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id
+        userId: user.id
       }
     });
 
@@ -50,10 +62,22 @@ export async function PUT(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
+      );
+    }
+
+    // Kullanıcıyı email ile bul
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı' },
+        { status: 404 }
       );
     }
 
@@ -84,7 +108,7 @@ export async function PUT(
     const existingPassenger = await prisma.passenger.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id
+        userId: user.id
       }
     });
 
@@ -138,10 +162,22 @@ export async function DELETE(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
+      );
+    }
+
+    // Kullanıcıyı email ile bul
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Kullanıcı bulunamadı' },
+        { status: 404 }
       );
     }
 
@@ -149,7 +185,7 @@ export async function DELETE(
     const existingPassenger = await prisma.passenger.findUnique({
       where: {
         id: params.id,
-        userId: session.user.id
+        userId: user.id
       }
     });
 
