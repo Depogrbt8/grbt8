@@ -69,7 +69,6 @@ export default function FaturaPage() {
       // Bireysel adres için
       if (addressData.type === 'personal') {
         backendData.name = `${addressData.firstName || ''} ${addressData.lastName || ''}`.trim();
-        backendData.tcNo = addressData.tcNo;
       }
 
       // Kurumsal adres için
@@ -191,7 +190,6 @@ export default function FaturaPage() {
       name: '',
       firstName: '',
       lastName: '',
-      tcNo: '',
       address: '',
       city: '',
       district: '',
@@ -257,10 +255,30 @@ export default function FaturaPage() {
                         {/* Adres Tipi */}
                         <div>
                           <label className={labelClass}>Adres Tipi</label>
-                          <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
-                            <option value="personal">Bireysel</option>
-                            <option value="corporate">Kurumsal</option>
-                          </select>
+                          <div className="flex gap-6 mt-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="addressType"
+                                value="personal"
+                                checked={form.type === 'personal'}
+                                onChange={e => setForm({ ...form, type: e.target.value })}
+                                className="w-4 h-4 text-green-500 border-gray-300 focus:ring-green-500"
+                              />
+                              <span className="text-gray-700">Bireysel</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="addressType"
+                                value="corporate"
+                                checked={form.type === 'corporate'}
+                                onChange={e => setForm({ ...form, type: e.target.value })}
+                                className="w-4 h-4 text-green-500 border-gray-300 focus:ring-green-500"
+                              />
+                              <span className="text-gray-700">Kurumsal</span>
+                            </label>
+                          </div>
                         </div>
 
                         {/* Bireysel/Kurumsal Bilgiler */}
@@ -282,16 +300,6 @@ export default function FaturaPage() {
                                 onChange={e => setForm({ ...form, lastName: e.target.value, name: ((form.firstName || '') + ' ' + e.target.value).trim() })} 
                                 placeholder="Soyad" 
                                 className={inputClass} 
-                              />
-                            </div>
-                            <div className="col-span-2">
-                              <label className={labelClass}>TC Kimlik No</label>
-                              <input 
-                                value={form.tcNo} 
-                                onChange={e => setForm({ ...form, tcNo: e.target.value })} 
-                                placeholder="TC Kimlik No" 
-                                className={inputClass} 
-                                maxLength={11}
                               />
                             </div>
                           </div>
@@ -413,15 +421,9 @@ export default function FaturaPage() {
                       <div className="mt-3 space-y-2 text-sm">
                         {address.type === 'personal' ? (
                           <>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <span className="text-gray-600">Ad Soyad:</span>
-                                <p className="text-gray-900">{address.name}</p>
-                              </div>
-                              <div>
-                                <span className="text-gray-600">TC:</span>
-                                <p className="text-gray-900">{address.tcNo}</p>
-                              </div>
+                            <div>
+                              <span className="text-gray-600">Ad Soyad:</span>
+                              <p className="text-gray-900">{address.name}</p>
                             </div>
                           </>
                         ) : (
@@ -463,10 +465,30 @@ export default function FaturaPage() {
                     {/* Adres Tipi */}
                     <div>
                       <label className={labelClass}>Adres Tipi</label>
-                      <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className={selectClass}>
-                        <option value="personal">Bireysel</option>
-                        <option value="corporate">Kurumsal</option>
-                      </select>
+                      <div className="flex gap-6 mt-2">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="newAddressType"
+                            value="personal"
+                            checked={form.type === 'personal'}
+                            onChange={e => setForm({ ...form, type: e.target.value })}
+                            className="w-4 h-4 text-green-500 border-gray-300 focus:ring-green-500"
+                          />
+                          <span className="text-gray-700">Bireysel</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="newAddressType"
+                            value="corporate"
+                            checked={form.type === 'corporate'}
+                            onChange={e => setForm({ ...form, type: e.target.value })}
+                            className="w-4 h-4 text-green-500 border-gray-300 focus:ring-green-500"
+                          />
+                          <span className="text-gray-700">Kurumsal</span>
+                        </label>
+                      </div>
                     </div>
 
                     {/* Bireysel/Kurumsal Bilgiler */}
@@ -488,16 +510,6 @@ export default function FaturaPage() {
                             onChange={e => setForm({ ...form, lastName: e.target.value, name: ((form.firstName || '') + ' ' + e.target.value).trim() })} 
                             placeholder="Soyad" 
                             className={inputClass} 
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <label className={labelClass}>TC Kimlik No</label>
-                          <input 
-                            value={form.tcNo} 
-                            onChange={e => setForm({ ...form, tcNo: e.target.value })} 
-                            placeholder="TC Kimlik No" 
-                            className={inputClass} 
-                            maxLength={11}
                           />
                         </div>
                       </div>
