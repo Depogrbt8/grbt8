@@ -45,10 +45,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const data = validation.data;
 
-    // Bireysel adres için name ve tcNo zorunlu
-    if (data.type === 'personal' && (!data.name || !data.tcNo)) {
+    // Bireysel adres için name zorunlu
+    if (data.type === 'personal' && !data.name) {
       return NextResponse.json({ 
-        error: 'Bireysel adres için ad soyad ve TC kimlik no gereklidir' 
+        error: 'Bireysel adres için ad soyad gereklidir' 
       }, { status: 400 });
     }
 
