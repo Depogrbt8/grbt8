@@ -5,7 +5,15 @@ import DateSelector from './DateSelector';
 
 export default function PersonalInfoSection({ formData, onFormDataChange }: PersonalInfoSectionProps) {
   const handleChange = (field: keyof typeof formData, value: any) => {
-    onFormDataChange({ [field]: value });
+    // TC vatandaşı değil seçildiğinde TC No'yu temizle
+    if (field === 'isForeigner' && value === true) {
+      onFormDataChange({ 
+        [field]: value,
+        identityNumber: '' // TC No'yu temizle
+      });
+    } else {
+      onFormDataChange({ [field]: value });
+    }
   };
 
   const handleDateChange = (dateValue: { day: string; month: string; year: string }) => {
@@ -49,8 +57,10 @@ export default function PersonalInfoSection({ formData, onFormDataChange }: Pers
             type="text"
             value={formData.identityNumber || ''}
             onChange={(e) => handleChange('identityNumber', e.target.value)}
-            className="w-full sm:px-4 px-2 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 text-sm"
+            className="w-full sm:px-4 px-2 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 text-sm disabled:bg-gray-100 disabled:text-gray-500"
             maxLength={11}
+            disabled={formData.isForeigner}
+            placeholder={formData.isForeigner ? "TC vatandaşı değil" : "TC Kimlik No"}
           />
           <div className="mt-2">
             <label className="flex items-center gap-2">
