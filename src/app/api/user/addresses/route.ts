@@ -41,8 +41,10 @@ export async function GET() {
 
     return NextResponse.json(addresses);
   } catch (error) {
-    console.error('Adres listeleme hatası:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Adres listeleme hatası:', message);
+    // TEMP DEBUG: detay mesajı kullanıcıya gösteriliyor (geçici)
+    return NextResponse.json({ error: 'Sunucu hatası', detail: message }, { status: 500 });
   }
 }
 
@@ -104,8 +106,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json(address, { status: 201 });
   } catch (error) {
-    console.error('Adres ekleme hatası:', error);
-    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Adres ekleme hatası:', message);
+    // TEMP DEBUG: detay mesajı kullanıcıya gösteriliyor (geçici)
+    return NextResponse.json({ error: 'Sunucu hatası', detail: message }, { status: 500 });
   }
 }
 
