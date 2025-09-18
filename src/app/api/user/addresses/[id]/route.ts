@@ -76,10 +76,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     return NextResponse.json(address);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error('Adres güncelleme hatası:', message);
-    // TEMP DEBUG: detay mesajı kullanıcıya gösteriliyor (geçici)
-    return NextResponse.json({ error: 'Sunucu hatası', detail: message }, { status: 500 });
+    console.error('Adres güncelleme hatası:', error);
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }
 
@@ -109,9 +107,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     return NextResponse.json({ message: 'Adres başarıyla silindi' });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error('Adres silme hatası:', message);
-    // TEMP DEBUG: detay mesajı kullanıcıya gösteriliyor (geçici)
-    return NextResponse.json({ error: 'Sunucu hatası', detail: message }, { status: 500 });
+    console.error('Adres silme hatası:', error);
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }
