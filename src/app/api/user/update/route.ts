@@ -4,16 +4,20 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
 
+// Boş stringleri undefined'a çeviren yardımcı
+const emptyToUndefined = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((val) => (val === '' ? undefined : val), schema.optional());
+
 const updateUserSchema = z.object({
-  firstName: z.string().min(2, "Ad en az 2 karakter olmalıdır.").optional(),
-  lastName: z.string().min(2, "Soyad en az 2 karakter olmalıdır.").optional(),
-  countryCode: z.string().optional(),
-  phone: z.string().optional(),
-  birthDay: z.string().optional(),
-  birthMonth: z.string().optional(),
-  birthYear: z.string().optional(),
-  gender: z.string().optional(),
-  identityNumber: z.string().optional(),
+  firstName: emptyToUndefined(z.string().min(2, 'Ad en az 2 karakter olmalıdır.')),
+  lastName: emptyToUndefined(z.string().min(2, 'Soyad en az 2 karakter olmalıdır.')),
+  countryCode: emptyToUndefined(z.string()),
+  phone: emptyToUndefined(z.string()),
+  birthDay: emptyToUndefined(z.string()),
+  birthMonth: emptyToUndefined(z.string()),
+  birthYear: emptyToUndefined(z.string()),
+  gender: emptyToUndefined(z.string()),
+  identityNumber: emptyToUndefined(z.string()),
   isForeigner: z.boolean().optional(),
 });
 
@@ -31,7 +35,9 @@ export async function PUT(request: Request) {
     const validation = updateUserSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json({ error: validation.error.flatten().fieldErrors }, { status: 400 });
+      const flat = validation.error.flatten();
+      const firstMessage = Object.values(flat.fieldErrors).flat()[0] || 'Geçersiz istek.';
+      return NextResponse.json({ error: firstMessage, details: flat.fieldErrors }, { status: 400 });
     }
     
     const dataToUpdate = validation.data;

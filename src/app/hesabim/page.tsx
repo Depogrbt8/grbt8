@@ -112,21 +112,36 @@ export default function HesabimPage() {
     setIsLoading(true);
 
     try {
+      // API'nin beklediği tiplere uyum: sayısal gelebilen alanları stringe çevir
+      const payload = {
+        ...userData,
+        birthDay: userData.birthDay !== '' && userData.birthDay !== undefined && userData.birthDay !== null ? String(userData.birthDay) : '',
+        birthMonth: userData.birthMonth !== '' && userData.birthMonth !== undefined && userData.birthMonth !== null ? String(userData.birthMonth) : '',
+        birthYear: userData.birthYear !== '' && userData.birthYear !== undefined && userData.birthYear !== null ? String(userData.birthYear) : '',
+      };
+
       const response = await fetch('/api/user/update', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         toast.success('Bilgileriniz başarıyla güncellendi.');
         // Session'ı güncelle
-        await fetch('/api/auth/session?update');
+        await fetch('/api/auth/session?update', { method: 'POST' });
         // Sayfayı yenile
         window.location.reload();
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || 'Bir hata oluştu.');
+        let message = 'Bir hata oluştu.';
+        try {
+          const errorData = await response.json();
+          const maybeError = errorData?.error;
+          if (typeof maybeError === 'string') {
+            message = maybeError;
+          }
+        } catch {}
+        toast.error(message);
       }
     } catch (error) {
       toast.error('Güncelleme sırasında bir hata oluştu.');
