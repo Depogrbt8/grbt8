@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 const addressSchema = z.object({
   type: z.enum(['personal', 'corporate']),
-  title: z.string().min(1, 'Başlık gereklidir'),
+  title: z.string().optional(),
   name: z.string().optional(),
   tcNo: z.string().optional(),
   companyName: z.string().optional(),
@@ -17,7 +17,7 @@ const addressSchema = z.object({
   district: z.string().min(1, 'İlçe gereklidir'),
 });
 
-// PUT - Adres güncelle
+// PUT - Adresi güncelle
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
@@ -59,20 +59,18 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       }, { status: 400 });
     }
 
-    // Adresin kullanıcıya ait olup olmadığını kontrol et
-    const existingAddress = await prisma.address.findFirst({
-      where: { 
-        id: params.id,
-        userId: user.id 
-      },
-    });
-
-    if (!existingAddress) {
-      return NextResponse.json({ error: 'Adres bulunamadı' }, { status: 404 });
+    // Title otomatik oluştur eğer gönderilmemişse
+    if (!data.title) {
+      data.title = data.type === 'personal' 
+        ? (data.name || 'Bireysel Adres')
+        : (data.companyName || 'Kurumsal Adres');
     }
 
-    const address = await prisma.address.update({
-      where: { id: params.id },
+    const address = await (prisma as any).address.update({
+      where: { 
+        id: params.id,
+        userId: user.id // Güvenlik için kullanıcının kendi adresini güncelleyebildiğinden emin ol
+      },
       data: data,
     });
 
@@ -83,7 +81,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// DELETE - Adres sil
+// DELETE - Adresi sil
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
@@ -100,23 +98,14 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
     }
 
-    // Adresin kullanıcıya ait olup olmadığını kontrol et
-    const existingAddress = await prisma.address.findFirst({
+    await (prisma as any).address.delete({
       where: { 
         id: params.id,
-        userId: user.id 
+        userId: user.id // Güvenlik için kullanıcının kendi adresini silebilmesini sağla
       },
     });
 
-    if (!existingAddress) {
-      return NextResponse.json({ error: 'Adres bulunamadı' }, { status: 404 });
-    }
-
-    await prisma.address.delete({
-      where: { id: params.id },
-    });
-
-    return NextResponse.json({ message: 'Adres silindi' });
+    return NextResponse.json({ message: 'Adres başarıyla silindi' });
   } catch (error) {
     console.error('Adres silme hatası:', error);
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });

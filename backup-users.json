@@ -1,0 +1,41 @@
+[
+  {
+    "id": "1",
+    "firstName": "hasan ",
+    "lastName": "derr",
+    "email": "",
+    "countryCode": "+44",
+    "phone": "2323222",
+    "birthDay": "2",
+    "birthMonth": "4",
+    "birthYear": "2024",
+    "gender": "male",
+    "identityNumber": "12211212121",
+    "isForeigner": false,
+    "marketingConsent": false,
+    "birthDate": "2024-04-02",
+    "createdAt": "2025-06-14T22:22:05.296Z",
+    "updatedAt": "2025-06-14T22:22:05.296Z",
+    "lastLoginAt": "2025-06-14T22:22:05.296Z",
+    "status": "active"
+  },
+  {
+    "id": "",
+    "firstName": "testiq",
+    "lastName": "testtt",
+    "email": "test14@gurbet.biz",
+    "countryCode": "+1",
+    "phone": "322323",
+    "birthDay": "1",
+    "birthMonth": "2",
+    "birthYear": "2024",
+    "gender": "female",
+    "identityNumber": "23231232123",
+    "isForeigner": false,
+    "birthDate": "2024-02-01",
+    "createdAt": "2025-06-14T22:21:06.281Z",
+    "updatedAt": "2025-06-14T22:21:06.281Z",
+    "lastLoginAt": "2025-06-14T22:21:06.281Z",
+    "status": "active"
+  }
+]

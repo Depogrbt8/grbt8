@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 const addressSchema = z.object({
   type: z.enum(['personal', 'corporate']),
-  title: z.string().min(1, 'Başlık gereklidir'),
+  title: z.string().optional(),
   name: z.string().optional(),
   tcNo: z.string().optional(),
   companyName: z.string().optional(),
@@ -34,7 +34,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
     }
 
-    const addresses = await prisma.address.findMany({
+    const addresses = await (prisma as any).address.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
     });
@@ -88,7 +88,14 @@ export async function POST(req: Request) {
       }, { status: 400 });
     }
 
-    const address = await prisma.address.create({
+    // Title otomatik oluştur eğer gönderilmemişse
+    if (!data.title) {
+      data.title = data.type === 'personal' 
+        ? (data.name || 'Bireysel Adres')
+        : (data.companyName || 'Kurumsal Adres');
+    }
+
+    const address = await (prisma as any).address.create({
       data: {
         userId: user.id,
         ...data,
@@ -101,3 +108,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }
+
