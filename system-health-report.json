@@ -1,0 +1,390 @@
+{
+  "timestamp": "2025-10-05T21:51:48.412Z",
+  "summary": {
+    "total": 75,
+    "critical": 2,
+    "warnings": 5,
+    "passed": 68
+  },
+  "critical": [
+    {
+      "category": "Frontend Components",
+      "message": "FlightCard.tsx eksik ❌",
+      "details": "src/components/FlightCard.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "PassengerForm.tsx eksik ❌",
+      "details": "src/components/PassengerForm.tsx"
+    }
+  ],
+  "warnings": [
+    {
+      "category": "Security",
+      "message": "CORS konfigürasyonu eksik ⚠️",
+      "details": ""
+    },
+    {
+      "category": "Security",
+      "message": "Security headers eksik ⚠️",
+      "details": ""
+    },
+    {
+      "category": "Performance",
+      "message": "CSS minification eksik ⚠️",
+      "details": ""
+    },
+    {
+      "category": "Performance",
+      "message": "Code splitting eksik ⚠️",
+      "details": ""
+    },
+    {
+      "category": "Error Handling",
+      "message": "global-error.tsx eksik ⚠️",
+      "details": ""
+    }
+  ],
+  "passed": [
+    {
+      "category": "File Check",
+      "message": "Package.json dosyası ✅",
+      "details": "package.json"
+    },
+    {
+      "category": "Dependencies",
+      "message": "next mevcut ✅",
+      "details": "13.5.6"
+    },
+    {
+      "category": "Dependencies",
+      "message": "react mevcut ✅",
+      "details": "18.2.0"
+    },
+    {
+      "category": "Dependencies",
+      "message": "prisma mevcut ✅",
+      "details": "5.13.0"
+    },
+    {
+      "category": "Dependencies",
+      "message": "next-auth mevcut ✅",
+      "details": "4.24.5"
+    },
+    {
+      "category": "Scripts",
+      "message": "dev script mevcut ✅",
+      "details": "next dev -p 4000"
+    },
+    {
+      "category": "Scripts",
+      "message": "build script mevcut ✅",
+      "details": "node vercel-protection.js && prisma generate && next build"
+    },
+    {
+      "category": "Scripts",
+      "message": "start script mevcut ✅",
+      "details": "next start"
+    },
+    {
+      "category": "File Check",
+      "message": "Next.js config dosyası ✅",
+      "details": "next.config.js"
+    },
+    {
+      "category": "Next.js Config",
+      "message": "Experimental features aktif ✅",
+      "details": ""
+    },
+    {
+      "category": "Next.js Config",
+      "message": "Package import optimizasyonu ✅",
+      "details": ""
+    },
+    {
+      "category": "Next.js Config",
+      "message": "Webpack konfigürasyonu ✅",
+      "details": ""
+    },
+    {
+      "category": "Next.js Config",
+      "message": "Security headers ✅",
+      "details": ""
+    },
+    {
+      "category": "File Check",
+      "message": "Prisma schema dosyası ✅",
+      "details": "prisma/schema.prisma"
+    },
+    {
+      "category": "Database Models",
+      "message": "User modeli mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Database Models",
+      "message": "Reservation modeli mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Database Models",
+      "message": "Passenger modeli mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Database Models",
+      "message": "Payment modeli mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "File Check",
+      "message": "Environment dosyası ✅",
+      "details": ".env"
+    },
+    {
+      "category": "File Check",
+      "message": "Environment örnek dosyası ✅",
+      "details": ".env.example"
+    },
+    {
+      "category": "File Check",
+      "message": "NextAuth konfigürasyonu ✅",
+      "details": "src/lib/auth.ts"
+    },
+    {
+      "category": "Authentication",
+      "message": "Authentication providers ✅",
+      "details": ""
+    },
+    {
+      "category": "Authentication",
+      "message": "Authentication callbacks ✅",
+      "details": ""
+    },
+    {
+      "category": "Authentication",
+      "message": "Session konfigürasyonu ✅",
+      "details": ""
+    },
+    {
+      "category": "Authentication",
+      "message": "JWT konfigürasyonu ✅",
+      "details": ""
+    },
+    {
+      "category": "Auth Routes",
+      "message": "route.ts mevcut ✅",
+      "details": "src/app/api/auth/login/route.ts"
+    },
+    {
+      "category": "Auth Routes",
+      "message": "route.ts mevcut ✅",
+      "details": "src/app/api/auth/register/route.ts"
+    },
+    {
+      "category": "Auth Routes",
+      "message": "route.ts mevcut ✅",
+      "details": "src/app/api/auth/change-password/route.ts"
+    },
+    {
+      "category": "Auth Routes",
+      "message": "route.ts mevcut ✅",
+      "details": "src/app/api/auth/forgot-password/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "auth/login endpoint mevcut ✅",
+      "details": "src/app/api/auth/login/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "auth/register endpoint mevcut ✅",
+      "details": "src/app/api/auth/register/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "auth/change-password endpoint mevcut ✅",
+      "details": "src/app/api/auth/change-password/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "flights/search-cached endpoint mevcut ✅",
+      "details": "src/app/api/flights/search-cached/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "payment/process endpoint mevcut ✅",
+      "details": "src/app/api/payment/process/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "passengers endpoint mevcut ✅",
+      "details": "src/app/api/passengers/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "reservations endpoint mevcut ✅",
+      "details": "src/app/api/reservations/route.ts"
+    },
+    {
+      "category": "API Endpoints",
+      "message": "user/profile endpoint mevcut ✅",
+      "details": "src/app/api/user/profile/route.ts"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "Header.tsx mevcut ✅",
+      "details": "src/components/Header.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "Footer.tsx mevcut ✅",
+      "details": "src/components/Footer.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "LoginModal.tsx mevcut ✅",
+      "details": "src/components/LoginModal.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "FlightSearchForm.tsx mevcut ✅",
+      "details": "src/components/FlightSearchForm.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "AccountSidebar.tsx mevcut ✅",
+      "details": "src/components/AccountSidebar.tsx"
+    },
+    {
+      "category": "Frontend Components",
+      "message": "ErrorBoundary.tsx mevcut ✅",
+      "details": "src/components/ErrorBoundary.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "page.tsx mevcut ✅",
+      "details": "src/app/page.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "layout.tsx mevcut ✅",
+      "details": "src/app/layout.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "giris/page.tsx mevcut ✅",
+      "details": "src/app/giris/page.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "hesabim/page.tsx mevcut ✅",
+      "details": "src/app/hesabim/page.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "flights/search/page.tsx mevcut ✅",
+      "details": "src/app/flights/search/page.tsx"
+    },
+    {
+      "category": "Pages",
+      "message": "flights/booking/page.tsx mevcut ✅",
+      "details": "src/app/flights/booking/page.tsx"
+    },
+    {
+      "category": "Security",
+      "message": "Rate limiting aktif ✅",
+      "details": ""
+    },
+    {
+      "category": "Security",
+      "message": "CSRF protection ✅",
+      "details": ""
+    },
+    {
+      "category": "Environment",
+      "message": "DATABASE_URL tanımlı ✅",
+      "details": ""
+    },
+    {
+      "category": "Environment",
+      "message": "NEXTAUTH_SECRET tanımlı ✅",
+      "details": ""
+    },
+    {
+      "category": "Environment",
+      "message": "NEXTAUTH_URL tanımlı ✅",
+      "details": ""
+    },
+    {
+      "category": "Performance",
+      "message": "Tailwind purging aktif ✅",
+      "details": ""
+    },
+    {
+      "category": "Performance",
+      "message": "Gzip compression ✅",
+      "details": ""
+    },
+    {
+      "category": "Performance",
+      "message": "Package import optimization ✅",
+      "details": ""
+    },
+    {
+      "category": "Error Handling",
+      "message": "ErrorBoundary component mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Error Handling",
+      "message": "ErrorBoundary implementasyonu doğru ✅",
+      "details": ""
+    },
+    {
+      "category": "Error Handling",
+      "message": "error.tsx mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Error Handling",
+      "message": "not-found.tsx mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Testing",
+      "message": "jest.config.js mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Testing",
+      "message": "jest.setup.js mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Testing",
+      "message": "__tests__ mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Testing",
+      "message": "Test coverage raporu mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Deployment",
+      "message": "vercel.json mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Deployment",
+      "message": "vercel-protection.js mevcut ✅",
+      "details": ""
+    },
+    {
+      "category": "Deployment",
+      "message": ".gitignore mevcut ✅",
+      "details": ""
+    }
+  ]
+}
