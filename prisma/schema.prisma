@@ -45,6 +45,11 @@ model User {
   campaigns       Campaign[]
   emailTemplates  EmailTemplate[]
   billingInfos    BillingInfo[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([lastLoginAt])
+  @@index([resetToken, resetTokenExpiry])
 }
 
 model Account {
@@ -103,6 +108,13 @@ model Reservation {
   updatedAt           DateTime  @updatedAt
   payment             Payment?
   user                User      @relation(fields: [userId], references: [id])
+
+  @@index([userId, type, createdAt])
+  @@index([userId, createdAt])
+  @@index([pnr])
+  @@index([biletDukkaniOrderId])
+  @@index([biletDukkaniRouteId])
+  @@index([departureTime])
 }
 
 model Payment {
@@ -117,6 +129,12 @@ model Payment {
   updatedAt     DateTime    @updatedAt
   reservation   Reservation @relation(fields: [reservationId], references: [id])
   user          User        @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([provider])
+  @@index([createdAt])
+  @@index([updatedAt])
 }
 
 model Passenger {
@@ -145,6 +163,7 @@ model Passenger {
 
   @@unique([userId, identityNumber])
   @@index([userId])
+  @@index([userId, status, createdAt])
 }
 
 model PriceAlert {
@@ -157,6 +176,9 @@ model PriceAlert {
   createdAt         DateTime @default(now())
   lastNotifiedPrice Float?
   user              User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([departureDate])
 }
 
 model SearchFavorite {
@@ -167,6 +189,9 @@ model SearchFavorite {
   departureDate DateTime
   createdAt     DateTime @default(now())
   user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([departureDate])
 }
 
 model SurveyResponse {
@@ -218,6 +243,10 @@ model Campaign {
   createdBy   String?
 
   user User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([startDate])
+  @@index([endDate])
 }
 
 // Sistem Logları
@@ -231,6 +260,9 @@ model SystemLog {
   timestamp DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([timestamp])
+  @@index([userId, timestamp])
 }
 
 // Email Template'leri

@@ -21,6 +21,7 @@
     "next": "13.5.6",
     "next-auth": "4.24.5",
     "nodemailer": "6.10.1",
+    "pg": "8.16.3",
     "prisma": "5.13.0",
     "rate-limiter-flexible": "4.0.0",
     "rc-slider": "11.1.8",
@@ -47,6 +48,7 @@
     "@types/react-dom": "18.2.0",
     "@types/swagger-ui-react": "5.18.0",
     "autoprefixer": "10.4.16",
+    "dotenv": "17.2.3",
     "eslint": "8.51.0",
     "eslint-config-next": "13.5.6",
     "eslint-plugin-react": "^7.35.0",
@@ -78,6 +80,7 @@
     "backup:list": "node scripts/auto-backup.js list",
     "backup:prisma": "node scripts/auto-backup.js prisma",
     "guard:check": "node scripts/prisma-guard.js",
-    "guard:schema": "node scripts/schema-guard.js"
+    "guard:schema": "node scripts/schema-guard.js",
+    "db:indexes:concurrent": "node scripts/create-indexes-concurrently.js"
   }
 }
