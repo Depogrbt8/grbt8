@@ -27,10 +27,11 @@ export async function getWithCache<T>(
 
 export async function cacheDeletePattern(pattern: string): Promise<void> {
   if (useRedis) {
-    // @ts-ignore deletePattern mevcut
-    if (typeof (redisCache as any).deletePattern === 'function') {
-      await (redisCache as any).deletePattern(pattern)
+    try {
+      await redisCache.deletePattern(pattern)
       return
+    } catch (error) {
+      console.warn('Redis cache delete pattern failed:', error)
     }
   }
   // In-memory: flight-search gibi bilinen prefix'ler için seçici temizlik
@@ -45,5 +46,3 @@ export async function cacheDeletePattern(pattern: string): Promise<void> {
     }
   }
 }
-
-
