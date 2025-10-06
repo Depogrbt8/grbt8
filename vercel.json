@@ -4,6 +4,16 @@
   "framework": "nextjs",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=4096"
+    }
+  },
   "crons": [
     {
       "path": "/api/monitoring/cron-sample",

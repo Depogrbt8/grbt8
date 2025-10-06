@@ -1,22 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import MonitorClient from './MonitorClient';
+'use client';
 
-export default async function OpsAdminMonitorPage() {
-  // Güvenlik kontrolü - Admin yetkisi gerekli
-  const session = await getServerSession(authOptions);
-  const allow = (process.env.ADMIN_EMAILS || 'admin@grbt8.store')
-    .split(',')
-    .map(s => s.trim().toLowerCase())
-    .filter(Boolean);
+import React, { useEffect, useMemo, useState } from 'react';
+import AdminSidebar from '@/components/AdminSidebar';
 
-  if (!session || !session.user?.email || !allow.includes(session.user.email.toLowerCase())) {
-    redirect('/grbt-8/giris');
-  }
-
-  return <MonitorClient />;
-}
+export default function MonitorClient() {
   const [timeframe, setTimeframe] = useState<'1h' | '24h' | '7d'>('24h');
   const [perf, setPerf] = useState<any>(null);
   const [sys, setSys] = useState<any>(null);
@@ -348,5 +335,3 @@ export default async function OpsAdminMonitorPage() {
     </div>
   );
 }
-
-

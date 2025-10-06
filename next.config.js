@@ -27,6 +27,15 @@ const nextConfig = {
     if (!isServer && process.env.NODE_ENV === 'production') {
       config.devtool = 'source-map';
     }
+    
+    // Build stability için
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    
     return config;
   },
   
@@ -39,6 +48,8 @@ const nextConfig = {
   // Experimental features (Next.js 13.5.6 için güvenli)
   experimental: {
     optimizePackageImports: ['lucide-react', 'react-hot-toast'], // Tree shaking
+    esmExternals: 'loose',
+    serverComponentsExternalPackages: ['@prisma/client']
   },
   
   // HTTP headers (ekstra güvenlik)

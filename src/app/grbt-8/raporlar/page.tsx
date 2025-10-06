@@ -1,20 +1,21 @@
-'use client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import RaporlarClient from './RaporlarClient';
 
-import SalesReportTable from '@/components/SalesReportTable';
-import AdminSidebar from '@/components/AdminSidebar';
+export default async function OpsAdminRaporlarPage() {
+  // Güvenlik kontrolü - Admin yetkisi gerekli
+  const session = await getServerSession(authOptions);
+  const allow = (process.env.ADMIN_EMAILS || 'admin@grbt8.store')
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean);
 
-export default function OpsAdminRaporlarPage() {
-  return (
-    <div className="min-h-screen flex">
-      <AdminSidebar />
-      <main className="flex-1">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Satış Raporları</h1>
-          <SalesReportTable />
-        </div>
-      </main>
-    </div>
-  );
+  if (!session || !session.user?.email || !allow.includes(session.user.email.toLowerCase())) {
+    redirect('/grbt-8/giris');
+  }
+
+  return <RaporlarClient />;
 }
 
 
