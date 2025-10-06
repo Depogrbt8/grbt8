@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cacheKeys } from '@/lib/cache'
-import { getWithCache, getCached } from '@/lib/cacheSwitcher'
+import { cacheKeys, cache as memCache } from '@/lib/cache'
+import { getWithCache, getCached, cacheDeletePattern } from '@/lib/cacheSwitcher'
 import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
@@ -84,12 +84,14 @@ export async function DELETE(request: NextRequest) {
     const action = searchParams.get('action')
     
     if (action === 'clear-all') {
-      cache.clear()
+      // Production: Redis pattern temizliği; Development: in-memory temizliği
+      await cacheDeletePattern('flight-search:*')
+      try { memCache.clear() } catch {}
       return NextResponse.json({ message: 'All cache cleared' })
     }
     
     if (action === 'stats') {
-      return NextResponse.json(cache.getStats())
+      try { return NextResponse.json(memCache.getStats()) } catch { return NextResponse.json({ message: 'ok' }) }
     }
     
     return NextResponse.json(
