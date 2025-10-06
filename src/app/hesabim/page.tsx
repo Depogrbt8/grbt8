@@ -32,7 +32,7 @@ export default function HesabimPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const csrfToken = useCSRFToken();
+  const { token: csrfToken } = useCSRFToken();
   
   const [userData, setUserData] = useState<Partial<UserData>>({
     firstName: '',
