@@ -5,7 +5,7 @@ describe('POST /api/admin/verify-pin', () => {
   const originalEnv = process.env.ADMIN_PIN
 
   beforeEach(() => {
-    process.env.ADMIN_PIN = '7000'
+    process.env.ADMIN_PIN = 'SecurePin123!'
   })
 
   afterEach(() => {
@@ -16,7 +16,7 @@ describe('POST /api/admin/verify-pin', () => {
     it('should verify correct PIN', async () => {
       const request = new NextRequest('http://localhost/api/admin/verify-pin', {
         method: 'POST',
-        body: JSON.stringify({ pin: '7000' }),
+        body: JSON.stringify({ pin: 'SecurePin123!' }),
       })
 
       const response = await POST(request as any)
@@ -24,15 +24,15 @@ describe('POST /api/admin/verify-pin', () => {
 
       expect(response.status).toBe(200)
       expect(data.success).toBe(true)
-      expect(data.message).toContain('PIN doğrulandı')
+      expect(data.message).toContain('PIN başarıyla doğrulandı')
     })
 
     it('should verify custom PIN from env', async () => {
-      process.env.ADMIN_PIN = '1234'
+      process.env.ADMIN_PIN = 'MyCustomPin456!'
 
       const request = new NextRequest('http://localhost/api/admin/verify-pin', {
         method: 'POST',
-        body: JSON.stringify({ pin: '1234' }),
+        body: JSON.stringify({ pin: 'MyCustomPin456!' }),
       })
 
       const response = await POST(request as any)
@@ -42,19 +42,16 @@ describe('POST /api/admin/verify-pin', () => {
       expect(data.success).toBe(true)
     })
 
-    it('should use default PIN 7000 if env not set', async () => {
+    it('should reject if env PIN not set (no default)', async () => {
       delete process.env.ADMIN_PIN
 
       const request = new NextRequest('http://localhost/api/admin/verify-pin', {
         method: 'POST',
-        body: JSON.stringify({ pin: '7000' }),
+        body: JSON.stringify({ pin: 'anypin' }),
       })
 
       const response = await POST(request as any)
-      const data = await response.json()
-
-      expect(response.status).toBe(200)
-      expect(data.success).toBe(true)
+      expect(response.status).toBe(500) // Should fail because no env PIN
     })
   })
 
@@ -232,7 +229,7 @@ describe('POST /api/admin/verify-pin', () => {
     it('should return success response with correct structure', async () => {
       const request = new NextRequest('http://localhost/api/admin/verify-pin', {
         method: 'POST',
-        body: JSON.stringify({ pin: '7000' }),
+        body: JSON.stringify({ pin: 'SecurePin123!' }),
       })
 
       const response = await POST(request as any)

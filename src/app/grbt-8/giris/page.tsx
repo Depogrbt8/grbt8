@@ -30,7 +30,12 @@ export default function AdminGiris() {
       const pinData = await pinResponse.json();
 
       if (!pinData.success) {
-        setError(pinData.message || 'Geçersiz PIN');
+        // PIN kilitli mi kontrol et
+        if (pinData.error === 'PIN_LOCKED') {
+          setError(`PIN kilitli: ${pinData.message}`);
+        } else {
+          setError(pinData.message || 'Geçersiz PIN');
+        }
         setLoading(false);
         return;
       }
@@ -66,10 +71,14 @@ export default function AdminGiris() {
               value={pin}
               onChange={(e) => setPin(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="PIN"
-              maxLength={6}
+              placeholder="Admin PIN (8+ karakter)"
+              maxLength={50}
+              minLength={8}
               required
             />
+            <p className="text-xs text-gray-500 mt-1">
+              PIN en az 8 karakter olmalıdır (büyük/küçük harf, rakam, özel karakter)
+            </p>
           </div>
 
           {/* Email alanı */}

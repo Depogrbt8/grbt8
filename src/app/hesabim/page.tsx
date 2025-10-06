@@ -139,10 +139,19 @@ export default function HesabimPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <div className="lg:w-1/4">
-            <AccountSidebar />
-          </div>
-
-          {/* Ana İçerik */}
+            <AccountSidebar 
+              items={[
+                { icon: User, label: 'Hesabım', href: '/hesabim' },
+                { icon: Plane, label: 'Rezervasyonlarım', href: '/rezervasyonlarim' },
+                { icon: Users, label: 'Yolcularım', href: '/yolcularim' },
+                { icon: Receipt, label: 'Faturalarım', href: '/faturalarim' },
+                { icon: Search, label: 'Arama Geçmişi', href: '/arama-gecmisi' },
+                { icon: Bell, label: 'Fiyat Alarmları', href: '/fiyat-alarmlari' },
+                { icon: Heart, label: 'Favorilerim', href: '/favorilerim' }
+              ]}
+              onLogout={() => signOut({ callbackUrl: '/giris' })}
+            />
+          </div>          {/* Ana İçerik */}
           <div className="lg:w-3/4">
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-6">Hesap Bilgileri</h1>

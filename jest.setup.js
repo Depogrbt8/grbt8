@@ -6,7 +6,7 @@ process.env.NEXTAUTH_SECRET = 'test-secret-key-for-jest-testing'
 process.env.NEXTAUTH_URL = 'http://localhost:4000'
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
 process.env.ADMIN_EMAILS = 'admin@grbt8.store,test@grbt8.store'
-process.env.ADMIN_PIN = '7000'
+process.env.ADMIN_PIN = 'SecurePin123!'
 process.env.FLIGHT_API_KEY = 'test-flight-api-key'
 
 // Mock fetch globally
