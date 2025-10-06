@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { logger } from '@/lib/logger';
+import { cacheDeletePattern } from '@/lib/cacheSwitcher';
 
 export async function GET(request: NextRequest) {
   try {
@@ -65,6 +66,13 @@ export async function POST(request: NextRequest) {
         airline: body.airline,
       }
     });
+
+    // Cache invalidation: flight search sonuçlarını temizle
+    try {
+      await cacheDeletePattern('flight-search:*')
+    } catch (e) {
+      logger.warn('Cache invalidation failed for flight-search:*', { error: e instanceof Error ? e.message : String(e) })
+    }
 
     logger.info('Rezervasyon başarıyla oluşturuldu', { reservationId: reservation.id });
     return NextResponse.json(reservation);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cache, cacheKeys, withCache } from '@/lib/cache'
+import { cacheKeys } from '@/lib/cache'
+import { getWithCache, getCached } from '@/lib/cacheSwitcher'
 import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch with cache
-    const results = await withCache(
+    const results = await getWithCache(
       cacheKey,
       () => searchFlightsFromAPI(searchParams),
       cacheTTL
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: results,
-      cached: cache.get(cacheKey) !== null,
+      cached: (await getCached(cacheKey)) !== null,
       cacheKey,
       ttl: cacheTTL
     })

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { tokenizeCard, getCardFromToken, invalidateToken, getSecureCardInfo } from '@/lib/cardTokenization';
 import { getCardBinInfo } from '@/services/paymentApi';
 import { logger } from '@/lib/logger';
+import { cacheDeletePattern } from '@/lib/cacheSwitcher';
 
 // Güvenli kart işleme şeması
 const processPaymentSchema = z.object({
@@ -116,6 +117,17 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
+  }
+}
+
+// Cache invalidation: ödeme başarıyla tamamlanınca uçuş arama cache'lerini temizle
+// Not: Gerçek implementasyonda reservation oluşturma akışıyla birlikte yönetilebilir
+export async function PUT() {
+  try {
+    await cacheDeletePattern('flight-search:*')
+    return NextResponse.json({ success: true })
+  } catch (e) {
+    return NextResponse.json({ success: false }, { status: 500 })
   }
 }
 
