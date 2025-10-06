@@ -12,6 +12,7 @@ import { User as PrismaUser } from '@prisma/client';
 import SurveyPopup from '@/components/SurveyPopup';
 import Footer from '@/components/Footer';
 import { logger } from '@/lib/logger';
+import { useCSRFToken } from '@/hooks/useCSRFToken';
 
 interface UserData {
   firstName: string;
@@ -19,9 +20,9 @@ interface UserData {
   email: string;
   phone: string;
   countryCode: string;
-  birthDay: string | number;
-  birthMonth: string | number;
-  birthYear: string | number;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
   gender: string;
   identityNumber: string;
   isForeigner: boolean;
@@ -31,6 +32,7 @@ export default function HesabimPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const csrfToken = useCSRFToken();
   
   const [userData, setUserData] = useState<Partial<UserData>>({
     firstName: '',
@@ -48,55 +50,35 @@ export default function HesabimPage() {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
+  // Kullanıcı verilerini yükle
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(prev => ({
+            ...prev,
+            ...data,
+            countryCode: data.countryCode || '+90',
+          }));
+        }
+      } catch (error) {
+        logger.error('Kullanıcı verisi yükleme hatası', { error });
+      }
+    };
+
+    if (status === 'authenticated') {
+      fetchUserData();
+    }
+  }, [status]);
+
+  // Oturum kontrolü
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/giris');
-    } else if (status === 'authenticated' && session.user) {
-      // Session'dan bilgileri al
-      const user = session.user as any;
-      setUserData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        countryCode: user.countryCode || '+90',
-        birthDay: user.birthDay ? parseInt(user.birthDay, 10) : '',
-        birthMonth: user.birthMonth ? parseInt(user.birthMonth, 10) : '',
-        birthYear: user.birthYear ? parseInt(user.birthYear, 10) : '',
-        gender: user.gender || '',
-        identityNumber: user.identityNumber || '',
-        isForeigner: user.isForeigner || false,
-      });
-
-      // Her zaman profili API'den tazeleyerek güncel veri göster
-      // (Admin panelde yapılan değişiklikler session'a yansımasa da burada görünür.)
-      fetchUserData();
     }
-  }, [session, status, router]);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch('/api/user/profile');
-      if (response.ok) {
-        const userData = await response.json();
-        setUserData({
-          firstName: userData.firstName || '',
-          lastName: userData.lastName || '',
-          email: userData.email || '',
-          phone: userData.phone || '',
-          countryCode: userData.countryCode || '+90',
-          birthDay: userData.birthDay ? parseInt(userData.birthDay, 10) : '',
-          birthMonth: userData.birthMonth ? parseInt(userData.birthMonth, 10) : '',
-          birthYear: userData.birthYear ? parseInt(userData.birthYear, 10) : '',
-          gender: userData.gender || '',
-          identityNumber: userData.identityNumber || '',
-          isForeigner: userData.isForeigner || false,
-        });
-      }
-    } catch (error) {
-      logger.error('Kullanıcı bilgileri çekilemedi', { error });
-    }
-  };
+  }, [status, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -114,7 +96,10 @@ export default function HesabimPage() {
     try {
       const response = await fetch('/api/user/update', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken || ''
+        },
         body: JSON.stringify(userData),
       });
 
@@ -129,258 +114,287 @@ export default function HesabimPage() {
         toast.error(errorData.error || 'Bir hata oluştu.');
       }
     } catch (error) {
-      toast.error('Güncelleme sırasında bir hata oluştu.');
+      logger.error('Kullanıcı güncelleme hatası', { error });
+      toast.error('Bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
   };
 
   if (status === 'loading') {
-    return <div>Yükleniyor...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  if (!session) {
+  if (status === 'unauthenticated') {
     return null;
   }
 
-  const menuItems = [
-    { icon: User, label: 'Hesabım', href: '/hesabim' },
-    { icon: Plane, label: 'Seyahatlerim', href: '/hesabim/seyahatlerim' },
-    { icon: Users, label: 'Yolcularım', href: '/hesabim/yolcularim' },
-    // { icon: Star, label: 'Puanlarım', href: '/hesabim/puanlarim' }, // Geçici olarak gizlendi
-    { icon: Receipt, label: 'Fatura Bilgilerim', href: '/hesabim/fatura' },
-    { icon: Search, label: 'Aramalarım', href: '/hesabim/aramalarim' },
-    { icon: Bell, label: 'Fiyat Alarmlarım', href: '/hesabim/alarmlar' },
-    { icon: Heart, label: 'Favorilerim', href: '/hesabim/favoriler' },
-  ];
-  const handleLogout = () => { signOut({ callbackUrl: '/' }); };
-
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="sm:container sm:mx-auto sm:px-4 sm:py-8 container mx-auto px-2 py-4">
-        <div className="sm:flex sm:gap-8 flex flex-col gap-2">
-          <div className="flex-1 bg-white rounded-lg shadow-sm sm:p-6 p-2">
-            <h1 className="sm:text-2xl text-lg font-bold text-gray-800 mb-4">Hesap Bilgileri</h1>
-            <form onSubmit={handleSubmit} className="sm:space-y-6 space-y-3">
-              <div className="sm:grid sm:grid-cols-3 sm:gap-6 grid grid-cols-1 gap-2">
-                {/* Ad */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ad</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={userData.firstName || ''}
-                    onChange={handleChange}
-                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    required
-                  />
-                </div>
-                {/* Soyad */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Soyad</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={userData.lastName || ''}
-                    onChange={handleChange}
-                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    required
-                  />
-                </div>
-                {/* TC Kimlik No */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
-                  <input
-                    type="text"
-                    name="identityNumber"
-                    value={userData.identityNumber || ''}
-                    onChange={handleChange}
-                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    maxLength={11}
-                    disabled={userData.isForeigner}
-                  />
-                  <div className="mt-2">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        name="isForeigner"
-                        checked={userData.isForeigner}
-                        onChange={handleChange}
-                        className="rounded text-green-500 focus:ring-green-500"
-                      />
-                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar */}
+          <div className="lg:w-1/4">
+            <AccountSidebar />
+          </div>
+
+          {/* Ana İçerik */}
+          <div className="lg:w-3/4">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-6">Hesap Bilgileri</h1>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Kişisel Bilgiler */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                      Ad *
                     </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={userData.firstName || ''}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
                   </div>
-                </div>
-              </div>
-              <div className="sm:grid sm:grid-cols-3 sm:gap-8 grid grid-cols-1 gap-2">
-                {/* Doğum Tarihi */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Doğum Tarihi</label>
-                  <div className="flex gap-1 min-w-[220px]">
-                    <select
-                      name="birthDay"
-                      value={userData.birthDay || ''}
+
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                      Soyad *
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={userData.lastName || ''}
                       onChange={handleChange}
-                      className="w-12 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    >
-                      <option value="">Gün</option>
-                      {Array.from({length: 31}, (_, i) => i + 1).map(day => (
-                        <option key={day} value={day}>{day}</option>
-                      ))}
-                    </select>
-                    <select
-                      name="birthMonth"
-                      value={userData.birthMonth || ''}
-                      onChange={handleChange}
-                      className="w-20 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    >
-                      <option value="">Ay</option>
-                      {Array.from({length: 12}, (_, i) => i + 1).map(month => (
-                        <option key={month} value={month}>{month}</option>
-                      ))}
-                    </select>
-                    <select
-                      name="birthYear"
-                      value={userData.birthYear || ''}
-                      onChange={handleChange}
-                      className="w-20 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    >
-                      <option value="">Yıl</option>
-                      {Array.from({length: 100}, (_, i) => new Date().getFullYear() - i).map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
                   </div>
-                </div>
-                {/* Ülke Kodu ve Telefon */}
-                <div>
-                  <div className="flex gap-2 items-end">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Kodu</label>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                      E-posta
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={userData.email || ''}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">E-posta adresi değiştirilemez</p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                      Telefon
+                    </label>
+                    <div className="flex">
                       <select
                         name="countryCode"
                         value={userData.countryCode || '+90'}
                         onChange={handleChange}
-                        className="w-32 px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                        className="px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
-                        <option value="+90">🇹🇷 TR (+90)</option>
-                        <option value="+49">🇩🇪 DE (+49)</option>
-                        <option value="+44">🇬🇧 UK (+44)</option>
-                        <option value="+33">🇫🇷 FR (+33)</option>
-                        <option value="+32">🇧🇪 BE (+32)</option>
-                        <option value="+31">🇳🇱 NL (+31)</option>
-                        <option value="+41">🇨🇭 CH (+41)</option>
-                        <option value="+45">🇩🇰 DK (+45)</option>
+                        <option value="+90">+90</option>
+                        <option value="+1">+1</option>
+                        <option value="+44">+44</option>
+                        <option value="+49">+49</option>
+                        <option value="+33">+33</option>
                       </select>
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Cep Telefonu</label>
                       <input
-                        type="text"
+                        type="tel"
+                        id="phone"
                         name="phone"
                         value={userData.phone || ''}
                         onChange={handleChange}
-                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                        placeholder="5XX XXX XX XX"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                 </div>
-                {/* Cinsiyet */}
-                <div className="flex flex-col justify-end pb-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cinsiyet</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="male"
-                        checked={userData.gender === 'male'}
-                        onChange={handleChange}
-                        className="text-green-500 focus:ring-green-500"
-                      />
-                      <span>Erkek</span>
+
+                {/* Doğum Tarihi */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label htmlFor="birthDay" className="block text-sm font-medium text-gray-700 mb-2">
+                      Doğum Günü
                     </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="female"
-                        checked={userData.gender === 'female'}
-                        onChange={handleChange}
-                        className="text-green-500 focus:ring-green-500"
-                      />
-                      <span>Kadın</span>
+                    <select
+                      id="birthDay"
+                      name="birthDay"
+                      value={userData.birthDay || ''}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Gün</option>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day.toString().padStart(2, '0')}>
+                          {day}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="birthMonth" className="block text-sm font-medium text-gray-700 mb-2">
+                      Doğum Ayı
                     </label>
+                    <select
+                      id="birthMonth"
+                      name="birthMonth"
+                      value={userData.birthMonth || ''}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Ay</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                        <option key={month} value={month.toString().padStart(2, '0')}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="birthYear" className="block text-sm font-medium text-gray-700 mb-2">
+                      Doğum Yılı
+                    </label>
+                    <select
+                      id="birthYear"
+                      name="birthYear"
+                      value={userData.birthYear || ''}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Yıl</option>
+                      {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                        <option key={year} value={year.toString()}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-              </div>
-              <div className="flex gap-4 flex-col sm:flex-row">
-                <div className="w-full sm:w-1/2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-Posta</label>
+
+                {/* Cinsiyet ve Kimlik */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+                      Cinsiyet
+                    </label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={userData.gender || ''}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Seçiniz</option>
+                      <option value="male">Erkek</option>
+                      <option value="female">Kadın</option>
+                      <option value="other">Diğer</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="identityNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                      Kimlik Numarası
+                    </label>
+                    <input
+                      type="text"
+                      id="identityNumber"
+                      name="identityNumber"
+                      value={userData.identityNumber || ''}
+                      onChange={handleChange}
+                      maxLength={11}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Yabancı Uyruklu */}
+                <div className="flex items-center">
                   <input
-                    type="email"
-                    name="email"
-                    value={userData.email || ''}
+                    type="checkbox"
+                    id="isForeigner"
+                    name="isForeigner"
+                    checked={userData.isForeigner || false}
                     onChange={handleChange}
-                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    disabled
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
+                  <label htmlFor="isForeigner" className="ml-2 block text-sm text-gray-700">
+                    Yabancı uyrukluyum
+                  </label>
                 </div>
-              </div>
-              <div className="flex flex-col sm:flex-row justify-between items-center pt-4 border-t gap-2">
-                <div className="flex gap-2 flex-wrap">
+
+                {/* Kaydet Butonu */}
+                <div className="flex justify-end">
                   <button
-                    type="button"
-                    className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs"
+                    type="submit"
+                    disabled={isLoading}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md transition-colors duration-200 flex items-center gap-2"
                   >
-                    <span className="text-xs">Pasaport Ekle</span>
+                    {isLoading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Kaydediliyor...
+                      </>
+                    ) : (
+                      'Kaydet'
+                    )}
                   </button>
+                </div>
+              </form>
+
+              {/* Diğer İşlemler */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Diğer İşlemler</h2>
+                <div className="space-y-3">
                   <button
-                    type="button"
-                    className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs"
-                  >
-                    <span className="text-xs">Mil Kart Ekle</span>
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => setIsChangePasswordModalOpen(true)}
-                    className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs"
+                    className="w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md transition-colors duration-200"
                   >
-                    <span className="text-xs">Şifre Değiştir</span>
+                    Şifre Değiştir
                   </button>
+                  
                   <button
-                    type="button"
                     onClick={() => setIsDeleteAccountModalOpen(true)}
-                    className="flex items-center gap-2 px-3 py-2 border border-red-300 text-red-600 rounded-xl hover:bg-red-50 text-xs"
+                    className="w-full text-left px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-md transition-colors duration-200"
                   >
-                    <span className="text-xs">Hesabı Sil</span>
+                    Hesabı Sil
                   </button>
                 </div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className={`px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 text-xs ${
-                    isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
-                </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
       <ChangePasswordModal
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
       />
+      
       <DeleteAccountModal
         isOpen={isDeleteAccountModalOpen}
         onClose={() => setIsDeleteAccountModalOpen(false)}
       />
+
       <SurveyPopup />
       <Footer />
-    </main>
+    </div>
   );
-} 
+}
