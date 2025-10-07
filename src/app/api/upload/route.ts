@@ -64,11 +64,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Dosya tipi kontrolü - sadece resim
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
+    // Dosya tipi kontrolü - sadece resim. Tüm image/* tiplerine izin ver (HEIC vb. dahil)
+    if (!file.type || !file.type.startsWith('image/')) {
       return cors(
-        NextResponse.json({ success: false, error: 'Sadece resim dosyaları yüklenebilir (JPEG, PNG, WEBP, GIF)' }, { status: 400 }), 
+        NextResponse.json({ success: false, error: 'Sadece resim dosyaları yüklenebilir.' }, { status: 400 }), 
         origin
       )
     }
