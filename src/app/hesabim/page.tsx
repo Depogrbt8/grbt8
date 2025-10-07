@@ -344,7 +344,6 @@ export default function HesabimPage() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Modals */}
       <ChangePasswordModal
