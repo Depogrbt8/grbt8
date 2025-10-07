@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import nodemailer from 'nodemailer';
-import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
 
 async function sendPriceAlertMail(to: string, alert: any) {
@@ -11,18 +10,25 @@ async function sendPriceAlertMail(to: string, alert: any) {
   const text = `Fiyat alarmınız başarıyla oluşturuldu!\n\nRota: ${alert.origin} -> ${alert.destination}\nTarih: ${alert.departureDate}${alert.targetPrice ? `\nHedef Fiyat: ${alert.targetPrice} EUR` : ''}`;
   const html = `<b>Fiyat alarmınız başarıyla oluşturuldu!</b><br/>Rota: ${alert.origin} → ${alert.destination}<br/>Tarih: ${alert.departureDate}${alert.targetPrice ? `<br/>Hedef Fiyat: ${alert.targetPrice} EUR` : ''}`;
 
-  // If RESEND is configured, prefer it
+  // If RESEND is configured, prefer it (optional dynamic import to avoid hard dependency during build)
   const resendApiKey = process.env.RESEND_API_KEY;
   if (resendApiKey) {
-    const resend = new Resend(resendApiKey);
-    await resend.emails.send({
-      from: process.env.RESEND_FROM || 'Gurbet.biz <no-reply@gurbet.biz>',
-      to,
-      subject,
-      text,
-      html,
-    });
-    return;
+    try {
+      const mod = await import('resend');
+      const Resend = mod?.Resend as any;
+      const resend = new Resend(resendApiKey);
+      await resend.emails.send({
+        from: process.env.RESEND_FROM || 'Gurbet.biz <no-reply@gurbet.biz>',
+        to,
+        subject,
+        text,
+        html,
+      });
+      return;
+    } catch (e) {
+      // Resend paketi ortamda yoksa sessizce SMTP fallback'e geç
+      logger.warn('RESEND module not available, falling back to SMTP');
+    }
   }
 
   // Fallback to SMTP (secure in production)
