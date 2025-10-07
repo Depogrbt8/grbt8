@@ -296,7 +296,34 @@ export default function HesabimPage() {
 
                 {/* Form Footer */}
                 <div className="hesabim-form-footer">
-                  <div className="hesabim-action-buttons"></div>
+                  <div className="hesabim-action-buttons">
+                    <button
+                      type="button"
+                      className="hesabim-button-secondary"
+                    >
+                      Pasaport Ekle
+                    </button>
+                    <button
+                      type="button"
+                      className="hesabim-button-secondary"
+                    >
+                      Mil Kart Ekle
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsChangePasswordModalOpen(true)}
+                      className="hesabim-button-secondary"
+                    >
+                      Şifre Değiştir
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDeleteAccountModalOpen(true)}
+                      className="hesabim-button-danger"
+                    >
+                      Hesabı Sil
+                    </button>
+                  </div>
                   <button
                     type="submit"
                     disabled={isLoading}
@@ -314,25 +341,7 @@ export default function HesabimPage() {
                 </div>
               </form>
 
-              {/* Diğer İşlemler */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">Diğer İşlemler</h2>
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setIsChangePasswordModalOpen(true)}
-                    className="hesabim-button-secondary w-full justify-start"
-                  >
-                    Şifre Değiştir
-                  </button>
-                  
-                  <button
-                    onClick={() => setIsDeleteAccountModalOpen(true)}
-                    className="hesabim-button-danger w-full justify-start"
-                  >
-                    Hesabı Sil
-                  </button>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
