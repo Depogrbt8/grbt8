@@ -33,9 +33,13 @@ export async function POST(request: NextRequest) {
   const origin = request.headers.get('origin');
   
   try {
-    // Authentication kontrolü - sadece giriş yapmış kullanıcılar yükleyebilir
+    // Authentication kontrolü - kampanyalar için session kontrolü esnek
+    // Ana sitede session olmadan da çalışabilir
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    
+    // Sadece admin domain'den geliyorsa session kontrolü yap
+    const isAdminDomain = origin?.includes('www.grbt8.store');
+    if (isAdminDomain && !session?.user) {
       return cors(
         NextResponse.json({ success: false, error: 'Yetkisiz erişim' }, { status: 401 }), 
         origin
