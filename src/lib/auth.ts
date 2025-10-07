@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import bcrypt from 'bcryptjs';
+import { logger } from '@/lib/logger';
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "./prisma";
 import { User } from "@prisma/client";
@@ -130,31 +131,41 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials.password) {
-                    return null;
-                }
+                try {
+                    if (!credentials?.email || !credentials.password) {
+                        logger.warn('AUTH_MISSING_CREDENTIALS');
+                        return null;
+                    }
 
-                // Kullanıcıyı veritabanında ara
-                const user = await prisma.user.findUnique({ 
-                    where: { email: credentials.email } 
-                });
+                    const email = credentials.email.trim().toLowerCase();
+                    const password = credentials.password;
 
-                // Kullanıcı yoksa veya şifresi yoksa
-                if (!user || !user.password) {
-                    return null;
-                }
+                    // Kullanıcıyı veritabanında ara
+                    const user = await prisma.user.findUnique({ 
+                        where: { email } 
+                    });
 
-                // Şifreyi doğrula
-                const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
-                
-                if (!isPasswordValid) {
-                    return null;
-                }
+                    if (!user) {
+                        logger.warn('AUTH_USER_NOT_FOUND', { email });
+                        return null;
+                    }
 
-                // Kullanıcı aktif değilse
-                if (user.status !== 'active') {
-                    return null;
-                }
+                    if (!user.password) {
+                        logger.warn('AUTH_USER_NO_PASSWORD', { email });
+                        return null;
+                    }
+
+                    // Şifreyi doğrula
+                    const isPasswordValid = await bcrypt.compare(password, user.password);
+                    if (!isPasswordValid) {
+                        logger.warn('AUTH_PASSWORD_MISMATCH', { email });
+                        return null;
+                    }
+
+                    if (user.status !== 'active') {
+                        logger.warn('AUTH_USER_INACTIVE', { email, status: user.status });
+                        return null;
+                    }
 
                 // Başarılı giriş
                 const name = (user.firstName && user.lastName) 
@@ -166,6 +177,10 @@ export const authOptions: NextAuthOptions = {
                     name,
                     email: user.email 
                 };
+                } catch (e: any) {
+                    logger.error('AUTH_AUTHORIZE_ERROR', { message: e?.message });
+                    return null;
+                }
             }
         })
     ],

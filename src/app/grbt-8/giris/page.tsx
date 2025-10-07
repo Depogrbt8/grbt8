@@ -24,7 +24,7 @@ export default function AdminGiris() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ pin }),
+        body: JSON.stringify({ pin: pin.trim() }),
       });
 
       const pinData = await pinResponse.json();
@@ -42,8 +42,8 @@ export default function AdminGiris() {
 
       // NextAuth ile giriş yap
       const result = await signIn('credentials', {
-        email,
-        password,
+        email: email.trim(),
+        password: password,
         redirect: false,
       });
 
