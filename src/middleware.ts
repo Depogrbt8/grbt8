@@ -97,8 +97,16 @@ export async function middleware(request: NextRequest) {
     // CSRF Protection for POST, PUT, DELETE requests
     // NextAuth endpoint'lerini CSRF kontrolünden muaf tut
     const isNextAuthEndpoint = request.nextUrl.pathname.startsWith('/api/auth/');
+    // Vercel Cron tetiklemeleri ve yedekleme endpointi CSRF'ten muaf (sunucu taraflı çağrı)
+    const isCronInvocation = !!request.headers.get('x-vercel-cron');
+    const isBackupScheduledEndpoint = request.nextUrl.pathname === '/api/backup/scheduled';
     
-    if (['POST', 'PUT', 'DELETE'].includes(request.method) && !isNextAuthEndpoint) {
+    if (
+      ['POST', 'PUT', 'DELETE'].includes(request.method) &&
+      !isNextAuthEndpoint &&
+      !isCronInvocation &&
+      !isBackupScheduledEndpoint
+    ) {
       const csrfMiddleware = createCSRFProtection();
       const csrfResponse = await csrfMiddleware(request);
       if (csrfResponse.status === 403) {
