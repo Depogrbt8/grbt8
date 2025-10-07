@@ -119,6 +119,8 @@ export default function HesabimPage() {
         toast.success('Bilgileriniz başarıyla güncellendi.');
         await fetch('/api/auth/session?update');
         await fetchProfile();
+        // Görünürlüğü garanti etmek için bir kez daha bildir
+        setTimeout(() => toast.success('Bilgileriniz başarıyla güncellendi.'), 100);
       } else {
         let errorText = 'Bir hata oluştu.';
         try {
