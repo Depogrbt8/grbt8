@@ -45,26 +45,35 @@ export default function HesabimPage() {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
+  // Profil verisini API'den çek (session gecikmelerinde eski veri kalmasın)
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch('/api/user/profile', { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      setUserData({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        countryCode: data.countryCode || '+90',
+        birthDay: data.birthDay || '',
+        birthMonth: data.birthMonth || '',
+        birthYear: data.birthYear || '',
+        gender: data.gender || '',
+        identityNumber: data.identityNumber || '',
+        isForeigner: !!data.isForeigner,
+      });
+    } catch {}
+  };
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/giris');
-    } else if (status === 'authenticated' && session?.user) {
-      const user: any = session.user;
-      setUserData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        countryCode: user.countryCode || '+90',
-        birthDay: user.birthDay ? parseInt(user.birthDay, 10) : '',
-        birthMonth: user.birthMonth ? parseInt(user.birthMonth, 10) : '',
-        birthYear: user.birthYear ? parseInt(user.birthYear, 10) : '',
-        gender: user.gender || '',
-        identityNumber: user.identityNumber || '',
-        isForeigner: user.isForeigner || false,
-      });
+    } else if (status === 'authenticated') {
+      fetchProfile();
     }
-  }, [session, status, router]);
+  }, [status, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -109,7 +118,7 @@ export default function HesabimPage() {
       if (response.ok) {
         toast.success('Bilgileriniz başarıyla güncellendi.');
         await fetch('/api/auth/session?update');
-        window.location.reload();
+        await fetchProfile();
       } else {
         let errorText = 'Bir hata oluştu.';
         try {
