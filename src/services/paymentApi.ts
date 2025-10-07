@@ -99,8 +99,13 @@ export async function getBinInfo(
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    logger.error('BIN bilgisi alınırken hata', { error });
+  } catch (error: any) {
+    // Hatalı loglarda hassas alanları temizle
+    try {
+      const meta: any = { message: error?.message };
+      if (error?.response?.status) meta.status = error.response.status;
+      logger.error('BIN bilgisi alınırken hata', meta);
+    } catch {}
     throw new Error('Kart bilgileri doğrulanamadı. Lütfen tekrar deneyin.');
   }
 }

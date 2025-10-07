@@ -18,9 +18,15 @@ const SENSITIVE_FIELDS = [
   'cvv',
   'cvc',
   'token',
+  'access_token',
+  'refresh_token',
+  'id_token',
+  'authorization',
+  'x-csrf-token',
   'secret',
   'apiKey',
   'privateKey',
+  'sessionToken',
 ];
 
 /**

@@ -3,19 +3,20 @@
 
 import axios from 'axios';
 
-// İleride .env.local dosyasından alınacak
+// .env üzerinden yönetilir (kod içine gizli bilgi koyma)
 const API_URL = 'https://test-login.rooftickets.com/connect/token';
-const CLIENT_ID = process.env.BILETDUKKANI_CLIENT_ID || 'agent.web';
-const CLIENT_SECRET = process.env.BILETDUKKANI_CLIENT_SECRET || 'secret';
-const USERNAME = process.env.BILETDUKKANI_USERNAME || 'test-api.biletdukkani@roofstacks.com';
-const PASSWORD = process.env.BILETDUKKANI_PASSWORD || 'TestApi4123';
+const CLIENT_ID = process.env.BILETDUKKANI_CLIENT_ID || '';
+const CLIENT_SECRET = process.env.BILETDUKKANI_CLIENT_SECRET || '';
+const USERNAME = process.env.BILETDUKKANI_USERNAME || '';
+const PASSWORD = process.env.BILETDUKKANI_PASSWORD || '';
 const SCOPE = 'openid profile email IdentityServerApi role ticket.api permission';
 
 // Demo fonksiyon: Gerçek API çağrısı yerine sahte token döner
 export async function getBiletDukkaniTokenDemo() {
-  // Burada gerçek API çağrısı yapılmayacak, demo token dönecek
+  // Demo amaçlı token .env'den okunur; kod içinde sabit tutulmaz
+  const demoToken = process.env.BILET_DUKKANI_DEMO_TOKEN || 'demo_token';
   return {
-    access_token: 'demo_token_123456',
+    access_token: demoToken,
     expires_in: 7200,
     token_type: 'Bearer',
     scope: SCOPE,
@@ -25,6 +26,9 @@ export async function getBiletDukkaniTokenDemo() {
 
 // Gerçek fonksiyon (ileride aktif edilecek)
 export async function getBiletDukkaniTokenReal() {
+  if (!CLIENT_ID || !CLIENT_SECRET || !USERNAME || !PASSWORD) {
+    throw new Error('BiletDukkani gerçek API bilgileri eksik. Lütfen .env değişkenlerini tanımlayın.');
+  }
   const params = new URLSearchParams();
   params.append('grant_type', 'password');
   params.append('client_id', CLIENT_ID);
