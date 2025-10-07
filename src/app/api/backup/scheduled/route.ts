@@ -11,7 +11,47 @@ export const runtime = 'nodejs';
 // GitHub yapılandırması
 const GITHUB_TOKEN = process.env.GITHUB_BACKUP_TOKEN || '';
 const DEFAULT_GITHUB_REPO = 'grbt8yedek/cronbackup';
-const BACKUP_SECRET = process.env.BACKUP_SECRET_TOKEN || 'BACKUP_SECRET_TOKEN_2025';
+// Güvenlik: default değer KALDIRILDI. Env yoksa 500 dön.
+const BACKUP_SECRET = process.env.BACKUP_SECRET_TOKEN;
+const BACKUP_ALLOWED_IPS = (process.env.BACKUP_ALLOWED_IPS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
+function getClientIp(request: NextRequest): string {
+  const fwd = request.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim();
+  // @ts-ignore - NextRequest may expose ip in some runtimes
+  return (request as any).ip || 'unknown';
+}
+
+function ensureSecretAndNetwork(request: NextRequest): NextResponse | null {
+  if (!BACKUP_SECRET) {
+    return NextResponse.json({ success: false, error: 'Backup secret misconfigured' }, { status: 500 });
+  }
+  const authHeader = request.headers.get('authorization') || '';
+  const hasSecret = authHeader.includes(BACKUP_SECRET);
+  const isCron = !!request.headers.get('x-vercel-cron');
+  // Prod: hem cron header hem secret zorunlu
+  if (process.env.NODE_ENV === 'production') {
+    if (!(isCron && hasSecret)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+  } else {
+    // Dev: secret yeterli
+    if (!hasSecret) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+  // IP allowlist (opsiyonel)
+  if (BACKUP_ALLOWED_IPS.length > 0) {
+    const ip = getClientIp(request);
+    if (!BACKUP_ALLOWED_IPS.includes(ip)) {
+      return NextResponse.json({ success: false, error: 'IP not allowed' }, { status: 403 });
+    }
+  }
+  return null;
+}
 
 // Son backup zamanını kontrol et
 async function getLastBackupTime(): Promise<Date | null> {
@@ -95,18 +135,34 @@ async function createFullBackup(): Promise<string> {
     data: {
       // Kullanıcılar
       users: await prisma.user.findMany({
-        include: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          countryCode: true,
+          phone: true,
+          birthDay: true,
+          birthMonth: true,
+          birthYear: true,
+          gender: true,
+          isForeigner: true,
+          status: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
           passengers: true,
           reservations: true,
           priceAlerts: true,
-          searchFavorites: true
+          searchFavorites: true,
         }
       }),
 
       // NextAuth / Auth tabloları
-      accounts: await (async () => { try { return await prisma.account.findMany(); } catch { return []; } })(),
-      sessions: await (async () => { try { return await prisma.session.findMany(); } catch { return []; } })(),
-      verificationTokens: await (async () => { try { return await prisma.verificationToken.findMany(); } catch { return []; } })(),
+      // Hassas auth alanlarını dahil ETME
+      accounts: [],
+      sessions: [],
+      verificationTokens: [],
       
       // Rezervasyonlar
       reservations: await prisma.reservation.findMany({
@@ -155,16 +211,16 @@ async function createFullBackup(): Promise<string> {
         try { return await prisma.emailTemplate.findMany(); } catch { return []; }
       })(),
 
-      emailLogs: await (async () => {
-        try { return await prisma.emailLog.findMany(); } catch { return []; }
-      })(),
+      // E-mail logları PII içerebilir, dışarı çıkarma
+      emailLogs: [],
 
       emailSettings: await (async () => {
         try { return await prisma.emailSettings.findMany(); } catch { return []; }
       })(),
       
       // Sistem logları
-      systemLogs: await prisma.systemLog.findMany(),
+      // Sistem logları PII içerebilir, dışarı çıkarma
+      systemLogs: [],
       
       // Faturalama bilgileri
       billingInfos: await prisma.billingInfo.findMany()
@@ -364,15 +420,9 @@ async function runScheduledBackupFlow(repoOverride?: string): Promise<{ uploaded
 
 export async function POST(request: NextRequest) {
   try {
-    // Authorization kontrolü (manual tetikleme için)
-    const authHeader = request.headers.get('authorization');
-    const isVercelCron = !!request.headers.get('x-vercel-cron');
-    if (!isVercelCron && (!authHeader || !authHeader.includes(BACKUP_SECRET))) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // Güvenlik kontrolleri
+    const sec = ensureSecretAndNetwork(request);
+    if (sec) return sec;
 
     // Son backup zamanını kontrol et (6 saatlik interval)
     const lastBackup = await getLastBackupTime();
@@ -433,61 +483,17 @@ export async function POST(request: NextRequest) {
 // GET endpoint - backup durumunu kontrol et
 export async function GET(request: NextRequest) {
   try {
+    // Prod'da GET ile tetikleme kapalı
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ success: false, error: 'Method disabled' }, { status: 405 });
+    }
+    // Dev/test ortamında sadece secret + cron header ile izin ver
+    const sec = ensureSecretAndNetwork(request);
+    if (sec) return sec;
     const url = new URL(request.url);
-    const providedSecret = url.searchParams.get('secret');
-    const isVercelCron = !!request.headers.get('x-vercel-cron');
     const repoParam = url.searchParams.get('repo') || undefined;
-
-    // Eğer Vercel Cron tetiklediyse veya doğru secret verildiyse backup'ı çalıştır
-    if (isVercelCron || (providedSecret && providedSecret === BACKUP_SECRET)) {
-      logger.info('🚀 GET ile zamanlanmış backup tetiklendi');
-      // Son backup 6 saat kuralını koru
-      const lastBackup = await getLastBackupTime();
-      const now = new Date();
-      if (lastBackup) {
-        const hoursDiff = (now.getTime() - lastBackup.getTime()) / (1000 * 60 * 60);
-        if (hoursDiff < 6) {
-          return NextResponse.json({
-            success: true,
-            message: 'Backup atlandı - henüz 6 saat geçmedi',
-            lastBackup: lastBackup.toISOString(),
-            nextBackup: new Date(lastBackup.getTime() + (6 * 60 * 60 * 1000)).toISOString(),
-            hoursSinceLastBackup: hoursDiff
-          });
-        }
-      }
-      await runScheduledBackupFlow(repoParam);
-      return NextResponse.json({ success: true, message: 'Backup GET ile başarıyla oluşturuldu' });
-    }
-
-    const lastBackup = await getLastBackupTime();
-    const now = new Date();
-    
-    let hoursSinceLastBackup = 0;
-    let nextBackup = now;
-    
-    if (lastBackup) {
-      hoursSinceLastBackup = (now.getTime() - lastBackup.getTime()) / (1000 * 60 * 60);
-      nextBackup = new Date(lastBackup.getTime() + (6 * 60 * 60 * 1000));
-    }
-
-    return NextResponse.json({
-      success: true,
-      status: 'active',
-      schedule: '6 hours',
-      retentionPolicy: '10 days on GitHub',
-      lastBackup: lastBackup?.toISOString() || null,
-      nextBackup: nextBackup.toISOString(),
-      hoursSinceLastBackup: hoursSinceLastBackup,
-      readyForBackup: hoursSinceLastBackup >= 6 || !lastBackup,
-      features: {
-        githubUpload: !!GITHUB_TOKEN,
-        autoCleanup: true,
-        retentionDays: 10,
-        localCleanup: true,
-        cronHeaderAllowed: true
-      }
-    });
+    await runScheduledBackupFlow(repoParam);
+    return NextResponse.json({ success: true, message: 'Backup (GET) completed in non-production' });
 
   } catch (error: any) {
     // Detaylı error bilgisini logger'a kaydet (güvenli)
