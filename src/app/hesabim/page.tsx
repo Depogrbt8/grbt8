@@ -8,7 +8,6 @@ import ChangePasswordModal from '@/components/ChangePasswordModal';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
 import { useSession, signOut } from 'next-auth/react';
 import { User, Plane, Users, Receipt, Search, Bell, Heart } from 'lucide-react';
-import { User as PrismaUser } from '@prisma/client';
 import SurveyPopup from '@/components/SurveyPopup';
 import Footer from '@/components/Footer';
 import { logger } from '@/lib/logger';
@@ -142,12 +141,10 @@ export default function HesabimPage() {
               <h1 className="text-2xl font-bold text-gray-900 mb-6">Hesap Bilgileri</h1>
               
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Kişisel Bilgiler */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Ad / Soyad / TC aynı satır */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Ad *
-                    </label>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">Ad *</label>
                     <input
                       type="text"
                       id="firstName"
@@ -155,14 +152,11 @@ export default function HesabimPage() {
                       value={userData.firstName || ''}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
                     />
                   </div>
-
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Soyad *
-                    </label>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Soyad *</label>
                     <input
                       type="text"
                       id="lastName"
@@ -170,142 +164,11 @@ export default function HesabimPage() {
                       value={userData.lastName || ''}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
                     />
                   </div>
-
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      E-posta
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={userData.email || ''}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">E-posta adresi değiştirilemez</p>
-                  </div>
-
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                      Telefon
-                    </label>
-                    <div className="flex">
-                      <select
-                        name="countryCode"
-                        value={userData.countryCode || '+90'}
-                        onChange={handleChange}
-                        className="px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="+90">+90</option>
-                        <option value="+1">+1</option>
-                        <option value="+44">+44</option>
-                        <option value="+49">+49</option>
-                        <option value="+33">+33</option>
-                      </select>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={userData.phone || ''}
-                        onChange={handleChange}
-                        placeholder="5XX XXX XX XX"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Doğum Tarihi */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label htmlFor="birthDay" className="block text-sm font-medium text-gray-700 mb-2">
-                      Doğum Günü
-                    </label>
-                    <select
-                      id="birthDay"
-                      name="birthDay"
-                      value={userData.birthDay || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Gün</option>
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                        <option key={day} value={day.toString().padStart(2, '0')}>
-                          {day}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="birthMonth" className="block text-sm font-medium text-gray-700 mb-2">
-                      Doğum Ayı
-                    </label>
-                    <select
-                      id="birthMonth"
-                      name="birthMonth"
-                      value={userData.birthMonth || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Ay</option>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                        <option key={month} value={month.toString().padStart(2, '0')}>
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="birthYear" className="block text-sm font-medium text-gray-700 mb-2">
-                      Doğum Yılı
-                    </label>
-                    <select
-                      id="birthYear"
-                      name="birthYear"
-                      value={userData.birthYear || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Yıl</option>
-                      {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                        <option key={year} value={year.toString()}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Cinsiyet ve Kimlik */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
-                      Cinsiyet
-                    </label>
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={userData.gender || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Seçiniz</option>
-                      <option value="male">Erkek</option>
-                      <option value="female">Kadın</option>
-                      <option value="other">Diğer</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="identityNumber" className="block text-sm font-medium text-gray-700 mb-2">
-                      Kimlik Numarası
-                    </label>
+                    <label htmlFor="identityNumber" className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
                     <input
                       type="text"
                       id="identityNumber"
@@ -313,24 +176,130 @@ export default function HesabimPage() {
                       value={userData.identityNumber || ''}
                       onChange={handleChange}
                       maxLength={11}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                 </div>
 
-                {/* Yabancı Uyruklu */}
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isForeigner"
-                    name="isForeigner"
-                    checked={userData.isForeigner || false}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="isForeigner" className="ml-2 block text-sm text-gray-700">
-                    Yabancı uyrukluyum
-                  </label>
+                {/* E-posta ve Telefon (Kod + Telefon) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex gap-4">
+                    <div className="w-1/2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">E-Posta</label>
+                      <input
+                        type="email"
+                        value={userData.email || ''}
+                        disabled
+                        className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 text-gray-500 cursor-not-allowed"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">E-posta adresi değiştirilemez</p>
+                    </div>
+                    <div className="flex gap-2 w-1/2">
+                      <div className="w-[60px]">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Kod</label>
+                        <select
+                          name="countryCode"
+                          value={userData.countryCode || '+90'}
+                          onChange={handleChange}
+                          className="w-full px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 appearance-none text-sm"
+                        >
+                          <option value="+90">+90</option>
+                          <option value="+1">+1</option>
+                          <option value="+44">+44</option>
+                          <option value="+49">+49</option>
+                          <option value="+33">+33</option>
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Cep Telefonu</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={userData.phone || ''}
+                          onChange={handleChange}
+                          placeholder="_ _ _  _ _ _  _ _ _ _"
+                          className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Doğum Tarihi */}
+                  <div className="flex gap-2 items-end">
+                    <div className="w-24">
+                      <select 
+                        id="birthDay"
+                        name="birthDay"
+                        value={userData.birthDay || ''}
+                        onChange={handleChange}
+                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                      >
+                        <option value="">Gün</option>
+                        {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                          <option key={day} value={day.toString().padStart(2, '0')}>{day}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="w-24">
+                      <select 
+                        id="birthMonth"
+                        name="birthMonth"
+                        value={userData.birthMonth || ''}
+                        onChange={handleChange}
+                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                      >
+                        <option value="">Ay</option>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                          <option key={month} value={month.toString().padStart(2, '0')}>{month}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="w-24">
+                      <select 
+                        id="birthYear"
+                        name="birthYear"
+                        value={userData.birthYear || ''}
+                        onChange={handleChange}
+                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                      >
+                        <option value="">Yıl</option>
+                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                          <option key={year} value={year.toString()}>{year}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cinsiyet ve TC Vatandaşı Değil */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Cinsiyet</label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={userData.gender || ''}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
+                    >
+                      <option value="">Seçiniz</option>
+                      <option value="male">Erkek</option>
+                      <option value="female">Kadın</option>
+                      <option value="other">Diğer</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center h-full">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="isForeigner"
+                        name="isForeigner"
+                        checked={userData.isForeigner || false}
+                        onChange={handleChange}
+                        className="rounded text-green-500 focus:ring-green-500"
+                      />
+                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
+                    </label>
+                  </div>
                 </div>
 
                 {/* Kaydet Butonu */}
