@@ -49,7 +49,7 @@ export default function RootLayout({
             {children}
           </SessionProviderWrapper>
         </ErrorBoundary>
-        <Toaster />
+        <Toaster position="bottom-right" toastOptions={{ duration: 3500, style: { zIndex: 999999 } }} />
         <Analytics />
         <SpeedInsights />
         <script
