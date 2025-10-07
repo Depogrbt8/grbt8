@@ -178,6 +178,18 @@ export default function HesabimPage() {
                       maxLength={11}
                       className="w-full px-3 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500"
                     />
+                    {/* TC Vatandaşı Değil - TC alanının altında */}
+                    <label className="mt-3 inline-flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="isForeigner"
+                        name="isForeigner"
+                        checked={userData.isForeigner || false}
+                        onChange={handleChange}
+                        className="rounded text-green-500 focus:ring-green-500"
+                      />
+                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
+                    </label>
                   </div>
                 </div>
 
@@ -223,55 +235,12 @@ export default function HesabimPage() {
                       </div>
                     </div>
                   </div>
-                  {/* Doğum Tarihi */}
-                  <div className="flex gap-2 items-end">
-                    <div className="w-24">
-                      <select 
-                        id="birthDay"
-                        name="birthDay"
-                        value={userData.birthDay || ''}
-                        onChange={handleChange}
-                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                      >
-                        <option value="">Gün</option>
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                          <option key={day} value={day.toString().padStart(2, '0')}>{day}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="w-24">
-                      <select 
-                        id="birthMonth"
-                        name="birthMonth"
-                        value={userData.birthMonth || ''}
-                        onChange={handleChange}
-                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                      >
-                        <option value="">Ay</option>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                          <option key={month} value={month.toString().padStart(2, '0')}>{month}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="w-24">
-                      <select 
-                        id="birthYear"
-                        name="birthYear"
-                        value={userData.birthYear || ''}
-                        onChange={handleChange}
-                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                      >
-                        <option value="">Yıl</option>
-                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                          <option key={year} value={year.toString()}>{year}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+                  {/* (boş) */}
+                  <div></div>
                 </div>
 
-                {/* Cinsiyet ve TC Vatandaşı Değil */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Cinsiyet + Doğum Tarihi aynı satır */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Cinsiyet</label>
                     <select
@@ -287,18 +256,50 @@ export default function HesabimPage() {
                       <option value="other">Diğer</option>
                     </select>
                   </div>
-                  <div className="flex items-center h-full">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="isForeigner"
-                        name="isForeigner"
-                        checked={userData.isForeigner || false}
-                        onChange={handleChange}
-                        className="rounded text-green-500 focus:ring-green-500"
-                      />
-                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
-                    </label>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Gün</label>
+                    <select 
+                      id="birthDay"
+                      name="birthDay"
+                      value={userData.birthDay || ''}
+                      onChange={handleChange}
+                      className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Gün</option>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day.toString().padStart(2, '0')}>{day}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ay</label>
+                    <select 
+                      id="birthMonth"
+                      name="birthMonth"
+                      value={userData.birthMonth || ''}
+                      onChange={handleChange}
+                      className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Ay</option>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                        <option key={month} value={month.toString().padStart(2, '0')}>{month}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Yıl</label>
+                    <select 
+                      id="birthYear"
+                      name="birthYear"
+                      value={userData.birthYear || ''}
+                      onChange={handleChange}
+                      className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Yıl</option>
+                      {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                        <option key={year} value={year.toString()}>{year}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
