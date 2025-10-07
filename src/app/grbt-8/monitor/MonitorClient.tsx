@@ -89,8 +89,7 @@ export default function MonitorClient() {
       <AdminSidebar />
       <main className="flex-1">
         <div className={`p-6 space-y-3 text-sm ${security?.isRisky ? 'border-2 border-red-500 bg-red-50' : ''}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between">        <div className="flex items-center gap-2">
           <h1 className="text-base font-semibold">Monitor</h1>
           {riskCount > 0 && (
             <button
