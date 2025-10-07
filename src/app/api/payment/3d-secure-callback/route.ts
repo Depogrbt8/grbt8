@@ -26,22 +26,34 @@ export async function POST(request: NextRequest) {
     const result = await handle3DSecureCallback(orderId, callbackData);
 
     if (result.success) {
-      // Rezervasyonu güncelle
-      await prisma.reservation.update({
+      // Önce rezervasyonu sipariş numarasından bul
+      const reservation = await prisma.reservation.findFirst({
         where: { biletDukkaniOrderId: orderId },
+        select: { id: true },
+      });
+      if (!reservation) {
+        return NextResponse.json(
+          { success: false, error: 'Rezervasyon bulunamadı' },
+          { status: 404 }
+        );
+      }
+
+      // Rezervasyonu id (unique) ile güncelle
+      await prisma.reservation.update({
+        where: { id: reservation.id },
         data: {
           status: 'confirmed',
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
 
-      // Payment kaydını güncelle
-      await prisma.payment.update({
-        where: { reservationId: orderId },
+      // Payment kaydını güncelle (reservationId = reservation.id)
+      await prisma.payment.updateMany({
+        where: { reservationId: reservation.id },
         data: {
           status: 'completed',
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
 
       return NextResponse.json({
