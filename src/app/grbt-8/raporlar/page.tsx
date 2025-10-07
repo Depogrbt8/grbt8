@@ -6,7 +6,7 @@ import RaporlarClient from './RaporlarClient';
 export default async function OpsAdminRaporlarPage() {
   // Güvenlik kontrolü - Admin yetkisi gerekli
   const session = await getServerSession(authOptions);
-  const allow = (process.env.ADMIN_EMAILS || 'admin@grbt8.store')
+  const allow = (process.env.ADMIN_EMAILS || 'admin@grbt8.store,manager@grbt8.store')
     .split(',')
     .map(s => s.trim().toLowerCase())
     .filter(Boolean);
