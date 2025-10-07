@@ -120,6 +120,12 @@ async function createFullBackup(): Promise<string> {
   logger.info('🔄 Full database backup oluşturuluyor...');
 
   // Tüm tabloları yedekle
+  function mask(value: any): any {
+    if (!value || typeof value !== 'string') return value;
+    if (value.length <= 6) return '***';
+    return `${value.slice(0, 3)}***${value.slice(-3)}`;
+  }
+
   const backup = {
     metadata: {
       timestamp: new Date().toISOString(),
@@ -158,11 +164,31 @@ async function createFullBackup(): Promise<string> {
         }
       }),
 
-      // NextAuth / Auth tabloları
-      // Hassas auth alanlarını dahil ETME
-      accounts: [],
-      sessions: [],
-      verificationTokens: [],
+      // NextAuth / Auth tabloları (hassas alanlar maskelenmiş)
+      accounts: await (async () => {
+        try {
+          const rows = await prisma.account.findMany();
+          return rows.map((r: any) => ({
+            ...r,
+            refresh_token: mask(r.refresh_token),
+            access_token: mask(r.access_token),
+            id_token: mask(r.id_token),
+            session_state: mask(r.session_state),
+          }));
+        } catch { return []; }
+      })(),
+      sessions: await (async () => {
+        try {
+          const rows = await prisma.session.findMany();
+          return rows.map((r: any) => ({ ...r, sessionToken: mask(r.sessionToken) }));
+        } catch { return []; }
+      })(),
+      verificationTokens: await (async () => {
+        try {
+          const rows = await prisma.verificationToken.findMany();
+          return rows.map((r: any) => ({ ...r, token: mask(r.token) }));
+        } catch { return []; }
+      })(),
       
       // Rezervasyonlar
       reservations: await prisma.reservation.findMany({
@@ -211,16 +237,33 @@ async function createFullBackup(): Promise<string> {
         try { return await prisma.emailTemplate.findMany(); } catch { return []; }
       })(),
 
-      // E-mail logları PII içerebilir, dışarı çıkarma
-      emailLogs: [],
+      // E-mail logları (PII maskeleme)
+      emailLogs: await (async () => {
+        try {
+          const rows = await prisma.emailLog.findMany();
+          return rows.map((r: any) => ({
+            ...r,
+            recipient: r.recipient ? mask(r.recipient) : null,
+            cc: r.cc ? mask(r.cc) : null,
+            bcc: r.bcc ? mask(r.bcc) : null,
+          }));
+        } catch { return []; }
+      })(),
 
       emailSettings: await (async () => {
         try { return await prisma.emailSettings.findMany(); } catch { return []; }
       })(),
       
-      // Sistem logları
-      // Sistem logları PII içerebilir, dışarı çıkarma
-      systemLogs: [],
+      // Sistem logları (kısıtlı alanlar, kısa mesaj)
+      systemLogs: await (async () => {
+        try {
+          const rows = await prisma.systemLog.findMany({ orderBy: { timestamp: 'desc' }, take: 2000 });
+          return rows.map((r: any) => ({ id: r.id, level: r.level, source: r.source, message: (r.message || '').slice(0, 200), timestamp: r.timestamp }));
+        } catch { return []; }
+      })(),
+
+      // Ödemeler (ayrık liste)
+      payments: await (async () => { try { return await prisma.payment.findMany(); } catch { return []; } })(),
       
       // Faturalama bilgileri
       billingInfos: await prisma.billingInfo.findMany()
@@ -424,17 +467,18 @@ export async function POST(request: NextRequest) {
     const sec = ensureSecretAndNetwork(request);
     if (sec) return sec;
 
-    // Son backup zamanını kontrol et (6 saatlik interval)
+    const url = new URL(request.url);
+    const force = url.searchParams.get('force') === '1';
+    // Son backup zamanını kontrol et (6 saatlik interval) - force=1 ise atla
     const lastBackup = await getLastBackupTime();
     const now = new Date();
-    
-    if (lastBackup) {
+    if (!force && lastBackup) {
       const hoursDiff = (now.getTime() - lastBackup.getTime()) / (1000 * 60 * 60);
-      
       if (hoursDiff < 6) {
         logger.info(`⏰ Henüz 6 saat geçmedi (${hoursDiff.toFixed(1)} saat), backup atlanıyor`);
         return NextResponse.json({
           success: true,
+          skipped: true,
           message: 'Backup atlandı - henüz 6 saat geçmedi',
           lastBackup: lastBackup.toISOString(),
           nextBackup: new Date(lastBackup.getTime() + (6 * 60 * 60 * 1000)).toISOString(),
@@ -443,9 +487,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    logger.info('🚀 Zamanlanmış backup başlatılıyor...');
+    logger.info(`🚀 Zamanlanmış backup başlatılıyor... (force=${force ? 'true' : 'false'})`);
 
-    const url = new URL(request.url);
     const repoParam = url.searchParams.get('repo') || undefined;
     const result = await runScheduledBackupFlow(repoParam);
 

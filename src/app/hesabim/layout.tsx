@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 import AccountSidebar from '@/components/AccountSidebar';
 import { useSession, signOut } from 'next-auth/react';
 import { HESABIM_MENU_ITEMS } from '@/data/hesabimMenu';
+import { Toaster } from 'react-hot-toast';
 
 export default function HesabimLayout({
   children,
@@ -42,6 +43,7 @@ export default function HesabimLayout({
           </div>
         </div>
       </div>
+      <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
     </div>
   );
 } 
