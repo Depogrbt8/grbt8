@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { logger } from '@/lib/logger';
+import { validatePasswordStrength } from '@/lib/authSecurity';
 
 export async function POST(request: Request) {
   try {
@@ -27,9 +28,10 @@ export async function POST(request: Request) {
     }
 
     // 3. Yeni şifre güçlülük kontrolü
-    if (newPassword.length < 8) {
+    const passwordValidation = validatePasswordStrength(newPassword);
+    if (!passwordValidation.isValid) {
       return NextResponse.json(
-        { error: 'Yeni şifre en az 8 karakter olmalıdır' },
+        { error: 'Şifre güvenlik gereksinimlerini karşılamıyor: ' + passwordValidation.errors.join(', ') },
         { status: 400 }
       );
     }
