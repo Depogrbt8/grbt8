@@ -359,6 +359,6 @@ export default function HesabimPage() {
 
       <SurveyPopup />
       <Footer />
-    </div>
+    </main>
   );
 }
