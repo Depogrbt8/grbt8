@@ -56,7 +56,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if (typeof window !== 'undefined') {
-                ${setupErrorTracking.toString()}();
+                (${setupErrorTracking.toString()})();
                 
                 // CSRF Protection setup
                 const originalFetch = window.fetch;
