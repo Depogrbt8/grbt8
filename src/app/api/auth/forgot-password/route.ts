@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import crypto from 'crypto'
 import { logger } from '@/lib/logger'
+import { rateLimit } from '@/lib/redis'
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,6 +22,31 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Geçerli bir email adresi giriniz'
       }, { status: 400 })
+    }
+
+    // Rate limiting: IP bazlı (3 istek / 15 dakika)
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+    const ipRateLimitKey = `forgot-password:ip:${ip}`
+    const ipRateLimit = await rateLimit.check(ipRateLimitKey, 3, 15 * 60 * 1000)
+    
+    if (!ipRateLimit.allowed) {
+      logger.security('Forgot password rate limit exceeded (IP)', { ip })
+      return NextResponse.json({
+        success: false,
+        error: 'Çok fazla istek. Lütfen 15 dakika sonra tekrar deneyin.'
+      }, { status: 429 })
+    }
+
+    // Rate limiting: Email bazlı (5 istek / saat)
+    const emailRateLimitKey = `forgot-password:email:${email.toLowerCase()}`
+    const emailRateLimit = await rateLimit.check(emailRateLimitKey, 5, 60 * 60 * 1000)
+    
+    if (!emailRateLimit.allowed) {
+      logger.security('Forgot password rate limit exceeded (Email)', { email: email.toLowerCase() })
+      return NextResponse.json({
+        success: false,
+        error: 'Bu email adresi için çok fazla istek yapıldı. Lütfen 1 saat sonra tekrar deneyin.'
+      }, { status: 429 })
     }
 
     // Kullanıcıyı bul

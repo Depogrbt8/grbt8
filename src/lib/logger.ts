@@ -135,26 +135,30 @@ function sanitizeUserData(data: any): any {
 
 /**
  * Safe log fonksiyonu - ASLA hata fırlatmaz
+ * Production ve development'da çalışır - Vercel otomatik logları toplar
  */
 function safeLog(level: string, message: string, meta?: any) {
   try {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
 
-    if (isDev) {
-      switch (level) {
-        case 'error':
-          console.error(prefix, message, meta || '');
-          break;
-        case 'warn':
-          console.warn(prefix, message, meta || '');
-          break;
-        case 'debug':
+    // Production ve development'da log yaz
+    // Vercel production'da console log'ları otomatik toplar
+    switch (level) {
+      case 'error':
+        console.error(prefix, message, meta || '');
+        break;
+      case 'warn':
+        console.warn(prefix, message, meta || '');
+        break;
+      case 'debug':
+        // Debug sadece development'ta
+        if (isDev) {
           console.log(prefix, message, meta || '');
-          break;
-        default:
-          console.log(prefix, message, meta || '');
-      }
+        }
+        break;
+      default:
+        console.log(prefix, message, meta || '');
     }
   } catch (error) {
     // Logger ASLA hata fırlatmamalı
@@ -173,11 +177,6 @@ export const logger = {
     try {
       const sanitized = sanitize(meta);
       safeLog('error', message, sanitized);
-
-      // Production'da Sentry'ye gönder (gelecekte)
-      if (isProd) {
-        // TODO: Sentry entegrasyonu
-      }
     } catch (error) {
       console.error('[LOGGER ERROR]', error);
     }
@@ -243,11 +242,6 @@ export const logger = {
     try {
       const sanitized = sanitizePaymentData(meta);
       safeLog('payment', `💳 [PAYMENT] ${action}`, sanitized);
-
-      // Production'da audit log'a kaydet (gelecekte)
-      if (isProd) {
-        // TODO: Audit log entegrasyonu
-      }
     } catch (error) {
       console.error('[LOGGER ERROR]', error);
     }
@@ -260,11 +254,6 @@ export const logger = {
     try {
       const sanitized = sanitizeSecurityData(meta);
       safeLog('security', `🛡️ [SECURITY] ${event}`, sanitized);
-
-      // Production'da security log'a kaydet (gelecekte)
-      if (isProd) {
-        // TODO: Security log entegrasyonu
-      }
     } catch (error) {
       console.error('[LOGGER ERROR]', error);
     }
@@ -292,4 +281,3 @@ export const sanitizers = {
   sanitizeSecurityData,
   sanitizeUserData,
 };
-
