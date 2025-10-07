@@ -80,13 +80,30 @@ export default function HesabimPage() {
     setIsLoading(true);
 
     try {
+      // Boş string/null/undefined olan alanları payload'dan çıkar
+      const payload: Record<string, unknown> = {};
+      Object.entries(userData).forEach(([key, value]) => {
+        if (value === '' || value === null || typeof value === 'undefined') return;
+        payload[key] = value as unknown;
+      });
+
+      // CSRF token'ı garanti altına al
+      let token = csrfToken;
+      if (!token) {
+        try {
+          const tRes = await fetch('/api/csrf-token', { method: 'GET', credentials: 'include' });
+          const tJson = await tRes.json();
+          token = tJson.csrfToken as string;
+        } catch {}
+      }
+
       const response = await fetch('/api/user/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken || '',
+          'x-csrf-token': token || '',
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -94,8 +111,12 @@ export default function HesabimPage() {
         await fetch('/api/auth/session?update');
         window.location.reload();
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || 'Bir hata oluştu.');
+        let errorText = 'Bir hata oluştu.';
+        try {
+          const errorData = await response.json();
+          errorText = typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error);
+        } catch {}
+        toast.error(errorText);
       }
     } catch (error) {
       toast.error('Güncelleme sırasında bir hata oluştu.');
