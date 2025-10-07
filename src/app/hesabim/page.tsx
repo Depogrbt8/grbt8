@@ -3,15 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import AccountSidebar from '@/components/AccountSidebar';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
 import { useSession, signOut } from 'next-auth/react';
-import { User, Plane, Users, Receipt, Search, Bell, Heart } from 'lucide-react';
-import SurveyPopup from '@/components/SurveyPopup';
-import Footer from '@/components/Footer';
-import { logger } from '@/lib/logger';
-import './hesabim-tasarim.css';
+import { User, Plane, Users, Star, Receipt, Search, Bell, Heart } from 'lucide-react';
 import { useCSRFToken } from '@/hooks/useCSRFToken';
 
 interface UserData {
@@ -20,9 +15,9 @@ interface UserData {
   email: string;
   phone: string;
   countryCode: string;
-  birthDay: string;
-  birthMonth: string;
-  birthYear: string;
+  birthDay: string | number;
+  birthMonth: string | number;
+  birthYear: string | number;
   gender: string;
   identityNumber: string;
   isForeigner: boolean;
@@ -31,9 +26,9 @@ interface UserData {
 export default function HesabimPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
   const { token: csrfToken } = useCSRFToken();
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const [userData, setUserData] = useState<Partial<UserData>>({
     firstName: '',
     lastName: '',
@@ -50,35 +45,26 @@ export default function HesabimPage() {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
-  // Kullanıcı verilerini yükle
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('/api/user/profile');
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(prev => ({
-            ...prev,
-            ...data,
-            countryCode: data.countryCode || '+90',
-          }));
-        }
-      } catch (error) {
-        logger.error('Kullanıcı verisi yükleme hatası', { error });
-      }
-    };
-
-    if (status === 'authenticated') {
-      fetchUserData();
-    }
-  }, [status]);
-
-  // Oturum kontrolü
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/giris');
+    } else if (status === 'authenticated' && session?.user) {
+      const user: any = session.user;
+      setUserData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        countryCode: user.countryCode || '+90',
+        birthDay: user.birthDay ? parseInt(user.birthDay, 10) : '',
+        birthMonth: user.birthMonth ? parseInt(user.birthMonth, 10) : '',
+        birthYear: user.birthYear ? parseInt(user.birthYear, 10) : '',
+        gender: user.gender || '',
+        identityNumber: user.identityNumber || '',
+        isForeigner: user.isForeigner || false,
+      });
     }
-  }, [status, router]);
+  }, [session, status, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -96,269 +82,228 @@ export default function HesabimPage() {
     try {
       const response = await fetch('/api/user/update', {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken || ''
+          'x-csrf-token': csrfToken || '',
         },
         body: JSON.stringify(userData),
       });
 
       if (response.ok) {
         toast.success('Bilgileriniz başarıyla güncellendi.');
-        // Session'ı güncelle
         await fetch('/api/auth/session?update');
-        // Sayfayı yenile
         window.location.reload();
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Bir hata oluştu.');
       }
     } catch (error) {
-      logger.error('Kullanıcı güncelleme hatası', { error });
-      toast.error('Bir hata oluştu. Lütfen tekrar deneyin.');
+      toast.error('Güncelleme sırasında bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }
   };
 
   if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <div>Yükleniyor...</div>;
   }
 
-  if (status === 'unauthenticated') {
+  if (!session) {
     return null;
   }
 
+  const handleLogout = () => { signOut({ callbackUrl: '/' }); };
+
   return (
-    <main className="hesabim-page">
-      <div className="hesabim-container">
-        <div className="hesabim-layout">
-          <div className="hesabim-content-card">
-            <h1 className="hesabim-title">Hesap Bilgileri</h1>
-            
-              <form onSubmit={handleSubmit} className="hesabim-form">
-                {/* Ad / Soyad / TC aynı satır */}
-                <div className="hesabim-grid-3">
-                  <div className="hesabim-form-group">
-                    <label htmlFor="firstName" className="hesabim-label">Ad *</label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={userData.firstName || ''}
-                      onChange={handleChange}
-                      required
-                      className="hesabim-input"
-                    />
-                  </div>
-                  <div className="hesabim-form-group">
-                    <label htmlFor="lastName" className="hesabim-label">Soyad *</label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={userData.lastName || ''}
-                      onChange={handleChange}
-                      required
-                      className="hesabim-input"
-                    />
-                  </div>
-                  <div className="hesabim-form-group">
-                    <label htmlFor="identityNumber" className="hesabim-label">TC Kimlik No</label>
-                    <input
-                      type="text"
-                      id="identityNumber"
-                      name="identityNumber"
-                      value={userData.identityNumber || ''}
-                      onChange={handleChange}
-                      maxLength={11}
-                      className="hesabim-input"
-                    />
-                    {/* TC Vatandaşı Değil - TC alanının altında */}
-                    <label className="hesabim-checkbox-label mt-3">
+    <main className="min-h-screen bg-gray-50">
+      <div className="sm:container sm:mx-auto sm:px-4 sm:py-8 container mx-auto px-2 py-4">
+        <div className="sm:flex sm:gap-8 flex flex-col gap-2">
+          <div className="flex-1 bg-white rounded-lg shadow-sm sm:p-6 p-2">
+            <h1 className="sm:text-2xl text-lg font-bold text-gray-800 mb-4">Hesap Bilgileri</h1>
+            <form onSubmit={handleSubmit} className="sm:space-y-6 space-y-3">
+              <div className="sm:grid sm:grid-cols-3 sm:gap-6 grid grid-cols-1 gap-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ad</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={userData.firstName || ''}
+                    onChange={handleChange}
+                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Soyad</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={userData.lastName || ''}
+                    onChange={handleChange}
+                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
+                  <input
+                    type="text"
+                    name="identityNumber"
+                    value={userData.identityNumber || ''}
+                    onChange={handleChange}
+                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    maxLength={11}
+                    disabled={!!userData.isForeigner}
+                  />
+                  <div className="mt-2">
+                    <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
-                        id="isForeigner"
                         name="isForeigner"
-                        checked={userData.isForeigner || false}
+                        checked={!!userData.isForeigner}
                         onChange={handleChange}
-                        className="hesabim-checkbox"
+                        className="rounded text-green-500 focus:ring-green-500"
                       />
-                      TC Vatandaşı Değil
+                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
                     </label>
                   </div>
                 </div>
-
-                {/* E-posta ve Telefon (Kod + Telefon) */}
-                <div className="hesabim-grid-3">
-                  <div className="hesabim-form-group">
-                    <label className="hesabim-label">E-Posta</label>
-                    <input
-                      type="email"
-                      value={userData.email || ''}
-                      disabled
-                      className="hesabim-input"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">E-posta adresi değiştirilemez</p>
+              </div>
+              <div className="sm:grid sm:grid-cols-3 sm:gap-8 grid grid-cols-1 gap-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Doğum Tarihi</label>
+                  <div className="flex gap-1 min-w-[220px]">
+                    <select
+                      name="birthDay"
+                      value={userData.birthDay || ''}
+                      onChange={handleChange}
+                      className="w-12 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Gün</option>
+                      {Array.from({length: 31}, (_, i) => i + 1).map(day => (
+                        <option key={day} value={day}>{day}</option>
+                      ))}
+                    </select>
+                    <select
+                      name="birthMonth"
+                      value={userData.birthMonth || ''}
+                      onChange={handleChange}
+                      className="w-20 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Ay</option>
+                      {Array.from({length: 12}, (_, i) => i + 1).map(month => (
+                        <option key={month} value={month}>{month}</option>
+                      ))}
+                    </select>
+                    <select
+                      name="birthYear"
+                      value={userData.birthYear || ''}
+                      onChange={handleChange}
+                      className="w-20 px-1 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="">Yıl</option>
+                      {Array.from({length: 100}, (_, i) => new Date().getFullYear() - i).map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="hesabim-phone-container">
-                    <div className="hesabim-country-code">
-                      <label className="hesabim-label">Kod</label>
+                </div>
+                <div>
+                  <div className="flex gap-2 items-end">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Ülke Kodu</label>
                       <select
                         name="countryCode"
                         value={userData.countryCode || '+90'}
                         onChange={handleChange}
-                        className="hesabim-select"
+                        className="w-32 px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
                       >
-                        <option value="+90">+90</option>
-                        <option value="+1">+1</option>
-                        <option value="+44">+44</option>
-                        <option value="+49">+49</option>
-                        <option value="+33">+33</option>
+                        <option value="+90">🇹🇷 TR (+90)</option>
+                        <option value="+49">🇩🇪 DE (+49)</option>
+                        <option value="+44">🇬🇧 UK (+44)</option>
+                        <option value="+33">🇫🇷 FR (+33)</option>
+                        <option value="+32">🇧🇪 BE (+32)</option>
+                        <option value="+31">🇳🇱 NL (+31)</option>
+                        <option value="+41">🇨🇭 CH (+41)</option>
+                        <option value="+45">🇩🇰 DK (+45)</option>
                       </select>
                     </div>
-                    <div className="hesabim-phone-input">
-                      <label className="hesabim-label">Cep Telefonu</label>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Cep Telefonu</label>
                       <input
-                        type="tel"
+                        type="text"
                         name="phone"
                         value={userData.phone || ''}
                         onChange={handleChange}
-                        placeholder="_ _ _  _ _ _  _ _ _ _"
-                        className="hesabim-input"
+                        className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
                       />
                     </div>
                   </div>
-                  <div></div>
                 </div>
-
-                {/* Cinsiyet + Doğum Tarihi aynı satır */}
-                <div className="hesabim-grid-3">
-                  <div className="hesabim-form-group hesabim-gender-container">
-                    <label htmlFor="gender" className="hesabim-label">Cinsiyet</label>
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={userData.gender || ''}
-                      onChange={handleChange}
-                      className="hesabim-select"
-                    >
-                      <option value="">Seçiniz</option>
-                      <option value="male">Erkek</option>
-                      <option value="female">Kadın</option>
-                      <option value="other">Diğer</option>
-                    </select>
+                <div className="flex flex-col justify-end pb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Cinsiyet</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="male"
+                        checked={userData.gender === 'male'}
+                        onChange={handleChange}
+                        className="text-green-500 focus:ring-green-500"
+                      />
+                      <span>Erkek</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="female"
+                        checked={userData.gender === 'female'}
+                        onChange={handleChange}
+                        className="text-green-500 focus:ring-green-500"
+                      />
+                      <span>Kadın</span>
+                    </label>
                   </div>
-                  <div className="hesabim-birthdate-container">
-                    <select 
-                      id="birthDay"
-                      name="birthDay"
-                      value={userData.birthDay || ''}
-                      onChange={handleChange}
-                      className="hesabim-select hesabim-birthdate-day"
-                    >
-                      <option value="">Gün</option>
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                        <option key={day} value={day.toString().padStart(2, '0')}>{day}</option>
-                      ))}
-                    </select>
-                    <select 
-                      id="birthMonth"
-                      name="birthMonth"
-                      value={userData.birthMonth || ''}
-                      onChange={handleChange}
-                      className="hesabim-select hesabim-birthdate-month"
-                    >
-                      <option value="">Ay</option>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                        <option key={month} value={month.toString().padStart(2, '0')}>{month}</option>
-                      ))}
-                    </select>
-                    <select 
-                      id="birthYear"
-                      name="birthYear"
-                      value={userData.birthYear || ''}
-                      onChange={handleChange}
-                      className="hesabim-select hesabim-birthdate-year"
-                    >
-                      <option value="">Yıl</option>
-                      {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                        <option key={year} value={year.toString()}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div></div>
                 </div>
-
-                {/* Form Footer */}
-                <div className="hesabim-form-footer">
-                  <div className="hesabim-action-buttons">
-                    <button
-                      type="button"
-                      className="hesabim-button-secondary"
-                    >
-                      Pasaport Ekle
-                    </button>
-                    <button
-                      type="button"
-                      className="hesabim-button-secondary"
-                    >
-                      Mil Kart Ekle
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsChangePasswordModalOpen(true)}
-                      className="hesabim-button-secondary"
-                    >
-                      Şifre Değiştir
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsDeleteAccountModalOpen(true)}
-                      className="hesabim-button-danger"
-                    >
-                      Hesabı Sil
-                    </button>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="hesabim-button-primary flex items-center gap-2"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Kaydediliyor...
-                      </>
-                    ) : (
-                      'Kaydet'
-                    )}
-                  </button>
+              </div>
+              <div className="flex gap-4 flex-col sm:flex-row">
+                <div className="w-full sm:w-1/2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-Posta</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={userData.email || ''}
+                    onChange={handleChange}
+                    className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
+                    disabled
+                  />
                 </div>
-              </form>
-
-              
-            </div>
+              </div>
+              <div className="flex flex-col sm:flex-row justify-between items-center pt-4 border-t gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <button type="button" className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs">Pasaport Ekle</button>
+                  <button type="button" className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs">Mil Kart Ekle</button>
+                  <button type="button" onClick={() => setIsChangePasswordModalOpen(true)} className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 text-xs">Şifre Değiştir</button>
+                  <button type="button" onClick={() => setIsDeleteAccountModalOpen(true)} className="flex items-center gap-2 px-3 py-2 border border-red-300 text-red-600 rounded-xl hover:bg-red-50 text-xs">Hesabı Sil</button>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 text-xs ${
+                    isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-
-      {/* Modals */}
-      <ChangePasswordModal
-        isOpen={isChangePasswordModalOpen}
-        onClose={() => setIsChangePasswordModalOpen(false)}
-      />
-      
-      <DeleteAccountModal
-        isOpen={isDeleteAccountModalOpen}
-        onClose={() => setIsDeleteAccountModalOpen(false)}
-      />
-
-      <SurveyPopup />
-      <Footer />
+      </div>
+      <ChangePasswordModal isOpen={isChangePasswordModalOpen} onClose={() => setIsChangePasswordModalOpen(false)} />
+      <DeleteAccountModal isOpen={isDeleteAccountModalOpen} onClose={() => setIsDeleteAccountModalOpen(false)} />
     </main>
   );
 }

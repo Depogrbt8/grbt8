@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-10-05T22:19:49.267Z",
+  "timestamp": "2025-10-07T12:03:10.375Z",
   "summary": {
-    "total": 75,
+    "total": 74,
     "critical": 2,
     "warnings": 5,
-    "passed": 68
+    "passed": 67
   },
   "critical": [
     {
@@ -364,11 +364,6 @@
     {
       "category": "Testing",
       "message": "__tests__ mevcut ✅",
-      "details": ""
-    },
-    {
-      "category": "Testing",
-      "message": "Test coverage raporu mevcut ✅",
       "details": ""
     },
     {
