@@ -1,0 +1,42 @@
+/* Hesabım sayfası özel stilleri - dokümantasyondaki sınıflar */
+.hesabim-page{min-height:100vh;background-color:#f9fafb}
+.hesabim-container{max-width:1280px;margin:0 auto;padding:2rem 1rem}
+@media (max-width:640px){.hesabim-container{padding:1rem .5rem}}
+.hesabim-layout{display:flex;gap:2rem}
+@media (max-width:640px){.hesabim-layout{flex-direction:column;gap:.5rem}}
+.hesabim-content-card{flex:1;background-color:#fff;border-radius:.5rem;box-shadow:0 1px 2px 0 rgba(0,0,0,.05);padding:1.5rem;animation:fadeIn .3s ease-in-out}
+@media (max-width:640px){.hesabim-content-card{padding:.5rem}}
+.hesabim-title{font-size:1.5rem;font-weight:700;color:#1f2937;margin-bottom:1rem}
+@media (max-width:640px){.hesabim-title{font-size:1.125rem}}
+.hesabim-form{display:flex;flex-direction:column;gap:1.5rem}
+@media (max-width:640px){.hesabim-form{gap:.75rem}}
+.hesabim-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media (max-width:640px){.hesabim-grid-3{grid-template-columns:1fr;gap:.5rem}}
+.hesabim-form-group{display:flex;flex-direction:column}
+.hesabim-label{display:block;font-size:.875rem;font-weight:500;color:#374151;margin-bottom:.25rem}
+.hesabim-input{width:100%;padding:.5rem;border-radius:.75rem;background-color:#f9fafb;border:none;font-size:.875rem;transition:all .2s}
+.hesabim-input:disabled{opacity:.5;cursor:not-allowed}
+.hesabim-select{width:100%;padding:.5rem;border-radius:.75rem;background-color:#f9fafb;border:none;font-size:.875rem;cursor:pointer}
+.hesabim-birthdate-container{display:flex;gap:.25rem;min-width:220px}
+.hesabim-birthdate-day{width:3rem;padding:.25rem .5rem}
+.hesabim-birthdate-month{width:5rem;padding:.25rem .5rem}
+.hesabim-birthdate-year{width:5rem;padding:.25rem .5rem}
+.hesabim-phone-container{display:flex;gap:.5rem;align-items:flex-end}
+.hesabim-country-code{width:8rem}
+.hesabim-phone-input{flex:1}
+.hesabim-checkbox{border-radius:.25rem;color:#22c55e}
+.hesabim-checkbox-label{display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:#374151;cursor:pointer}
+.hesabim-radio-group{display:flex;gap:1rem}
+.hesabim-radio-label{display:flex;align-items:center;gap:.5rem;cursor:pointer}
+input[type="radio"]:checked{accent-color:#22c55e}
+.hesabim-form-footer{display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid #e5e7eb;gap:.5rem}
+@media (max-width:640px){.hesabim-form-footer{flex-direction:column;align-items:stretch}}
+.hesabim-action-buttons{display:flex;gap:.5rem;flex-wrap:wrap}
+.hesabim-button-secondary{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.75rem;font-size:.75rem;cursor:pointer;transition:background-color .2s}
+.hesabim-button-secondary:hover{background-color:#f9fafb}
+.hesabim-button-danger{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border:1px solid #fca5a5;color:#dc2626;border-radius:.75rem;font-size:.75rem;cursor:pointer;transition:background-color .2s}
+.hesabim-button-danger:hover{background-color:#fef2f2}
+.hesabim-button-primary{padding:.5rem 1rem;background-color:#22c55e;color:#fff;border:none;border-radius:.75rem;font-size:.75rem;cursor:pointer;transition:background-color .2s}
+.hesabim-button-primary:hover{background-color:#16a34a}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+

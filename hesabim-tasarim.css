@@ -1,0 +1,496 @@
+/* ============================================
+   HESABIM SAYFASI TASARIM CSS
+   /hesabim sayfasının tüm stilleri
+   ============================================ */
+
+/* Genel Sayfa Arka Plan */
+.hesabim-page {
+  min-height: 100vh;
+  background-color: #f9fafb; /* gray-50 */
+}
+
+/* Ana Container */
+.hesabim-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Mobile Container */
+@media (max-width: 640px) {
+  .hesabim-container {
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* Flex Layout */
+.hesabim-layout {
+  display: flex;
+  gap: 2rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-layout {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Ana İçerik Kartı */
+.hesabim-content-card {
+  flex: 1;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-content-card {
+    padding: 0.5rem;
+  }
+}
+
+/* Başlık */
+.hesabim-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937; /* gray-800 */
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Form Container */
+.hesabim-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-form {
+    gap: 0.75rem;
+  }
+}
+
+/* Grid Layout - 3 Sütun */
+.hesabim-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Form Group */
+.hesabim-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label */
+.hesabim-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.25rem;
+}
+
+/* Input Field */
+.hesabim-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background-color: #f9fafb; /* gray-50 */
+  border: none;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.hesabim-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #22c55e; /* green-500 */
+}
+
+.hesabim-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Select Dropdown */
+.hesabim-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  border: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.hesabim-select:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #22c55e;
+}
+
+/* Doğum Tarihi Container */
+.hesabim-birthdate-container {
+  display: flex;
+  gap: 0.25rem;
+  min-width: 220px;
+}
+
+.hesabim-birthdate-day {
+  width: 3rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.hesabim-birthdate-month {
+  width: 5rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.hesabim-birthdate-year {
+  width: 5rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Telefon Container */
+.hesabim-phone-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.hesabim-country-code {
+  width: 8rem;
+}
+
+.hesabim-phone-input {
+  flex: 1;
+}
+
+/* Checkbox */
+.hesabim-checkbox {
+  border-radius: 0.25rem;
+  color: #22c55e;
+}
+
+.hesabim-checkbox:focus {
+  ring-color: #22c55e;
+}
+
+.hesabim-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* Radio Buttons */
+.hesabim-radio-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.hesabim-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.hesabim-radio {
+  color: #22c55e;
+}
+
+.hesabim-radio:focus {
+  ring-color: #22c55e;
+}
+
+/* Checked Radio */
+input[type="radio"]:checked {
+  accent-color: #22c55e;
+}
+
+/* Gender Container */
+.hesabim-gender-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 0.5rem;
+}
+
+/* Form Footer */
+.hesabim-form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .hesabim-form-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Action Buttons Container */
+.hesabim-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Secondary Button */
+.hesabim-button-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hesabim-button-secondary:hover {
+  background-color: #f9fafb;
+}
+
+/* Danger Button */
+.hesabim-button-danger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #fca5a5; /* red-300 */
+  color: #dc2626; /* red-600 */
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hesabim-button-danger:hover {
+  background-color: #fef2f2; /* red-50 */
+}
+
+/* Primary Button (Kaydet) */
+.hesabim-button-primary {
+  padding: 0.5rem 1rem;
+  background-color: #22c55e; /* green-500 */
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hesabim-button-primary:hover {
+  background-color: #16a34a; /* green-600 */
+}
+
+.hesabim-button-primary:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   SIDEBAR TASARIMI
+   ============================================ */
+
+.account-sidebar {
+  width: 16rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.account-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.account-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: #4b5563; /* gray-600 */
+}
+
+.account-sidebar-item:hover {
+  background-color: #f9fafb; /* gray-50 */
+}
+
+.account-sidebar-item.active {
+  background-color: #f0fdf4; /* green-50 */
+  color: #16a34a; /* green-600 */
+}
+
+.account-sidebar-divider {
+  margin: 1rem 0;
+  border-top: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.account-sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: #4b5563;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.account-sidebar-logout:hover {
+  background-color: #f9fafb;
+}
+
+/* ============================================
+   RESPONSIVE TASARIM
+   ============================================ */
+
+/* Tablet ve daha küçük ekranlar */
+@media (max-width: 768px) {
+  .hesabim-container {
+    padding: 1rem;
+  }
+  
+  .account-sidebar {
+    display: none; /* Mobilde sidebar gizli */
+  }
+}
+
+/* Çok küçük ekranlar */
+@media (max-width: 480px) {
+  .hesabim-input,
+  .hesabim-select {
+    font-size: 16px; /* iOS zoom'u önlemek için */
+  }
+  
+  .hesabim-form-footer {
+    flex-direction: column;
+  }
+  
+  .hesabim-action-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .hesabim-button-secondary,
+  .hesabim-button-danger,
+  .hesabim-button-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   YÜKLENİYOR DURUMU
+   ============================================ */
+
+.hesabim-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* ============================================
+   EKSTRA STILLER
+   ============================================ */
+
+/* Focus visible için erişilebilirlik */
+*:focus-visible {
+  outline: 2px solid #22c55e;
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Form error state (ihtiyaç halinde) */
+.hesabim-input.error {
+  border: 1px solid #ef4444; /* red-500 */
+  background-color: #fef2f2; /* red-50 */
+}
+
+.hesabim-error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Success state */
+.hesabim-input.success {
+  border: 1px solid #22c55e;
+  background-color: #f0fdf4;
+}
+
+/* ============================================
+   ANİMASYONLAR
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hesabim-content-card {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Buton hover efektleri */
+.hesabim-button-primary,
+.hesabim-button-secondary,
+.hesabim-button-danger {
+  transition: all 0.2s ease-in-out;
+}
+
+.hesabim-button-primary:active,
+.hesabim-button-secondary:active,
+.hesabim-button-danger:active {
+  transform: scale(0.98);
+}
+

@@ -11,6 +11,7 @@ import { User, Plane, Users, Receipt, Search, Bell, Heart } from 'lucide-react';
 import SurveyPopup from '@/components/SurveyPopup';
 import Footer from '@/components/Footer';
 import { logger } from '@/lib/logger';
+import './hesabim-tasarim.css';
 import { useCSRFToken } from '@/hooks/useCSRFToken';
 
 interface UserData {
@@ -133,12 +134,11 @@ export default function HesabimPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="sm:container sm:mx-auto sm:px-4 sm:py-8 container mx-auto px-2 py-4">
-        <div className="sm:flex sm:gap-8 flex flex-col gap-2">
-          <div className="flex-1">
-            <div className="bg-white rounded-2xl shadow-sm sm:p-8 p-2">
-              <h1 className="text-2xl font-medium text-gray-700 mb-6">Hesap Bilgileri</h1>
+    <main className="hesabim-page">
+      <div className="hesabim-container">
+        <div className="hesabim-layout">
+          <div className="hesabim-content-card">
+            <h1 className="hesabim-title">Hesap Bilgileri</h1>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Ad / Soyad / TC aynı satır */}
