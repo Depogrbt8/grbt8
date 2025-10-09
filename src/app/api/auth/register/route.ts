@@ -62,10 +62,34 @@ export async function POST(request: Request) {
       }
     });
 
+    // Kullanıcıyı otomatik olarak ilk yolcu (hesap sahibi) olarak ekle
+    await prisma.passenger.create({
+      data: {
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        identityNumber: user.identityNumber,
+        isForeigner: user.isForeigner,
+        birthDay: user.birthDay || '01',
+        birthMonth: user.birthMonth || '01', 
+        birthYear: user.birthYear || '1990',
+        gender: user.gender || 'male',
+        countryCode: user.countryCode,
+        phone: user.phone,
+        isAccountOwner: true, // HESAP SAHİBİ - SİLİNEMEZ
+        status: 'active'
+      }
+    });
+
     // NOT: Admin panel ve ana site aynı Neon PostgreSQL database'ini kullanıyor
     // Bu yüzden ayrıca HTTP sync'e gerek yok - kullanıcı zaten her iki panelde de görünüyor
 
-    logger.info('Yeni kullanıcı kaydedildi:', { email: user.email, id: user.id });
+    logger.info('Yeni kullanıcı ve otomatik passenger kaydedildi:', { 
+      email: user.email, 
+      userId: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
 
     return successResponse({
       user: {
