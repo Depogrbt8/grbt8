@@ -32,9 +32,9 @@ function ensureSecretAndNetwork(request: NextRequest): NextResponse | null {
   const authHeader = request.headers.get('authorization') || '';
   const hasSecret = authHeader.includes(BACKUP_SECRET);
   const isCron = !!request.headers.get('x-vercel-cron');
-  // Prod: hem cron header hem secret zorunlu
+  // Prod: cron header varsa secret gerekmez, yoksa secret gerekli
   if (process.env.NODE_ENV === 'production') {
-    if (!(isCron && hasSecret)) {
+    if (!isCron && !hasSecret) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
   } else {
