@@ -139,10 +139,34 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     setLoading(false);
     if (res.ok) {
       const data = await res.json();
-      toast.success('Hesabınız başarıyla oluşturuldu! Şimdi giriş yapabilirsiniz.');
+      toast.success('Hesabınız başarıyla oluşturuldu! Otomatik giriş yapılıyor...');
       // Monitoring: Başarılı kayıt
       monitoringClient.trackUserRegistration(data.user?.id || 'new_user', email);
-      setActiveTab('login'); // Yönlendirme yerine giriş sekmesini aç
+      
+      // Otomatik giriş yap
+      setTimeout(async () => {
+        try {
+          const loginRes = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'x-csrf-token': csrfToken,
+            },
+            body: JSON.stringify({ email, password }),
+          });
+          
+          if (loginRes.ok) {
+            // Sayfayı yenile ki session güncellensin
+            window.location.reload();
+          } else {
+            // Giriş başarısız olursa giriş sekmesini aç
+            setActiveTab('login');
+          }
+        } catch (error) {
+          console.error('Otomatik giriş hatası:', error);
+          setActiveTab('login');
+        }
+      }, 1000);
     } else {
       const data = await res.json();
       setError(data.error || 'Bir hata oluştu.');

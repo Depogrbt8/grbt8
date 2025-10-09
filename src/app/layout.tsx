@@ -11,6 +11,7 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import { setupErrorTracking } from '@/lib/errorTracking'
 import '@/lib/monitoringClient'
 import { logger } from '@/lib/logger'
+import SurveyPopup from '@/components/SurveyPopup'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -47,6 +48,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <SessionProviderWrapper>
             {children}
+            <SurveyPopup />
           </SessionProviderWrapper>
         </ErrorBoundary>
         <Toaster position="bottom-right" toastOptions={{ duration: 3500, style: { zIndex: 999999 } }} />
