@@ -71,6 +71,22 @@ export default async function GRBT8Dashboard() {
                 Sistemi İzle
               </a>
             </div>
+
+            {/* SEO Kartı */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                🚀 SEO Yönetimi
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Anahtar kelime analizi ve SEO optimizasyonu
+              </p>
+              <a 
+                href="/grbt-8/seo" 
+                className="inline-block bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700 transition-colors"
+              >
+                SEO'yu Yönet
+              </a>
+            </div>
           </div>
         </div>
       </main>

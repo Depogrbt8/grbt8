@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Gurbet.biz - Yurt Dışı Seyahat Platformu',
+    default: 'gurbetbiz.com - Avrupa'dan Türkiye'ye yol arkadaşınız',
     template: '%s | Gurbet.biz'
   },
   description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri. Güvenli ödeme, 7/24 destek.',
@@ -36,20 +36,20 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     url: 'https://gurbet.biz',
     siteName: 'Gurbet.biz',
-    title: 'Gurbet.biz - Yurt Dışı Seyahat Platformu',
+    title: 'gurbetbiz.com - Avrupa'dan Türkiye'ye yol arkadaşınız',
     description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Gurbet.biz - Yurt Dışı Seyahat Platformu',
+        alt: 'gurbetbiz.com - Avrupa'dan Türkiye'ye yol arkadaşınız',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gurbet.biz - Yurt Dışı Seyahat Platformu',
+    title: 'gurbetbiz.com - Avrupa'dan Türkiye'ye yol arkadaşınız',
     description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
     images: ['/images/og-image.jpg'],
   },
