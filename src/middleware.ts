@@ -101,13 +101,15 @@ export async function middleware(request: NextRequest) {
     const isCronInvocation = !!request.headers.get('x-vercel-cron');
     const isBackupScheduledEndpoint = request.nextUrl.pathname === '/api/backup/scheduled';
     const isMonitoringCronEndpoint = request.nextUrl.pathname === '/api/monitoring/cron-sample';
+    const isMonitoringSystemEndpoint = request.nextUrl.pathname === '/api/monitoring/system';
     
     if (
       ['POST', 'PUT', 'DELETE'].includes(request.method) &&
       !isNextAuthEndpoint &&
       !isCronInvocation &&
       !isBackupScheduledEndpoint &&
-      !isMonitoringCronEndpoint
+      !isMonitoringCronEndpoint &&
+      !isMonitoringSystemEndpoint
     ) {
       const csrfMiddleware = createCSRFProtection();
       const csrfResponse = await csrfMiddleware(request);
