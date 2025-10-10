@@ -376,3 +376,75 @@ model BillingInfo {
 
   @@index([userId])
 }
+
+// SEO Yönetim Tabloları
+model SeoPage {
+  id          String   @id @default(cuid())
+  url         String   @unique
+  title       String
+  description String?
+  keywords    String?
+  h1          String?
+  h2          String?
+  h3          String?
+  metaRobots  String?  @default("index, follow")
+  canonical   String?
+  ogTitle     String?
+  ogDescription String?
+  ogImage     String?
+  twitterTitle String?
+  twitterDescription String?
+  twitterImage String?
+  schemaJson  String?  // JSON Schema data
+  seoScore    Int      @default(0)
+  lastChecked DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([url])
+  @@index([seoScore])
+}
+
+model SeoKeyword {
+  id            String   @id @default(cuid())
+  keyword       String   @unique
+  targetUrl     String?
+  currentPosition Int?
+  targetPosition Int?
+  searchVolume  Int?
+  difficulty    Int?
+  cpc           Float?
+  trend         String?  // up, down, stable
+  lastChecked   DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([keyword])
+  @@index([currentPosition])
+}
+
+model SeoSettings {
+  id                String   @id @default(cuid())
+  siteName          String
+  siteDescription   String
+  siteUrl           String
+  defaultTitle      String
+  defaultDescription String
+  defaultKeywords   String
+  googleAnalytics   String?
+  googleSearchConsole String?
+  facebookPixel     String?
+  twitterSite       String?
+  twitterCreator    String?
+  schemaOrgJson     String?  // Default Schema.org data
+  robotsTxt         String?
+  sitemapUrl        String?
+  faviconUrl        String?
+  logoUrl           String?
+  ogImageUrl        String?
+  twitterImageUrl   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([siteName])
+}

@@ -3,433 +3,700 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '@/components/AdminSidebar';
 
-interface KeywordData {
-  id: string;
-  keyword: string;
-  position: number;
-  searchVolume: number;
-  difficulty: number;
-  trend: 'up' | 'down' | 'stable';
-  lastUpdated: string;
+interface SeoSettings {
+  id?: string;
+  siteName: string;
+  siteDescription: string;
+  siteUrl: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultKeywords: string;
+  googleAnalytics?: string;
+  googleSearchConsole?: string;
+  facebookPixel?: string;
+  twitterSite?: string;
+  twitterCreator?: string;
+  schemaOrgJson?: string;
+  robotsTxt?: string;
+  sitemapUrl?: string;
+  faviconUrl?: string;
+  logoUrl?: string;
+  ogImageUrl?: string;
+  twitterImageUrl?: string;
 }
 
-interface PageSeoData {
-  id: string;
+interface SeoPage {
+  id?: string;
   url: string;
   title: string;
-  metaDescription: string;
-  h1: string;
-  score: number;
-  issues: string[];
-  lastChecked: string;
+  description?: string;
+  keywords?: string;
+  h1?: string;
+  h2?: string;
+  h3?: string;
+  metaRobots?: string;
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  schemaJson?: string;
+  seoScore?: number;
+  lastChecked?: string;
 }
 
-interface CompetitorData {
-  id: string;
-  domain: string;
-  position: number;
-  traffic: number;
-  backlinks: number;
-  domainAuthority: number;
+interface SeoKeyword {
+  id?: string;
+  keyword: string;
+  targetUrl?: string;
+  currentPosition?: number;
+  targetPosition?: number;
+  searchVolume?: number;
+  difficulty?: number;
+  cpc?: number;
+  trend?: string;
+  lastChecked?: string;
 }
 
 export default function SeoClient() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [keywords, setKeywords] = useState<KeywordData[]>([]);
-  const [pages, setPages] = useState<PageSeoData[]>([]);
-  const [competitors, setCompetitors] = useState<CompetitorData[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Mock data - gerçek uygulamada API'den gelecek
-  useEffect(() => {
-    const mockKeywords: KeywordData[] = [
-      { id: '1', keyword: 'ucak bileti', position: 15, searchVolume: 12000, difficulty: 65, trend: 'up', lastUpdated: '2025-10-08' },
-      { id: '2', keyword: 'yurtdışı seyahat', position: 8, searchVolume: 8500, difficulty: 45, trend: 'stable', lastUpdated: '2025-10-08' },
-      { id: '3', keyword: 'gurbetçi uçak bileti', position: 3, searchVolume: 3200, difficulty: 25, trend: 'up', lastUpdated: '2025-10-08' },
-    ];
-
-    const mockPages: PageSeoData[] = [
-      { id: '1', url: '/', title: 'Ana Sayfa', metaDescription: 'Yurt dışı seyahat platformu', h1: 'Avrupa\'dan Türkiye\'ye Yol Arkadaşınız', score: 85, issues: ['Meta description çok kısa'], lastChecked: '2025-10-08' },
-      { id: '2', url: '/hakkimizda', title: 'Hakkımızda', metaDescription: 'Gurbetbiz hakkında bilgiler', h1: 'Hakkımızda', score: 92, issues: [], lastChecked: '2025-10-08' },
-    ];
-
-    const mockCompetitors: CompetitorData[] = [
-      { id: '1', domain: 'example1.com', position: 1, traffic: 150000, backlinks: 2500, domainAuthority: 78 },
-      { id: '2', domain: 'example2.com', position: 2, traffic: 98000, backlinks: 1800, domainAuthority: 65 },
-    ];
-
-    setTimeout(() => {
-      setKeywords(mockKeywords);
-      setPages(mockPages);
-      setCompetitors(mockCompetitors);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const [activeTab, setActiveTab] = useState('general');
+  const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState<SeoSettings>({
+    siteName: '',
+    siteDescription: '',
+    siteUrl: '',
+    defaultTitle: '',
+    defaultDescription: '',
+    defaultKeywords: '',
+  });
+  const [pages, setPages] = useState<SeoPage[]>([]);
+  const [keywords, setKeywords] = useState<SeoKeyword[]>([]);
+  const [editingPage, setEditingPage] = useState<SeoPage | null>(null);
+  const [editingKeyword, setEditingKeyword] = useState<SeoKeyword | null>(null);
+  const [analyzeUrl, setAnalyzeUrl] = useState('');
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-    { id: 'keywords', label: 'Anahtar Kelimeler', icon: '🔑' },
-    { id: 'pages', label: 'Sayfa Analizi', icon: '📄' },
-    { id: 'competitors', label: 'Rakip Analizi', icon: '🏆' },
-    { id: 'analytics', label: 'SEO Analitik', icon: '📈' },
+    { id: 'general', label: 'Genel SEO', icon: '🌐' },
+    { id: 'meta', label: 'Meta Tags', icon: '<>' },
+    { id: 'social', label: 'Sosyal Medya', icon: 'f' },
+    { id: 'security', label: 'Güvenlik', icon: '🛡️' },
+    { id: 'schema', label: 'Schema.org', icon: '⚙️' },
+    { id: 'analytics', label: 'Analiz', icon: '📊' },
   ];
 
-  const renderDashboard = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Toplam Anahtar Kelime */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">Toplam Anahtar Kelime</p>
-            <p className="text-2xl font-bold text-gray-900">{keywords.length}</p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-full">
-            <span className="text-blue-600 text-xl">🔑</span>
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 mt-2">+2 bu hafta</p>
-      </div>
+  useEffect(() => {
+    loadData();
+  }, []);
 
-      {/* Ortalama Pozisyon */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">Ortalama Pozisyon</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {keywords.length > 0 ? (keywords.reduce((sum, k) => sum + k.position, 0) / keywords.length).toFixed(1) : '0'}
-            </p>
-          </div>
-          <div className="p-3 bg-green-100 rounded-full">
-            <span className="text-green-600 text-xl">📈</span>
-          </div>
-        </div>
-        <p className="text-sm text-green-600 mt-2">↗ +2.3 pozisyon</p>
-      </div>
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [settingsRes, pagesRes, keywordsRes] = await Promise.all([
+        fetch('/api/seo/settings'),
+        fetch('/api/seo/pages'),
+        fetch('/api/seo/keywords'),
+      ]);
 
-      {/* Toplam Trafik */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">Aylık Trafik Tahmini</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {keywords.reduce((sum, k) => sum + k.searchVolume, 0).toLocaleString()}
-            </p>
-          </div>
-          <div className="p-3 bg-purple-100 rounded-full">
-            <span className="text-purple-600 text-xl">👥</span>
-          </div>
-        </div>
-        <p className="text-sm text-green-600 mt-2">↗ +15% bu ay</p>
-      </div>
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json();
+        setSettings(settingsData);
+      }
 
-      {/* SEO Skoru */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <div className="flex items-center justify-between">
+      if (pagesRes.ok) {
+        const pagesData = await pagesRes.json();
+        setPages(pagesData);
+      }
+
+      if (keywordsRes.ok) {
+        const keywordsData = await keywordsRes.json();
+        setKeywords(keywordsData);
+      }
+    } catch (error) {
+      console.error('Data loading error:', error);
+    }
+    setLoading(false);
+  };
+
+  const saveSettings = async (data: SeoSettings) => {
+    try {
+      const response = await fetch('/api/seo/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, id: settings.id }),
+      });
+
+      if (response.ok) {
+        const savedSettings = await response.json();
+        setSettings(savedSettings);
+        alert('Ayarlar kaydedildi!');
+      }
+    } catch (error) {
+      console.error('Save settings error:', error);
+      alert('Kaydetme hatası!');
+    }
+  };
+
+  const savePage = async (data: SeoPage) => {
+    try {
+      const response = await fetch('/api/seo/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const savedPage = await response.json();
+        setPages(prev => prev.filter(p => p.url !== data.url).concat(savedPage));
+        setEditingPage(null);
+        alert('Sayfa kaydedildi!');
+      }
+    } catch (error) {
+      console.error('Save page error:', error);
+      alert('Kaydetme hatası!');
+    }
+  };
+
+  const saveKeyword = async (data: SeoKeyword) => {
+    try {
+      const response = await fetch('/api/seo/keywords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const savedKeyword = await response.json();
+        setKeywords(prev => prev.filter(k => k.keyword !== data.keyword).concat(savedKeyword));
+        setEditingKeyword(null);
+        alert('Anahtar kelime kaydedildi!');
+      }
+    } catch (error) {
+      console.error('Save keyword error:', error);
+      alert('Kaydetme hatası!');
+    }
+  };
+
+  const analyzePage = async () => {
+    if (!analyzeUrl) {
+      alert('URL girin!');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/seo/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: analyzeUrl }),
+      });
+
+      if (response.ok) {
+        const analysis = await response.json();
+        setEditingPage(analysis);
+        alert('Sayfa analiz edildi!');
+      } else {
+        alert('Analiz hatası!');
+      }
+    } catch (error) {
+      console.error('Analysis error:', error);
+      alert('Analiz hatası!');
+    }
+    setLoading(false);
+  };
+
+  const deletePage = async (id: string) => {
+    if (!confirm('Bu sayfayı silmek istediğinizden emin misiniz?')) return;
+
+    try {
+      const response = await fetch(`/api/seo/pages?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setPages(prev => prev.filter(p => p.id !== id));
+        alert('Sayfa silindi!');
+      }
+    } catch (error) {
+      console.error('Delete page error:', error);
+      alert('Silme hatası!');
+    }
+  };
+
+  const deleteKeyword = async (id: string) => {
+    if (!confirm('Bu anahtar kelimeyi silmek istediğinizden emin misiniz?')) return;
+
+    try {
+      const response = await fetch(`/api/seo/keywords?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setKeywords(prev => prev.filter(k => k.id !== id));
+        alert('Anahtar kelime silindi!');
+      }
+    } catch (error) {
+      console.error('Delete keyword error:', error);
+      alert('Silme hatası!');
+    }
+  };
+
+  const renderGeneralSeo = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Genel Site Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm font-medium text-gray-600">Ortalama SEO Skoru</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {pages.length > 0 ? (pages.reduce((sum, p) => sum + p.score, 0) / pages.length).toFixed(0) : '0'}
-            </p>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Site Adı</label>
+            <input
+              type="text"
+              value={settings.siteName}
+              onChange={(e) => setSettings({...settings, siteName: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-          <div className="p-3 bg-orange-100 rounded-full">
-            <span className="text-orange-600 text-xl">🎯</span>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Site URL</label>
+            <input
+              type="url"
+              value={settings.siteUrl}
+              onChange={(e) => setSettings({...settings, siteUrl: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Site Açıklaması</label>
+            <textarea
+              value={settings.siteDescription}
+              onChange={(e) => setSettings({...settings, siteDescription: e.target.value})}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Varsayılan Başlık</label>
+            <input
+              type="text"
+              value={settings.defaultTitle}
+              onChange={(e) => setSettings({...settings, defaultTitle: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Varsayılan Açıklama</label>
+            <textarea
+              value={settings.defaultDescription}
+              onChange={(e) => setSettings({...settings, defaultDescription: e.target.value})}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Varsayılan Anahtar Kelimeler</label>
+            <input
+              type="text"
+              value={settings.defaultKeywords}
+              onChange={(e) => setSettings({...settings, defaultKeywords: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="kelime1, kelime2, kelime3"
+            />
           </div>
         </div>
-        <p className="text-sm text-green-600 mt-2">↗ +5 puan</p>
+        <button
+          onClick={() => saveSettings(settings)}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Kaydet
+        </button>
       </div>
     </div>
   );
 
-  const renderKeywords = () => (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Anahtar Kelimeler</h3>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-            + Yeni Kelime Ekle
-          </button>
+  const renderMetaTags = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Sayfa Meta Tags</h3>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={analyzeUrl}
+              onChange={(e) => setAnalyzeUrl(e.target.value)}
+              placeholder="/sayfa-url"
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={analyzePage}
+              disabled={loading}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Analiz...' : 'Analiz Et'}
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anahtar Kelime</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pozisyon</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arama Hacmi</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zorluk</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {keywords.map((keyword) => (
-              <tr key={keyword.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{keyword.keyword}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    keyword.position <= 10 ? 'bg-green-100 text-green-800' : 
-                    keyword.position <= 20 ? 'bg-yellow-100 text-yellow-800' : 
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    #{keyword.position}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {keyword.searchVolume.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
-                        className={`h-2 rounded-full ${
-                          keyword.difficulty <= 30 ? 'bg-green-500' : 
-                          keyword.difficulty <= 60 ? 'bg-yellow-500' : 
-                          'bg-red-500'
-                        }`}
-                        style={{ width: `${keyword.difficulty}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm text-gray-900">{keyword.difficulty}%</span>
+
+        {editingPage && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 className="font-medium text-gray-900 mb-3">Sayfa Analizi: {editingPage.url}</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
+                <input
+                  type="text"
+                  value={editingPage.title || ''}
+                  onChange={(e) => setEditingPage({...editingPage, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                <input
+                  type="text"
+                  value={editingPage.description || ''}
+                  onChange={(e) => setEditingPage({...editingPage, description: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">H1</label>
+                <input
+                  type="text"
+                  value={editingPage.h1 || ''}
+                  onChange={(e) => setEditingPage({...editingPage, h1: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SEO Skoru</label>
+                <div className="flex items-center">
+                  <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        (editingPage.seoScore || 0) >= 80 ? 'bg-green-500' : 
+                        (editingPage.seoScore || 0) >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}
+                      style={{ width: `${editingPage.seoScore || 0}%` }}
+                    ></div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${
-                    keyword.trend === 'up' ? 'bg-green-100 text-green-800' : 
-                    keyword.trend === 'down' ? 'bg-red-100 text-red-800' : 
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {keyword.trend === 'up' ? '↗' : keyword.trend === 'down' ? '↘' : '→'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">Düzenle</button>
-                  <button className="text-red-600 hover:text-red-900">Sil</button>
-                </td>
+                  <span className="text-sm font-medium">{editingPage.seoScore || 0}/100</span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => savePage(editingPage)}
+              className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Kaydet
+            </button>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Başlık</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SEO Skoru</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {pages.map((page) => (
+                <tr key={page.id}>
+                  <td className="px-4 py-4 text-sm text-gray-900">{page.url}</td>
+                  <td className="px-4 py-4 text-sm text-gray-900">{page.title}</td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center">
+                      <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                        <div 
+                          className={`h-2 rounded-full ${
+                            (page.seoScore || 0) >= 80 ? 'bg-green-500' : 
+                            (page.seoScore || 0) >= 60 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${page.seoScore || 0}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm">{page.seoScore || 0}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium">
+                    <button
+                      onClick={() => setEditingPage(page)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
+                      Düzenle
+                    </button>
+                    <button
+                      onClick={() => page.id && deletePage(page.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Sil
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 
-  const renderPages = () => (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Sayfa SEO Analizi</h3>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-            🔍 Tüm Sayfaları Tara
-          </button>
+  const renderSocialMedia = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Sosyal Medya Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Facebook Pixel ID</label>
+            <input
+              type="text"
+              value={settings.facebookPixel || ''}
+              onChange={(e) => setSettings({...settings, facebookPixel: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Twitter Site</label>
+            <input
+              type="text"
+              value={settings.twitterSite || ''}
+              onChange={(e) => setSettings({...settings, twitterSite: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="@username"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Twitter Creator</label>
+            <input
+              type="text"
+              value={settings.twitterCreator || ''}
+              onChange={(e) => setSettings({...settings, twitterCreator: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="@username"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">OG Image URL</label>
+            <input
+              type="url"
+              value={settings.ogImageUrl || ''}
+              onChange={(e) => setSettings({...settings, ogImageUrl: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sayfa</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SEO Skoru</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sorunlar</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Son Kontrol</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {pages.map((page) => (
-              <tr key={page.id}>
-                <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{page.title}</div>
-                  <div className="text-sm text-gray-500">{page.url}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
-                        className={`h-2 rounded-full ${
-                          page.score >= 90 ? 'bg-green-500' : 
-                          page.score >= 70 ? 'bg-yellow-500' : 
-                          'bg-red-500'
-                        }`}
-                        style={{ width: `${page.score}%` }}
-                      ></div>
-                    </div>
-                    <span className={`text-sm font-medium ${
-                      page.score >= 90 ? 'text-green-600' : 
-                      page.score >= 70 ? 'text-yellow-600' : 
-                      'text-red-600'
-                    }`}>
-                      {page.score}/100
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  {page.issues.length === 0 ? (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      Sorun Yok
-                    </span>
-                  ) : (
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                      {page.issues.length} sorun
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(page.lastChecked).toLocaleDateString('tr-TR')}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">Analiz Et</button>
-                  <button className="text-green-600 hover:text-green-900">Düzenle</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <button
+          onClick={() => saveSettings(settings)}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Kaydet
+        </button>
       </div>
     </div>
   );
 
-  const renderCompetitors = () => (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Rakip Analizi</h3>
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
-            + Rakip Ekle
-          </button>
+  const renderSecurity = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Güvenlik Ayarları</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Robots.txt</label>
+            <textarea
+              value={settings.robotsTxt || ''}
+              onChange={(e) => setSettings({...settings, robotsTxt: e.target.value})}
+              rows={10}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sitemap URL</label>
+              <input
+                type="url"
+                value={settings.sitemapUrl || ''}
+                onChange={(e) => setSettings({...settings, sitemapUrl: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Favicon URL</label>
+              <input
+                type="url"
+                value={settings.faviconUrl || ''}
+                onChange={(e) => setSettings({...settings, faviconUrl: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
         </div>
+        <button
+          onClick={() => saveSettings(settings)}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Kaydet
+        </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pozisyon</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aylık Trafik</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Backlink</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain Authority</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {competitors.map((competitor) => (
-              <tr key={competitor.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{competitor.domain}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                    #{competitor.position}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {competitor.traffic.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {competitor.backlinks.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                      <div 
-                        className={`h-2 rounded-full ${
-                          competitor.domainAuthority >= 70 ? 'bg-green-500' : 
-                          competitor.domainAuthority >= 50 ? 'bg-yellow-500' : 
-                          'bg-red-500'
-                        }`}
-                        style={{ width: `${competitor.domainAuthority}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm text-gray-900">{competitor.domainAuthority}/100</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">Analiz Et</button>
-                  <button className="text-red-600 hover:text-red-900">Sil</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    </div>
+  );
+
+  const renderSchema = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schema.org Yapılandırması</h3>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Schema.org JSON</label>
+          <textarea
+            value={settings.schemaOrgJson || ''}
+            onChange={(e) => setSettings({...settings, schemaOrgJson: e.target.value})}
+            rows={15}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+            placeholder='{"@context": "https://schema.org", "@type": "Organization", ...}'
+          />
+        </div>
+        <button
+          onClick={() => saveSettings(settings)}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Kaydet
+        </button>
       </div>
     </div>
   );
 
   const renderAnalytics = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Organik Trafik Trendi */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Organik Trafik Trendi</h3>
-        <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">Grafik buraya gelecek</p>
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Analitik Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Google Analytics ID</label>
+            <input
+              type="text"
+              value={settings.googleAnalytics || ''}
+              onChange={(e) => setSettings({...settings, googleAnalytics: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="GA-XXXXXXXXX-X"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Google Search Console</label>
+            <input
+              type="text"
+              value={settings.googleSearchConsole || ''}
+              onChange={(e) => setSettings({...settings, googleSearchConsole: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Verification code"
+            />
+          </div>
         </div>
+        <button
+          onClick={() => saveSettings(settings)}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Kaydet
+        </button>
       </div>
 
-      {/* Anahtar Kelime Pozisyon Trendi */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Anahtar Kelime Pozisyon Trendi</h3>
-        <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">Grafik buraya gelecek</p>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Anahtar Kelimeler</h3>
+          <button
+            onClick={() => setEditingKeyword({ keyword: '', targetPosition: 1 })}
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+          >
+            + Ekle
+          </button>
         </div>
-      </div>
 
-      {/* Top Performans Gösteren Sayfalar */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Performans Sayfalar</h3>
-        <div className="space-y-3">
-          {pages.map((page, index) => (
-            <div key={page.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium mr-3">
-                  {index + 1}
-                </span>
-                <div>
-                  <div className="text-sm font-medium text-gray-900">{page.title}</div>
-                  <div className="text-xs text-gray-500">{page.url}</div>
-                </div>
+        {editingKeyword && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 className="font-medium text-gray-900 mb-3">Anahtar Kelime Ekle/Düzenle</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Anahtar Kelime</label>
+                <input
+                  type="text"
+                  value={editingKeyword.keyword}
+                  onChange={(e) => setEditingKeyword({...editingKeyword, keyword: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
               </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">{page.score}/100</div>
-                <div className="text-xs text-gray-500">SEO Skoru</div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Hedef Pozisyon</label>
+                <input
+                  type="number"
+                  value={editingKeyword.targetPosition || ''}
+                  onChange={(e) => setEditingKeyword({...editingKeyword, targetPosition: parseInt(e.target.value)})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Arama Hacmi</label>
+                <input
+                  type="number"
+                  value={editingKeyword.searchVolume || ''}
+                  onChange={(e) => setEditingKeyword({...editingKeyword, searchVolume: parseInt(e.target.value)})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+            <button
+              onClick={() => saveKeyword(editingKeyword)}
+              className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Kaydet
+            </button>
+          </div>
+        )}
 
-      {/* Son Aktiviteler */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Son Aktiviteler</h3>
-        <div className="space-y-3">
-          <div className="flex items-start space-x-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-900">"gurbetçi uçak bileti" anahtar kelimesi #3 pozisyona yükseldi</p>
-              <p className="text-xs text-gray-500">2 saat önce</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-900">Ana sayfa SEO skoru 85'ten 88'e yükseldi</p>
-              <p className="text-xs text-gray-500">5 saat önce</p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-900">Yeni rakip "example.com" eklendi</p>
-              <p className="text-xs text-gray-500">1 gün önce</p>
-            </div>
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Anahtar Kelime</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hedef Pozisyon</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Arama Hacmi</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {keywords.map((keyword) => (
+                <tr key={keyword.id}>
+                  <td className="px-4 py-4 text-sm text-gray-900">{keyword.keyword}</td>
+                  <td className="px-4 py-4 text-sm text-gray-900">
+                    {keyword.targetPosition ? `#${keyword.targetPosition}` : '-'}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-gray-900">
+                    {keyword.searchVolume ? keyword.searchVolume.toLocaleString() : '-'}
+                  </td>
+                  <td className="px-4 py-4 text-sm font-medium">
+                    <button
+                      onClick={() => setEditingKeyword(keyword)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
+                      Düzenle
+                    </button>
+                    <button
+                      onClick={() => keyword.id && deleteKeyword(keyword.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Sil
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 
-  if (loading) {
+  if (loading && !settings.siteName) {
     return (
       <div className="min-h-screen flex">
         <AdminSidebar />
@@ -476,10 +743,11 @@ export default function SeoClient() {
 
           {/* Tab Content */}
           <div>
-            {activeTab === 'dashboard' && renderDashboard()}
-            {activeTab === 'keywords' && renderKeywords()}
-            {activeTab === 'pages' && renderPages()}
-            {activeTab === 'competitors' && renderCompetitors()}
+            {activeTab === 'general' && renderGeneralSeo()}
+            {activeTab === 'meta' && renderMetaTags()}
+            {activeTab === 'social' && renderSocialMedia()}
+            {activeTab === 'security' && renderSecurity()}
+            {activeTab === 'schema' && renderSchema()}
             {activeTab === 'analytics' && renderAnalytics()}
           </div>
         </div>
