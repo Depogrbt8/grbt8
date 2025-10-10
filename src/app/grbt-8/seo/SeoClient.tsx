@@ -244,6 +244,68 @@ export default function SeoClient() {
 
   const renderGeneralSeo = () => (
     <div className="space-y-6">
+      {/* SEO Dashboard Kartları */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Anahtar Kelime</p>
+              <p className="text-2xl font-bold text-gray-900">{keywords.length}</p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-full">
+              <span className="text-blue-600 text-xl">🔑</span>
+            </div>
+          </div>
+          <p className="text-sm text-gray-500 mt-2">+2 bu hafta</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Ortalama Pozisyon</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {keywords.length > 0 ? (keywords.reduce((sum, k) => sum + (k.currentPosition || 0), 0) / keywords.length).toFixed(1) : '0'}
+              </p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-full">
+              <span className="text-green-600 text-xl">📈</span>
+            </div>
+          </div>
+          <p className="text-sm text-green-600 mt-2">↗ +2.3 pozisyon</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aylık Trafik Tahmini</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {keywords.reduce((sum, k) => sum + (k.searchVolume || 0), 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-full">
+              <span className="text-purple-600 text-xl">👥</span>
+            </div>
+          </div>
+          <p className="text-sm text-green-600 mt-2">↗ +15% bu ay</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Ortalama SEO Skoru</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {pages.length > 0 ? (pages.reduce((sum, p) => sum + (p.seoScore || 0), 0) / pages.length).toFixed(0) : '0'}
+              </p>
+            </div>
+            <div className="p-3 bg-orange-100 rounded-full">
+              <span className="text-orange-600 text-xl">🎯</span>
+            </div>
+          </div>
+          <p className="text-sm text-green-600 mt-2">↗ +5 puan</p>
+        </div>
+      </div>
+
+      {/* Site Ayarları */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Genel Site Ayarları</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -309,6 +371,34 @@ export default function SeoClient() {
         >
           Kaydet
         </button>
+      </div>
+
+      {/* Son Aktiviteler */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Son Aktiviteler</h3>
+        <div className="space-y-3">
+          <div className="flex items-start space-x-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-900">"gurbetçi uçak bileti" anahtar kelimesi #3 pozisyona yükseldi</p>
+              <p className="text-xs text-gray-500">2 saat önce</p>
+            </div>
+          </div>
+          <div className="flex items-start space-x-3">
+            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-900">Ana sayfa SEO skoru 85'ten 88'e yükseldi</p>
+              <p className="text-xs text-gray-500">5 saat önce</p>
+            </div>
+          </div>
+          <div className="flex items-start space-x-3">
+            <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-900">Yeni sayfa analiz edildi: /hakkimizda</p>
+              <p className="text-xs text-gray-500">1 gün önce</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -569,6 +659,64 @@ export default function SeoClient() {
 
   const renderAnalytics = () => (
     <div className="space-y-6">
+      {/* Analitik Grafikler */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Organik Trafik Trendi */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Organik Trafik Trendi</h3>
+          <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-2">📈</div>
+              <p className="text-gray-500">Grafik buraya gelecek</p>
+              <p className="text-sm text-gray-400 mt-1">Son 30 gün</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Anahtar Kelime Pozisyon Trendi */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Anahtar Kelime Pozisyon Trendi</h3>
+          <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-4xl mb-2">📊</div>
+              <p className="text-gray-500">Grafik buraya gelecek</p>
+              <p className="text-sm text-gray-400 mt-1">Son 7 gün</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Top Performans Gösteren Sayfalar */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Performans Sayfalar</h3>
+        <div className="space-y-3">
+          {pages.slice(0, 5).map((page, index) => (
+            <div key={page.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium mr-3">
+                  {index + 1}
+                </span>
+                <div>
+                  <div className="text-sm font-medium text-gray-900">{page.title}</div>
+                  <div className="text-xs text-gray-500">{page.url}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-medium text-gray-900">{page.seoScore || 0}/100</div>
+                <div className="text-xs text-gray-500">SEO Skoru</div>
+              </div>
+            </div>
+          ))}
+          {pages.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <div className="text-4xl mb-2">📄</div>
+              <p>Henüz analiz edilmiş sayfa yok</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Analitik Ayarları */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Analitik Ayarları</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
