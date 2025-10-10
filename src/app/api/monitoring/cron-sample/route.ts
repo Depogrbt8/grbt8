@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
     // Persist to in-memory monitoring storage
     const recRes = await fetch(`${origin}/api/monitoring/system`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-vercel-cron': '1' // Internal cron call
+      },
       body: JSON.stringify(sample),
     })
 
