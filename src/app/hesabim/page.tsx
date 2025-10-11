@@ -28,41 +28,7 @@ export default function HesabimPage() {
   const { data: session, status } = useSession();
   const { token: csrfToken } = useCSRFToken();
   const [isLoading, setIsLoading] = useState(false);
-  const [authTokenUser, setAuthTokenUser] = useState<any>(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // Auth-token kontrolü
-  useEffect(() => {
-    const checkAuthToken = async () => {
-      try {
-        // Auth-token cookie'sini kontrol et
-        const authToken = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('auth-token='))
-          ?.split('=')[1];
-
-        if (authToken && !session) {
-          // Auth-token varsa kullanıcı bilgilerini al
-          const response = await fetch('/api/auth/token-user', {
-            headers: {
-              'Authorization': `Bearer ${authToken}`
-            }
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            setAuthTokenUser(userData);
-          }
-        }
-      } catch (error) {
-        console.error('Auth token check error:', error);
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    checkAuthToken();
-  }, [session]);
+  // Basitleştirilmiş auth kontrolü - sadece NextAuth session
 
   const [userData, setUserData] = useState<Partial<UserData>>({
     firstName: '',
@@ -83,18 +49,7 @@ export default function HesabimPage() {
   // Profil verisini API'den çek (session gecikmelerinde eski veri kalmasın)
   const fetchProfile = async () => {
     try {
-      // Auth-token varsa onu kullan, yoksa normal session
-      const authToken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('auth-token='))
-        ?.split('=')[1];
-
-      const headers: any = { cache: 'no-store' };
-      if (authToken && !session) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
-
-      const res = await fetch('/api/user/profile', headers);
+      const res = await fetch('/api/user/profile', { cache: 'no-store' });
       if (!res.ok) return;
       const data = await res.json();
       setUserData({
@@ -180,8 +135,8 @@ export default function HesabimPage() {
     }
   };
 
-  // Loading durumları
-  if (status === 'loading' || isCheckingAuth) {
+  // Loading durumu
+  if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -192,8 +147,8 @@ export default function HesabimPage() {
     );
   }
 
-  // Giriş kontrolü - NextAuth session veya auth-token
-  if (!session && !authTokenUser) {
+  // Giriş kontrolü - sadece NextAuth session
+  if (!session) {
     // Giriş yapmamış kullanıcıyı giriş sayfasına yönlendir
     router.push('/giris');
     return null;

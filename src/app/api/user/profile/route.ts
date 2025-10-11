@@ -4,26 +4,15 @@ import { authOptions, getUserFromAuthToken } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    let userId = session?.user?.id;
 
-    // Auth-token kontrolü
-    if (!userId) {
-      const authHeader = request.headers.get('authorization');
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        const authToken = authHeader.substring(7);
-        const authUser = await getUserFromAuthToken(authToken);
-        if (authUser) {
-          userId = authUser.id;
-        }
-      }
-    }
-
-    if (!userId) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Yetkisiz erişim.' }, { status: 401 });
     }
+
+    const userId = session.user.id;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },

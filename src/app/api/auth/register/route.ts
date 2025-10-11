@@ -94,11 +94,9 @@ export async function POST(request: Request) {
       lastName: user.lastName
     });
 
-    // Kullanıcıyı otomatik olarak giriş yapmış gibi yönlendir
-    const response = NextResponse.json({
+    return NextResponse.json({
       success: true,
-      message: 'Kullanıcı başarıyla oluşturuldu ve giriş yapıldı',
-      redirect: '/hesabim',
+      message: 'Kullanıcı başarıyla oluşturuldu',
       user: {
         id: user.id,
         email: user.email,
@@ -106,16 +104,6 @@ export async function POST(request: Request) {
         lastName: user.lastName
       }
     });
-
-    // Session cookie'si oluştur (NextAuth benzeri)
-    response.cookies.set('auth-token', user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 // 30 gün
-    });
-
-    return response;
     
   } catch (error) {
     return ApiError.databaseError(error as Error);

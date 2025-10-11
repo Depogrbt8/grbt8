@@ -144,17 +144,23 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       // Monitoring: Başarılı kayıt
       monitoringClient.trackUserRegistration(data.user?.id || 'new_user', email);
       
-      // Modal'ı kapat ve direkt hesabım sayfasına yönlendir
+      // Modal'ı kapat
       onClose();
       
-      // Kısa bir bekleme sonrası yönlendir
+      // NextAuth session'ını manuel olarak oluştur
+      try {
+        await signIn('credentials', {
+          email: email,
+          password: password,
+          redirect: false,
+        });
+      } catch (error) {
+        console.error('Manual sign in error:', error);
+      }
+      
+      // Direkt hesabım sayfasına yönlendir
       setTimeout(() => {
-        if (data.redirect) {
-          window.location.href = data.redirect;
-        } else {
-          // Fallback olarak sayfayı yenile (session cookie'si ile giriş yapılmış olacak)
-          window.location.reload();
-        }
+        router.push('/hesabim');
       }, 1000);
     } else {
       const data = await res.json();
