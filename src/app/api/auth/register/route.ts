@@ -2,6 +2,9 @@ import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { logger } from '@/utils/error';
 import { ApiError, successResponse, ErrorCode } from '@/utils/errorResponse';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
@@ -91,14 +94,28 @@ export async function POST(request: Request) {
       lastName: user.lastName
     });
 
-    return successResponse({
+    // Kullanıcıyı otomatik olarak giriş yapmış gibi yönlendir
+    const response = NextResponse.json({
+      success: true,
+      message: 'Kullanıcı başarıyla oluşturuldu ve giriş yapıldı',
+      redirect: '/hesabim',
       user: {
         id: user.id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName
       }
-    }, 'Kullanıcı başarıyla oluşturuldu');
+    });
+
+    // Session cookie'si oluştur (NextAuth benzeri)
+    response.cookies.set('auth-token', user.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 // 30 gün
+    });
+
+    return response;
     
   } catch (error) {
     return ApiError.databaseError(error as Error);

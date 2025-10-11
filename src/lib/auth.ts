@@ -201,4 +201,50 @@ export const authOptions: NextAuthOptions = {
             }
         }
     }
-}; 
+};
+
+// Auth-token cookie'sinden kullanıcı bilgilerini al
+export async function getUserFromAuthToken(authToken: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: authToken },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        countryCode: true,
+        birthDay: true,
+        birthMonth: true,
+        birthYear: true,
+        gender: true,
+        identityNumber: true,
+        isForeigner: true,
+      }
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      countryCode: user.countryCode,
+      birthDay: user.birthDay,
+      birthMonth: user.birthMonth,
+      birthYear: user.birthYear,
+      gender: user.gender,
+      identityNumber: user.identityNumber,
+      isForeigner: user.isForeigner,
+    };
+  } catch (error) {
+    logger.error('Auth token user lookup error:', error);
+    return null;
+  }
+} 

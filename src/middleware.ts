@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createCSRFProtection } from './lib/csrfProtection';
 import { rateLimit } from './lib/redis';
+import { getUserFromAuthToken } from './lib/auth';
 
 // Rate limiting ayarları
 const RATE_LIMIT_DURATION = 60 * 1000; // 1 dakika
@@ -14,6 +15,23 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
+
+  // Auth-token cookie kontrolü - yeni kayıt olan kullanıcıları otomatik giriş yapmış gibi yap
+  const authToken = request.cookies.get('auth-token')?.value;
+  if (authToken && !request.headers.get('authorization')) {
+    try {
+      const user = await getUserFromAuthToken(authToken);
+      if (user) {
+        // Kullanıcıyı NextAuth session'ına ekle
+        response.headers.set('x-user-id', user.id);
+        response.headers.set('x-user-email', user.email || '');
+        response.headers.set('x-user-name', user.name || '');
+      }
+    } catch (error) {
+      // Auth token geçersizse cookie'yi sil
+      response.cookies.delete('auth-token');
+    }
+  }
 
   // CORS allowlist (Admin ve Ana Site domainleri)
   const allowedOrigins = new Set<string>([
