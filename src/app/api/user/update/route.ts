@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
+import { validateCSRFToken } from '@/lib/csrfProtection';
 
 // Form tarafında bazı alanlar number olarak gelebiliyor; string'e dönüştür.
 const numberLikeToString = z
@@ -28,6 +29,12 @@ const updateUserSchema = z.object({
 
 export async function PUT(request: Request) {
   try {
+    // CSRF token kontrolü
+    const csrfToken = request.headers.get('x-csrf-token');
+    if (!csrfToken || !validateCSRFToken(csrfToken)) {
+      return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 });
+    }
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {

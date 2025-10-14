@@ -116,6 +116,20 @@ export async function isValidCSRFToken(token: string): Promise<boolean> {
   return false
 }
 
+// Sync version for immediate validation
+export function validateCSRFToken(token: string): boolean {
+  if (!token) return false
+  
+  // Memory'de ara
+  for (const [sessionId, tokenData] of csrfTokens.entries()) {
+    if (tokenData.token === token && tokenData.expires > Date.now()) {
+      return true
+    }
+  }
+  
+  return false
+}
+
 // Eski token'ları temizle
 function cleanupExpiredTokens(): void {
   const now = Date.now()
