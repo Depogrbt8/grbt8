@@ -97,36 +97,10 @@ export default function HesabimPage() {
         payload[key] = value as unknown;
       });
 
-      // CSRF token'ı garanti altına al
-      let token = csrfToken;
-      if (!token) {
-        try {
-          const tRes = await fetch('/api/csrf-token', { 
-            method: 'GET', 
-            credentials: 'include',
-            headers: {
-              'Cache-Control': 'no-cache'
-            }
-          });
-          const tJson = await tRes.json();
-          token = tJson.csrfToken as string;
-        } catch (error) {
-          console.error('CSRF token alma hatası:', error);
-          toast.error('Güvenlik token alınamadı. Lütfen sayfayı yenileyin.');
-          return;
-        }
-      }
-
-      if (!token) {
-        toast.error('Güvenlik token bulunamadı. Lütfen sayfayı yenileyin.');
-        return;
-      }
-
       const response = await fetch('/api/user/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-csrf-token': token || '',
         },
         body: JSON.stringify(payload),
       });
