@@ -31,7 +31,18 @@ export async function PUT(request: Request) {
   try {
     // CSRF token kontrolü
     const csrfToken = request.headers.get('x-csrf-token');
-    if (!csrfToken || !validateCSRFToken(csrfToken)) {
+    logger.debug('CSRF Token kontrolü', { 
+      hasToken: !!csrfToken, 
+      tokenPreview: csrfToken ? csrfToken.substring(0, 8) + '...' : 'none' 
+    });
+    
+    if (!csrfToken) {
+      logger.warn('CSRF Token eksik');
+      return NextResponse.json({ error: 'CSRF token missing' }, { status: 403 });
+    }
+    
+    if (!validateCSRFToken(csrfToken)) {
+      logger.warn('CSRF Token geçersiz', { tokenPreview: csrfToken.substring(0, 8) + '...' });
       return NextResponse.json({ error: 'Invalid CSRF token' }, { status: 403 });
     }
 

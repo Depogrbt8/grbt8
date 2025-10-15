@@ -69,13 +69,16 @@ export function generateCSRFToken(): string {
 }
 
 // CSRF token'ı kaydet (Redis'e)
-export async function storeCSRFToken(sessionId: string, token: string): Promise<void> {
+export function storeCSRFToken(sessionId: string, token: string): void {
   const expires = Date.now() + defaultConfig.tokenExpiry;
   
   // Redis'e kaydet (1 saat TTL)
-  await redisCSRFToken.set(token, Math.floor(defaultConfig.tokenExpiry / 1000));
+  redisCSRFToken.set(token, Math.floor(defaultConfig.tokenExpiry / 1000))
+    .catch(err => {
+      logger.error('CSRF token Redis kaydetme hatası', { error: err });
+    });
   
-  // Fallback: Memory'e de kaydet - TOKEN'I KEY OLARAK KULLAN!
+  // Memory'e kaydet - TOKEN'I KEY OLARAK KULLAN!
   csrfTokens.set(token, { token, expires });
   
   // Eski token'ları temizle (basit yaklaşım)
@@ -120,11 +123,10 @@ export async function isValidCSRFToken(token: string): Promise<boolean> {
 export function validateCSRFToken(token: string): boolean {
   if (!token) return false
   
-  // Memory'de ara
-  for (const [sessionId, tokenData] of csrfTokens.entries()) {
-    if (tokenData.token === token && tokenData.expires > Date.now()) {
-      return true
-    }
+  // Memory'de ara - token'ı key olarak kullan
+  const tokenData = csrfTokens.get(token);
+  if (tokenData && tokenData.expires > Date.now()) {
+    return true
   }
   
   return false

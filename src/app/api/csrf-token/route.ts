@@ -7,12 +7,13 @@ export async function GET() {
     // CSRF token oluştur
     const token = generateCSRFToken();
     
-    // Token'ı kaydet (session ID yerine random ID kullanıyoruz)
-    const sessionId = Math.random().toString(36).substring(2);
-    storeCSRFToken(sessionId, token);
+    // Token'ı kaydet (token'ı key olarak kullan)
+    storeCSRFToken(token, token);
     
     // Response oluştur
     const response = createCSRFResponse(token);
+    
+    logger.debug('CSRF Token oluşturuldu', { token: token.substring(0, 8) + '...' });
     
     return response;
     
