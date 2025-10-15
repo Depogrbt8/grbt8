@@ -194,7 +194,7 @@ export const authOptions: NextAuthOptions = {
             name: `next-auth.session-token`,
             options: {
                 httpOnly: true,
-                sameSite: 'lax',
+                sameSite: 'strict', // CSRF koruması için strict
                 path: '/',
                 secure: process.env.NODE_ENV === 'production',
                 domain: process.env.NODE_ENV === 'production' ? '.grbt8.store' : undefined
