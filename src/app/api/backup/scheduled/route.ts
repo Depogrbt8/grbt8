@@ -31,15 +31,25 @@ function ensureSecretAndNetwork(request: NextRequest): NextResponse | null {
   const authHeader = request.headers.get('authorization') || '';
   const hasSecret = authHeader.includes(BACKUP_SECRET);
   const isCron = !!request.headers.get('x-vercel-cron');
+  
+  // DEBUG: Header'ları logla
+  console.log('🔍 Backup Debug:', {
+    hasSecret: !!hasSecret,
+    isCron: !!isCron,
+    authHeader: authHeader.substring(0, 10) + '...',
+    userAgent: request.headers.get('user-agent')?.substring(0, 50),
+    allHeaders: Object.fromEntries(request.headers.entries())
+  });
+  
   // Prod: cron header varsa secret gerekmez, yoksa secret gerekli
   if (process.env.NODE_ENV === 'production') {
     if (!isCron && !hasSecret) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized - Need cron header or secret' }, { status: 401 });
     }
   } else {
     // Dev: secret yeterli
     if (!hasSecret) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized - Need secret' }, { status: 401 });
     }
   }
   // IP allowlist (opsiyonel)
