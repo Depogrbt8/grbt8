@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
@@ -77,36 +76,7 @@ async function getLastBackupTime(): Promise<Date | null> {
   }
 }
 
-// ZIP dosyası oluştur (Node.js built-in)
-function createZipFile(files: { name: string, content: string }[], zipPath: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    try {
-      // Basit ZIP oluşturma (Node.js built-in ile)
-      const { execSync } = require('child_process');
-      
-      // Geçici klasör oluştur
-      const tempDir = path.join('/tmp', 'temp-backup');
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true });
-      }
-      
-      // Dosyaları yaz
-      files.forEach(file => {
-        fs.writeFileSync(path.join(tempDir, file.name), file.content);
-      });
-      
-      // ZIP oluştur
-      execSync(`cd "${tempDir}" && zip -r "${zipPath}" .`, { stdio: 'pipe' });
-      
-      // Geçici klasörü sil
-      execSync(`rm -rf "${tempDir}"`);
-      
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
+// ZIP fonksiyonu kaldırıldı - artık sadece JSON kullanıyoruz (daha güvenilir ve Vercel uyumlu)
 
 // Tüm database verilerini yedekle
 async function createFullBackup(): Promise<string> {
@@ -297,23 +267,12 @@ async function createFullBackup(): Promise<string> {
   const jsonData = JSON.stringify(backup, null, 2);
   backup.statistics.backupSize = Buffer.byteLength(jsonData, 'utf8');
 
-  // ZIP dosyası oluştur
-  const zipFile = path.join(backupDir, `grbt8-backup-${timestamp}.zip`);
+  // JSON dosyasını kaydet (ZIP yerine doğrudan JSON kullan - daha güvenilir)
+  const jsonFile = path.join(backupDir, `grbt8-backup-${timestamp}.json`);
+  fs.writeFileSync(jsonFile, jsonData);
   
-  try {
-    await createZipFile([
-      { name: `grbt8-backup-${timestamp}.json`, content: jsonData }
-    ], zipFile);
-    
-    logger.info(`✅ ZIP backup oluşturuldu: ${zipFile}`);
-    return zipFile;
-  } catch (error) {
-    logger.error('ZIP oluşturma hatası:', error);
-    // ZIP oluşturamazsa JSON dosyasını kaydet
-    const jsonFile = path.join(backupDir, `grbt8-backup-${timestamp}.json`);
-    fs.writeFileSync(jsonFile, jsonData);
-    return jsonFile;
-  }
+  logger.info(`✅ JSON backup oluşturuldu: ${jsonFile} (${(backup.statistics.backupSize / 1024 / 1024).toFixed(2)} MB)`);
+  return jsonFile;
 }
 
 // GitHub'a backup yükle
@@ -383,7 +342,7 @@ async function cleanupOldGitHubBackups(repoOverride?: string): Promise<void> {
 
     const files = await response.json();
     const backupFiles = files.filter((file: any) => 
-      file.name.startsWith('grbt8-backup-') && file.name.endsWith('.zip')
+      file.name.startsWith('grbt8-backup-') && (file.name.endsWith('.zip') || file.name.endsWith('.json'))
     );
 
     const now = new Date();
@@ -392,8 +351,8 @@ async function cleanupOldGitHubBackups(repoOverride?: string): Promise<void> {
 
     for (const file of backupFiles) {
       try {
-        // Dosya tarihini parse et
-        const match = file.name.match(/grbt8-backup-(.+)\.zip/);
+        // Dosya tarihini parse et (hem .zip hem .json destekle)
+        const match = file.name.match(/grbt8-backup-(.+)\.(zip|json)/);
         if (!match) continue;
         
         const dateStr = match[1].replace(/T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/, 'T$1:$2:$3.$4Z');
