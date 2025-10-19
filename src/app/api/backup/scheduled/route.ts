@@ -495,15 +495,26 @@ export async function POST(request: NextRequest) {
 // GET endpoint - backup durumunu kontrol et
 export async function GET(request: NextRequest) {
   try {
-    // Production'da GET ile tetikleme - sadece cron header ile izin ver
+    // Production'da GET ile tetikleme - cron header veya secret ile izin ver
     const isCron = !!request.headers.get('x-vercel-cron');
-    if (process.env.NODE_ENV === 'production' && !isCron) {
-      return NextResponse.json({ success: false, error: 'Method disabled' }, { status: 405 });
+    const userAgent = request.headers.get('user-agent') || '';
+    
+    // Vercel cron job'ları için daha esnek kontrol
+    if (process.env.NODE_ENV === 'production') {
+      // Cron header varsa veya Vercel'in user agent'ı ise izin ver
+      const isVercelCron = isCron || userAgent.includes('vercel') || userAgent.includes('cron');
+      
+      if (!isVercelCron) {
+        // Secret kontrolü yap
+        const sec = ensureSecretAndNetwork(request);
+        if (sec) return sec;
+      }
+    } else {
+      // Dev/test ortamında secret ile izin ver
+      const sec = ensureSecretAndNetwork(request);
+      if (sec) return sec;
     }
     
-    // Dev/test ortamında veya production cron'da secret + cron header ile izin ver
-    const sec = ensureSecretAndNetwork(request);
-    if (sec) return sec;
     const url = new URL(request.url);
     const repoParam = url.searchParams.get('repo') || undefined;
     await runScheduledBackupFlow(repoParam);
