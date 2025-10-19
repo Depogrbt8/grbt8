@@ -25,22 +25,41 @@ function getClientIp(request: NextRequest): string {
 }
 
 function ensureSecretAndNetwork(request: NextRequest): NextResponse | null {
-  // Geçici olarak güvenlik kontrollerini gevşet - test için
+  if (!BACKUP_SECRET) {
+    return NextResponse.json({ success: false, error: 'Backup secret misconfigured' }, { status: 500 });
+  }
+  const authHeader = request.headers.get('authorization') || '';
+  const hasSecret = authHeader.includes(BACKUP_SECRET);
   const isCron = !!request.headers.get('x-vercel-cron');
   const userAgent = request.headers.get('user-agent') || '';
   
   // DEBUG: Header'ları logla
   console.log('🔍 Backup Debug:', {
+    hasSecret: !!hasSecret,
     isCron: !!isCron,
+    authHeader: authHeader.substring(0, 10) + '...',
     userAgent: userAgent.substring(0, 50),
     allHeaders: Object.fromEntries(request.headers.entries())
   });
   
-  // Geçici olarak sadece cron header kontrolü yap
-  if (process.env.NODE_ENV === 'production' && !isCron && !userAgent.includes('curl')) {
-    return NextResponse.json({ success: false, error: 'Unauthorized - Need cron header' }, { status: 401 });
+  // Prod: cron header varsa secret gerekmez, yoksa secret gerekli
+  if (process.env.NODE_ENV === 'production') {
+    if (!isCron && !hasSecret) {
+      return NextResponse.json({ success: false, error: 'Unauthorized - Need cron header or secret' }, { status: 401 });
+    }
+  } else {
+    // Dev: secret yeterli
+    if (!hasSecret) {
+      return NextResponse.json({ success: false, error: 'Unauthorized - Need secret' }, { status: 401 });
+    }
   }
-  
+  // IP allowlist (opsiyonel)
+  if (BACKUP_ALLOWED_IPS.length > 0) {
+    const ip = getClientIp(request);
+    if (!BACKUP_ALLOWED_IPS.includes(ip)) {
+      return NextResponse.json({ success: false, error: 'IP not allowed' }, { status: 403 });
+    }
+  }
   return null;
 }
 
