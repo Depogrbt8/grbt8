@@ -485,17 +485,19 @@ export async function POST(request: NextRequest) {
 // GET endpoint - backup durumunu kontrol et
 export async function GET(request: NextRequest) {
   try {
-    // Prod'da GET ile tetikleme kapalı
-    if (process.env.NODE_ENV === 'production') {
+    // Production'da GET ile tetikleme - sadece cron header ile izin ver
+    const isCron = !!request.headers.get('x-vercel-cron');
+    if (process.env.NODE_ENV === 'production' && !isCron) {
       return NextResponse.json({ success: false, error: 'Method disabled' }, { status: 405 });
     }
-    // Dev/test ortamında sadece secret + cron header ile izin ver
+    
+    // Dev/test ortamında veya production cron'da secret + cron header ile izin ver
     const sec = ensureSecretAndNetwork(request);
     if (sec) return sec;
     const url = new URL(request.url);
     const repoParam = url.searchParams.get('repo') || undefined;
     await runScheduledBackupFlow(repoParam);
-    return NextResponse.json({ success: true, message: 'Backup (GET) completed in non-production' });
+    return NextResponse.json({ success: true, message: 'Backup (GET) completed' });
 
   } catch (error: any) {
     // Detaylı error bilgisini logger'a kaydet (güvenli)
