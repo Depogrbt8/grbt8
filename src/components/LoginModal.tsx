@@ -11,7 +11,6 @@ import { validatePasswordStrength } from '@/lib/authSecurity';
 import CountryDropdown from './CountryDropdown';
 import { Country, defaultCountry } from '@/data/countries';
 import { monitoringClient } from '@/lib/monitoringClient';
-import { useCSRFToken } from '@/hooks/useCSRFToken';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -21,7 +20,6 @@ interface LoginModalProps {
 const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { token: csrfToken, loading: csrfLoading } = useCSRFToken();
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -120,18 +118,12 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       return;
     }
     
-    if (!csrfToken) {
-      setError('Güvenlik token yüklenemedi. Lütfen sayfayı yenileyin.');
-      return;
-    }
-    
     setLoading(true);
     
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'x-csrf-token': csrfToken,
       },
       body: JSON.stringify({ email, password, firstName, lastName, phone }),
     });
@@ -338,8 +330,8 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                   </div>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
-                <button type="submit" disabled={loading || csrfLoading} className="w-full bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400">
-                  {csrfLoading ? 'Hazırlanıyor...' : loading ? 'Kaydediliyor...' : 'Kayıt Ol'}
+                <button type="submit" disabled={loading} className="w-full bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 disabled:bg-gray-400">
+                  {loading ? 'Kaydediliyor...' : 'Kayıt Ol'}
                 </button>
                 <p className="text-center text-sm text-gray-600">
                   Zaten üye misin?{' '}
