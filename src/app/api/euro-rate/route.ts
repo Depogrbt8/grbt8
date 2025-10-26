@@ -2,18 +2,20 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { logger } from '@/lib/logger';
 
-// Cache sistemi - 5 dakika boyunca sakla
-const cache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 dakika
+// Serverless ortamda Redis yerine static cache - her invoke'da reset olur
+let staticCache: { data: any; timestamp: number } | null = null;
+const CACHE_DURATION = 2 * 60 * 1000; // 2 dakika (daha kısa süre)
 
 export async function GET() {
   try {
-    // Cache kontrolü
-    const cacheKey = 'euro-rate';
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      logger.debug('Cache\'den döviz kuru döndürülüyor');
-      return NextResponse.json(cached.data);
+    // Static cache kontrolü - sadece aynı invocation içinde çalışır
+    if (staticCache && Date.now() - staticCache.timestamp < CACHE_DURATION) {
+      logger.debug('Static cache\'den döviz kuru döndürülüyor', { age: Date.now() - staticCache.timestamp });
+      return NextResponse.json(staticCache.data, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300'
+        }
+      });
     }
 
     // Gerçek zamanlı döviz kuru için farklı API'ler - paralel çağrı
@@ -79,13 +81,17 @@ export async function GET() {
         if (responseData && responseData.eurTry) {
           logger.info(`Döviz kuru başarıyla alındı`, { rate: responseData.eurTry, source: result.value.apiUrl });
           
-          // Cache'e kaydet
-          cache.set(cacheKey, {
+          // Static cache'e kaydet
+          staticCache = {
             data: responseData,
             timestamp: Date.now()
-          });
+          };
         
-          return NextResponse.json(responseData);
+          return NextResponse.json(responseData, {
+            headers: {
+              'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300'
+            }
+          });
         }
       }
     }
@@ -99,13 +105,17 @@ export async function GET() {
       timestamp: new Date().toISOString()
     };
     
-    // Fallback'i de cache'e kaydet (kısa süre)
-    cache.set(cacheKey, {
+    // Fallback'i de static cache'e kaydet (kısa süre)
+    staticCache = {
       data: fallbackData,
       timestamp: Date.now()
-    });
+    };
     
-    return NextResponse.json(fallbackData);
+    return NextResponse.json(fallbackData, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
+      }
+    });
 
   } catch (error) {
     logger.error('Euro kuru çekilemedi', { error });
@@ -116,13 +126,16 @@ export async function GET() {
       timestamp: new Date().toISOString()
     };
     
-    // Error'u da cache'e kaydet (kısa süre)
-    const cacheKey = 'euro-rate';
-    cache.set(cacheKey, {
+    // Error'u da static cache'e kaydet (kısa süre)
+    staticCache = {
       data: errorData,
       timestamp: Date.now()
-    });
+    };
     
-    return NextResponse.json(errorData);
+    return NextResponse.json(errorData, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60'
+      }
+    });
   }
 }

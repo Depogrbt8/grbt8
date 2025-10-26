@@ -32,8 +32,8 @@ export default function Header() {
         // İlk yükleme
         fetchRate();
         
-        // Her 5 dakikada bir güncelle
-        const interval = setInterval(fetchRate, 5 * 60 * 1000);
+        // Her 2 dakikada bir güncelle (API cache 2 dakika)
+        const interval = setInterval(fetchRate, 2 * 60 * 1000);
         
         return () => clearInterval(interval);
     }, []);
