@@ -7,7 +7,6 @@ import ChangePasswordModal from '@/components/ChangePasswordModal';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
 import { useSession, signOut } from 'next-auth/react';
 import { User, Plane, Users, Star, Receipt, Search, Bell, Heart } from 'lucide-react';
-import { useCSRFToken } from '@/hooks/useCSRFToken';
 
 interface UserData {
   firstName: string;
@@ -26,7 +25,6 @@ interface UserData {
 export default function HesabimPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { token: csrfToken } = useCSRFToken();
   const [isLoading, setIsLoading] = useState(false);
   // Basitleştirilmiş auth kontrolü - sadece NextAuth session
 
