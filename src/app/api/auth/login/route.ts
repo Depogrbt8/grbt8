@@ -6,20 +6,12 @@ import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { createBruteForceProtection, resetLoginAttempts, getLoginAttempts } from '@/lib/authSecurity';
 import { getClientIP } from '@/lib/authSecurity';
-import { isValidCSRFToken } from '@/lib/csrfProtection';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    // CSRF Token kontrolü
-    const csrfToken = request.headers.get('x-csrf-token');
-    if (!csrfToken || !(await isValidCSRFToken(csrfToken))) {
-      return NextResponse.json({
-        success: false,
-        message: 'CSRF token gerekli'
-      }, { status: 403 });
-    }
+    // CSRF kontrolü kaldırıldı: SameSite=strict cookie ile korunuyor
     
     // Input validation
     await validate(userSchema.login, body);

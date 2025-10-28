@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createCSRFProtection } from './lib/csrfProtection';
 import { rateLimit } from './lib/redis';
 import { getUserFromAuthToken } from './lib/auth';
 
@@ -50,7 +49,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set('Vary', 'Origin');
     response.headers.set('Access-Control-Allow-Origin', isAllowedOrigin ? requestOrigin : 'https://anasite.grbt8.store');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Access-Control-Allow-Credentials', 'true');
 
     // Preflight isteği ise erken dön
@@ -86,7 +85,7 @@ export async function middleware(request: NextRequest) {
     upgrade-insecure-requests;
   `.replace(/\s+/g, ' ').trim());
 
-  // API Rate Limiting ve CSRF Protection
+  // API Rate Limiting (CSRF koruması kaldırıldı)
   if (request.nextUrl.pathname.startsWith('/api')) {
     const ip = request.ip || 'unknown';
     
@@ -112,29 +111,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set('X-RateLimit-Limit', MAX_REQUESTS.toString());
     response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
 
-    // CSRF Protection for POST, PUT, DELETE requests
-    // NextAuth endpoint'lerini CSRF kontrolünden muaf tut
-    const isNextAuthEndpoint = request.nextUrl.pathname.startsWith('/api/auth/');
-    // Vercel Cron tetiklemeleri ve monitoring/backup endpoint'leri CSRF'ten muaf (sunucu taraflı çağrı)
-    const isCronInvocation = !!request.headers.get('x-vercel-cron');
-    const isBackupScheduledEndpoint = request.nextUrl.pathname === '/api/backup/scheduled';
-    const isMonitoringCronEndpoint = request.nextUrl.pathname === '/api/monitoring/cron-sample';
-    const isMonitoringSystemEndpoint = request.nextUrl.pathname === '/api/monitoring/system';
-    
-    if (
-      ['POST', 'PUT', 'DELETE'].includes(request.method) &&
-      !isNextAuthEndpoint &&
-      !isCronInvocation &&
-      !isBackupScheduledEndpoint &&
-      !isMonitoringCronEndpoint &&
-      !isMonitoringSystemEndpoint
-    ) {
-      const csrfMiddleware = createCSRFProtection();
-      const csrfResponse = await csrfMiddleware(request);
-      if (csrfResponse.status === 403) {
-        return csrfResponse;
-      }
-    }
+    // Not: Daha önce burada CSRF middleware çalışıyordu. Artık SameSite=strict cookie kullanıldığı için kaldırıldı.
   }
 
   // /admin ve /grbt-8: arama motoru engelleme ve ek sertleştirme
