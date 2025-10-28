@@ -154,12 +154,12 @@ export default function AirportInput({
   // Mobil versiyonu
   return (
     <div className="w-full relative">
-      <div className="flex items-center bg-white border-0 rounded-lg px-4 h-11 shadow-md hover:shadow-lg focus-within:shadow-lg transition-all duration-200">
+      <div className="flex items-center bg-white border-0 rounded-xl px-4 h-14 shadow-md hover:shadow-lg focus-within:shadow-lg transition-all duration-200">
         <MapPin className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
         <input
           ref={inputRef}
           type="text"
-          className="flex-1 bg-transparent border-none outline-none text-[14px] font-normal placeholder-black text-black focus:outline-none focus:ring-0 focus:border-none min-w-0 h-full"
+          className="flex-1 bg-transparent border-none outline-none text-[18px] font-extrabold placeholder-black text-black focus:outline-none focus:ring-0 focus:border-none min-w-0 h-full tracking-tight"
           placeholder={placeholder}
           value={value}
           disabled={disabled}

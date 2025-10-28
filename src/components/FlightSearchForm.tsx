@@ -206,8 +206,8 @@ export default function FlightSearchForm({
             />
           </div>
           {/* Nereden-Nereye kutuları ve swap - YAN YANA */}
-          <div className="relative flex items-center gap-0 w-full mt-2">
-            <div className="flex-1 min-w-0 -mr-1">
+          <div className="relative flex items-center gap-3 w-full mt-3">
+            <div className="flex-1 min-w-0">
               <AirportInput
                 label=""
                 placeholder="Nereden"
@@ -226,7 +226,7 @@ export default function FlightSearchForm({
             >
               <ArrowRightLeft className="w-6 h-6 text-[#0a2342]" strokeWidth={1.2} />
             </button>
-            <div className="flex-1 min-w-0 -ml-1">
+            <div className="flex-1 min-w-0">
               <AirportInput
                 label=""
                 placeholder="Nereye"
