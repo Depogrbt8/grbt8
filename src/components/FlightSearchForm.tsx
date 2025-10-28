@@ -205,8 +205,19 @@ export default function FlightSearchForm({
               isMobile={true}
             />
           </div>
-          {/* Nereden-Nereye kutuları ve swap - YAN YANA */}
-          <div className="relative flex items-center gap-3 w-full mt-3">
+          {/* Nereden-Nereye kutuları ve swap */}
+          {/* Swap ikonunu üstte ortalanmış ayrı bir satırda göster */}
+          <div className="w-full flex items-center justify-center mt-2 mb-1">
+            <button
+              type="button"
+              onClick={onSwapAirports}
+              className="flex items-center justify-center w-10 h-10"
+              aria-label="Kalkış/Varış değiştir"
+            >
+              <ArrowRightLeft className="w-6 h-6 text-[#0a2342]" strokeWidth={1.2} />
+            </button>
+          </div>
+          <div className="flex items-stretch gap-2 w-full">
             <div className="flex-1 min-w-0">
               <AirportInput
                 label="Nereden"
@@ -218,14 +229,6 @@ export default function FlightSearchForm({
                 isMobile={true}
               />
             </div>
-            <button
-              type="button"
-              onClick={onSwapAirports}
-              className="flex-shrink-0 flex items-center justify-center w-10 h-10 z-10"
-              aria-label="Kalkış/Varış değiştir"
-            >
-              <ArrowRightLeft className="w-6 h-6 text-[#0a2342]" strokeWidth={1.2} />
-            </button>
             <div className="flex-1 min-w-0">
               <AirportInput
                 label="Nereye"
