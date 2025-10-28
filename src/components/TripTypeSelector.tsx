@@ -86,8 +86,9 @@ export default function TripTypeSelector({
 
   // Mobil versiyonu
   return (
-    <div className={`flex items-center w-full gap-1 mb-0 mt-0 ${className}`}>
-      <div className="flex gap-1 flex-shrink-0">
+    <div className={`flex items-center w-full gap-3 mb-0 mt-0 ${className}`}>
+      <div className="flex gap-3 flex-shrink-0 items-center">
+        {/* Tek yön */}
         <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-normal">
           <input
             type="radio"
@@ -95,11 +96,14 @@ export default function TripTypeSelector({
             value="oneWay"
             checked={tripType === 'oneWay'}
             onChange={() => onTripTypeChange('oneWay')}
-            className="accent-green-500 w-4 h-4"
-            style={{ accentColor: '#10b981' }}
+            className="hidden peer"
           />
+          <span className="w-4 h-4 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
+            {tripType === 'oneWay' && <span className="w-2 h-2 rounded-full bg-white"></span>}
+          </span>
           <span className="text-[#23272F]">Tek yön</span>
         </label>
+        {/* Gidiş-dönüş */}
         <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-normal">
           <input
             type="radio"
@@ -107,9 +111,11 @@ export default function TripTypeSelector({
             value="roundTrip"
             checked={tripType === 'roundTrip'}
             onChange={() => onTripTypeChange('roundTrip')}
-            className="accent-green-500 w-4 h-4"
-            style={{ accentColor: '#10b981' }}
+            className="hidden peer"
           />
+          <span className="w-4 h-4 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
+            {tripType === 'roundTrip' && <span className="w-2 h-2 rounded-full bg-white"></span>}
+          </span>
           <span className="text-[#23272F]">Gidiş-dönüş</span>
         </label>
       </div>
