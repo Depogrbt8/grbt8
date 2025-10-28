@@ -194,7 +194,7 @@ export default function FlightSearchForm({
 
       {/* Mobil için özel uçuş arama kutusu */}
       <div className="block sm:hidden w-full px-4 mt-8">
-        <div className="bg-gray-100 rounded-2xl shadow-lg p-4 flex flex-col gap-2">
+        <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col gap-2">
           {/* Tek yön / Gidiş-dönüş */}
           <div className="flex items-center w-full gap-1 mb-0 mt-0">
             <TripTypeSelector
@@ -272,7 +272,7 @@ export default function FlightSearchForm({
               className="w-full h-11 bg-white border-0 rounded-lg px-4 flex items-center justify-between shadow-md hover:shadow-lg transition-all duration-200"
             >
               <span className="text-[14px] font-normal text-black">
-                {adultCount + childCount + infantCount} Yolcu /
+                {adultCount + childCount + infantCount} Yolcu
               </span>
               <span className="text-[14px] font-normal text-black">
                 + Yolcu Ekle
