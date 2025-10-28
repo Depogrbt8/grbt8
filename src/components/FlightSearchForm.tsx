@@ -244,7 +244,7 @@ export default function FlightSearchForm({
           {/* Tarih kutuları */}
           <div className="flex gap-2 w-full mt-2">
             <div className="flex-1">
-              <div className="relative w-full h-14 border-0 rounded-lg bg-white shadow-sm hover:shadow-md focus-within:shadow-md transition-all duration-200">
+              <div className="relative w-full h-14 border-0 rounded-lg bg-white shadow-md hover:shadow-lg focus-within:shadow-lg transition-all duration-200">
                 <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
                 <DateInput
                   value={departureDate}
