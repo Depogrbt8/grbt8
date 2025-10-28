@@ -207,8 +207,8 @@ export default function FlightSearchForm({
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
           {/* Swap ikonunu iki kutunun ortasına bindir */}
-          <div className="relative w-full">
-            <div className="flex items-stretch gap-2 w-full">
+          <div className="relative w-full mt-3">
+          <div className="flex items-stretch gap-2 w-full">
             <div className="flex-1 min-w-0">
               <AirportInput
                 label="Nereden"
@@ -235,7 +235,7 @@ export default function FlightSearchForm({
             <button
               type="button"
               onClick={onSwapAirports}
-              className="absolute left-1/2 -translate-x-1/2 -top-3 flex items-center justify-center w-10 h-10"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10"
               aria-label="Kalkış/Varış değiştir"
             >
               <ArrowRightLeft className="w-6 h-6 text-[#0a2342]" strokeWidth={1.2} />
