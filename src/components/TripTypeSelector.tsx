@@ -96,6 +96,7 @@ export default function TripTypeSelector({
             checked={tripType === 'oneWay'}
             onChange={() => onTripTypeChange('oneWay')}
             className="accent-green-500 w-4 h-4"
+            style={{ accentColor: '#10b981' }}
           />
           <span className="text-[#23272F]">Tek yön</span>
         </label>
@@ -107,6 +108,7 @@ export default function TripTypeSelector({
             checked={tripType === 'roundTrip'}
             onChange={() => onTripTypeChange('roundTrip')}
             className="accent-green-500 w-4 h-4"
+            style={{ accentColor: '#10b981' }}
           />
           <span className="text-[#23272F]">Gidiş-dönüş</span>
         </label>
