@@ -209,7 +209,7 @@ export default function FlightSearchForm({
           <div className="relative flex items-center gap-3 w-full mt-3">
             <div className="flex-1 min-w-0">
               <AirportInput
-                label=""
+                label="Nereden"
                 placeholder="Nereden"
                 value={fromInput}
                 onChange={onFromInputChange}
@@ -228,7 +228,7 @@ export default function FlightSearchForm({
             </button>
             <div className="flex-1 min-w-0">
               <AirportInput
-                label=""
+                label="Nereye"
                 placeholder="Nereye"
                 value={toInput}
                 onChange={onToInputChange}
