@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Kullanıcıyı oluştur
-    const user = await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -63,6 +63,15 @@ export async function POST(request: Request) {
         isForeigner: isForeigner || false,
         status: 'active'
       }
+    });
+
+    // Customer number oluştur: id'nin son 6 karakteri (büyük harf)
+    const customerNo = `#${newUser.id.slice(-6).toUpperCase()}`;
+    
+    // Kullanıcıyı customerNo ile güncelle
+    const user = await prisma.user.update({
+      where: { id: newUser.id },
+      data: { customerNo }
     });
 
     // Kullanıcıyı otomatik olarak ilk yolcu (hesap sahibi) olarak ekle
