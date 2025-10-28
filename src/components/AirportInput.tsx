@@ -160,13 +160,13 @@ export default function AirportInput({
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 bg-transparent border-none outline-none text-[16px] font-semibold placeholder-black text-black text-center focus:outline-none focus:ring-0 focus:border-none min-w-0 tracking-tight"
+            className="flex-1 bg-transparent border-none outline-none text-[16px] font-semibold placeholder-black text-black focus:outline-none focus:ring-0 focus:border-none min-w-0 tracking-tight"
             placeholder={placeholder}
             value={value}
             disabled={disabled}
             onChange={handleInputChange}
             onFocus={handleFocus}
-            style={{ outline: 'none !important' }}
+            style={{ outline: 'none !important', textAlign: 'center' }}
           />
         </div>
       </div>
