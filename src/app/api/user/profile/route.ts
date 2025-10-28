@@ -20,6 +20,7 @@ export async function GET() {
         firstName: true,
         lastName: true,
         email: true,
+        customerNo: true,
         phone: true,
         countryCode: true,
         birthDay: true,
