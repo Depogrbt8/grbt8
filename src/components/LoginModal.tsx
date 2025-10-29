@@ -131,7 +131,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     setLoading(false);
     if (res.ok) {
       const data = await res.json();
-      toast.success('Hesabınız başarıyla oluşturuldu! Hesabım sayfasına yönlendiriliyorsunuz...');
+      toast.success('Hesabınız başarıyla oluşturuldu!');
       
       // Monitoring: Başarılı kayıt
       monitoringClient.trackUserRegistration(data.user?.id || 'new_user', email);
