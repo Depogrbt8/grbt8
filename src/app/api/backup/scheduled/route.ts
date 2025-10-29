@@ -10,6 +10,8 @@ export const runtime = 'nodejs';
 // GitHub yapılandırması
 const GITHUB_TOKEN = process.env.GITHUB_BACKUP_TOKEN || '';
 const DEFAULT_GITHUB_REPO = 'grbt8yedek/cronbackup';
+const GITHUB_REPO_ENV = process.env.GITHUB_BACKUP_REPO || '';
+const GITHUB_BRANCH_ENV = process.env.GITHUB_BACKUP_BRANCH || '';
 // Güvenlik: default değer KALDIRILDI. Env yoksa 500 dön.
 const BACKUP_SECRET = process.env.BACKUP_SECRET_TOKEN;
 const BACKUP_ALLOWED_IPS = (process.env.BACKUP_ALLOWED_IPS || '')
@@ -42,8 +44,11 @@ function ensureSecretAndNetwork(request: NextRequest): NextResponse | null {
     allHeaders: Object.fromEntries(request.headers.entries())
   });
   
+  // Production kontrolü - Vercel'de env var olmasa bile isCron kontrolü yap
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+  
   // Prod: cron header varsa secret gerekmez, yoksa secret gerekli
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction) {
     if (!isCron && !hasSecret) {
       return NextResponse.json({ success: false, error: 'Unauthorized - Need cron header or secret' }, { status: 401 });
     }
@@ -298,7 +303,8 @@ async function pushToGitHub(filePath: string, repoOverride?: string): Promise<bo
     const fileContent = fs.readFileSync(filePath);
     const base64Content = fileContent.toString('base64');
 
-    const targetRepo = repoOverride || DEFAULT_GITHUB_REPO;
+    const targetRepo = repoOverride || GITHUB_REPO_ENV || DEFAULT_GITHUB_REPO;
+    const targetBranch = GITHUB_BRANCH_ENV || 'main';
     // GitHub API ile dosya yükle
     const response = await fetch(`https://api.github.com/repos/${targetRepo}/contents/${fileName}`, {
       method: 'PUT',
@@ -309,7 +315,7 @@ async function pushToGitHub(filePath: string, repoOverride?: string): Promise<bo
       body: JSON.stringify({
         message: `Otomatik backup - ${new Date().toISOString()}`,
         content: base64Content,
-        branch: 'main'
+        branch: targetBranch
       })
     });
 
@@ -318,7 +324,15 @@ async function pushToGitHub(filePath: string, repoOverride?: string): Promise<bo
       return true;
     } else {
       const errorData = await response.json();
+      const status = (errorData && (errorData.status || errorData.message)) || 'unknown';
       logger.error('❌ GitHub yükleme hatası:', errorData);
+      if (response.status === 404) {
+        logger.error('🔎 İpucu: 404 genellikle fine-grained PAT ile repo erişimi verilmemesi veya branch adının (varsayılan: main) bulunmaması nedeniyle oluşur.');
+        logger.error(`Kontrol edin → repo: ${targetRepo}, branch: ${targetBranch}, PAT repo erişimi: Contents RW, SSO yetkilendirmesi`);
+      }
+      if (response.status === 401) {
+        logger.error('🔎 İpucu: 401 genellikle PAT geçersiz/süresi dolmuş veya org SSO authorize edilmemiş demektir.');
+      }
       return false;
     }
   } catch (error) {
@@ -338,7 +352,7 @@ async function cleanupOldGitHubBackups(repoOverride?: string): Promise<void> {
     logger.info('🧹 GitHub temizlik başlatılıyor (10 günden eski dosyalar)...');
 
     // GitHub'dan dosya listesi al
-    const targetRepo = repoOverride || DEFAULT_GITHUB_REPO;
+    const targetRepo = repoOverride || GITHUB_REPO_ENV || DEFAULT_GITHUB_REPO;
     const response = await fetch(`https://api.github.com/repos/${targetRepo}/contents`, {
       headers: {
         'Authorization': `token ${GITHUB_TOKEN}`,
@@ -399,6 +413,20 @@ async function cleanupOldGitHubBackups(repoOverride?: string): Promise<void> {
     logger.info(`✅ GitHub temizlik tamamlandı: ${deletedCount} eski dosya silindi`);
   } catch (error) {
     logger.error('❌ GitHub temizlik hatası:', error);
+  }
+}
+
+// GitHub erişim diagnostik
+async function checkGithubAccess(repoOverride?: string): Promise<{ ok: boolean; status: number; repo: string; branch: string }> {
+  const targetRepo = repoOverride || GITHUB_REPO_ENV || DEFAULT_GITHUB_REPO;
+  const targetBranch = GITHUB_BRANCH_ENV || 'main';
+  try {
+    const infoRes = await fetch(`https://api.github.com/repos/${targetRepo}`, {
+      headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+    });
+    return { ok: infoRes.ok, status: infoRes.status, repo: targetRepo, branch: targetBranch };
+  } catch {
+    return { ok: false, status: 0, repo: targetRepo, branch: targetBranch };
   }
 }
 
@@ -500,8 +528,11 @@ export async function GET(request: NextRequest) {
     const isCron = !!request.headers.get('x-vercel-cron');
     const userAgent = request.headers.get('user-agent') || '';
     
+    // Production kontrolü - Vercel'de env var olmasa bile çalış
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    
     // Vercel cron job'ları için daha esnek kontrol
-    if (process.env.NODE_ENV === 'production') {
+    if (isProduction) {
       // Cron header varsa veya Vercel'in user agent'ı ise izin ver
       const isVercelCron = isCron || userAgent.includes('vercel') || userAgent.includes('cron');
       
@@ -518,6 +549,11 @@ export async function GET(request: NextRequest) {
     
     const url = new URL(request.url);
     const repoParam = url.searchParams.get('repo') || undefined;
+    const diag = url.searchParams.get('diag') === '1';
+    if (diag) {
+      const probe = await checkGithubAccess(repoParam);
+      return NextResponse.json({ success: probe.ok, diag: true, status: probe.status, repo: probe.repo, branch: probe.branch });
+    }
     await runScheduledBackupFlow(repoParam);
     return NextResponse.json({ success: true, message: 'Backup (GET) completed' });
 
