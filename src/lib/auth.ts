@@ -197,7 +197,9 @@ export const authOptions: NextAuthOptions = {
                 sameSite: 'strict', // CSRF koruması için strict
                 path: '/',
                 secure: process.env.NODE_ENV === 'production',
-                domain: process.env.NODE_ENV === 'production' ? '.grbt8.store' : undefined
+                // Cookie domain kaldırıldı - admin (grbt8.store) ve ana site (gurbetbiz.app) farklı domain'ler
+                // Her domain kendi cookie'sini oluşturacak
+                domain: undefined
             }
         }
     }
