@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 const allowedOrigins = new Set<string>([
   'https://www.grbt8.store',
   'https://grbt8.store',
-  'https://anasite.grbt8.store',
+  'https://gurbetbiz.app',
   'http://localhost:3000',
   'http://localhost:4000',
 ]);

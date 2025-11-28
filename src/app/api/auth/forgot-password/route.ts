@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.firstName || user.email.split('@')[0],
         resetToken: resetToken,
-        baseUrl: 'https://anasite.grbt8.store', // ANA SİTE DOMAIN'İ
-        resetUrl: `https://anasite.grbt8.store/sifre-sifirla?token=${resetToken}`
+        baseUrl: 'https://gurbetbiz.app', // ANA SİTE DOMAIN'İ
+        resetUrl: `https://gurbetbiz.app/sifre-sifirla?token=${resetToken}`
       })
     })
 

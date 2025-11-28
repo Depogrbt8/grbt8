@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 async function performSEOAnalysis(url: string) {
   try {
     // URL'yi normalize et
-    const normalizedUrl = url.startsWith('http') ? url : `https://anasite.grbt8.store${url}`;
+    const normalizedUrl = url.startsWith('http') ? url : `https://gurbetbiz.app${url}`;
     
     // Sayfayı fetch et
     const response = await fetch(normalizedUrl, {

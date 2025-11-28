@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://gurbet.biz'),
+  metadataBase: new URL('https://gurbetbiz.app'),
   alternates: {
     canonical: '/',
     languages: {
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'tr_TR',
-    url: 'https://gurbet.biz',
+    url: 'https://gurbetbiz.app',
     siteName: 'Gurbet.biz',
     title: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
     description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     images: ['/images/og-image.jpg'],
   },
   // ⚠️ TÜM ARAMA MOTORLARI - INDEXLEME KAPALI
-  // Site geçici domain'de (anasite.grbt8.store)
+  // Site domain'de (gurbetbiz.app)
   robots: {
     index: false,
     follow: false,

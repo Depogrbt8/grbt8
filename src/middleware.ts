@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
   const allowedOrigins = new Set<string>([
     'https://www.grbt8.store',
     'https://grbt8.store',
-    'https://anasite.grbt8.store',
+    'https://gurbetbiz.app',
     'http://localhost:3000',
     'http://localhost:4000',
   ]);
@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
   // CORS headers (sadece API için uygula)
   if (isApiRoute) {
     response.headers.set('Vary', 'Origin');
-    response.headers.set('Access-Control-Allow-Origin', isAllowedOrigin ? requestOrigin : 'https://anasite.grbt8.store');
+    response.headers.set('Access-Control-Allow-Origin', isAllowedOrigin ? requestOrigin : 'https://gurbetbiz.app');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Access-Control-Allow-Credentials', 'true');

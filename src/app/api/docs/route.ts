@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     },
     servers: [
       {
-        url: 'https://anasite.grbt8.store',
+        url: 'https://gurbetbiz.app',
         description: 'Production Server'
       },
       {

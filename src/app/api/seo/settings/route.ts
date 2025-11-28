@@ -18,7 +18,7 @@ export async function GET() {
         data: {
           siteName: 'gurbetbiz.com',
           siteDescription: 'Avrupa\'dan Türkiye\'ye yol arkadaşınız',
-          siteUrl: 'https://anasite.grbt8.store',
+          siteUrl: 'https://gurbetbiz.app',
           defaultTitle: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
           defaultDescription: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
           defaultKeywords: 'uçak bileti, yurt dışı seyahat, otel rezervasyonu, araç kiralama, gurbet, seyahat platformu',

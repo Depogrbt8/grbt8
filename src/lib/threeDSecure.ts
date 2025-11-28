@@ -217,7 +217,7 @@ function generatePAReq(request: ThreeDSecureRequest): string {
     messageVersion: '2.1.0',
     merchant: {
       name: 'GRBT8 Demo',
-      url: 'https://anasite.grbt8.store'
+      url: 'https://gurbetbiz.app'
     },
     cardToken: request.cardToken.substring(0, 8) + '...',
     amount: request.amount,
