@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Tablo yoksa oluştur - try-catch ile güvenli
+    // Tablo yapısını kontrol et ve düzelt
     try {
       // Önce tablo var mı kontrol et
       const tableCheck = await prisma.$queryRaw`
@@ -56,6 +56,45 @@ export async function GET() {
         await prisma.$executeRawUnsafe(`
           CREATE INDEX IF NOT EXISTS "SeoSettings_siteName_idx" ON "SeoSettings"("siteName");
         `);
+      } else {
+        // Tablo var ama kolonları kontrol et ve eksikleri ekle
+        const columnsCheck = await prisma.$queryRawUnsafe(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_schema = 'public' 
+          AND table_name = 'SeoSettings';
+        `);
+        
+        const existingColumns = (columnsCheck as any[]).map((c: any) => c.column_name);
+        const requiredColumns = [
+          'siteName', 'siteDescription', 'siteUrl', 'defaultTitle', 'defaultDescription',
+          'defaultKeywords', 'googleAnalytics', 'googleSearchConsole', 'facebookPixel',
+          'bingWebmaster', 'twitterSite', 'twitterCreator', 'schemaOrgJson', 'robotsTxt',
+          'sitemapUrl', 'faviconUrl', 'logoUrl', 'ogImageUrl', 'twitterImageUrl'
+        ];
+        
+        // Eksik kolonları ekle
+        for (const col of requiredColumns) {
+          if (!existingColumns.includes(col)) {
+            const isNullable = ['googleAnalytics', 'googleSearchConsole', 'facebookPixel', 
+              'bingWebmaster', 'twitterSite', 'twitterCreator', 'schemaOrgJson', 'robotsTxt',
+              'sitemapUrl', 'faviconUrl', 'logoUrl', 'ogImageUrl', 'twitterImageUrl'].includes(col);
+            
+            const defaultValue = col === 'siteName' ? "DEFAULT 'gurbetbiz.app'" :
+                                col === 'siteDescription' ? "DEFAULT 'Avrupa''dan Türkiye''ye yol arkadaşınız'" :
+                                col === 'siteUrl' ? "DEFAULT 'https://gurbetbiz.app'" :
+                                col === 'defaultTitle' ? "DEFAULT 'gurbetbiz.app'" :
+                                col === 'defaultDescription' ? "DEFAULT 'Avrupa''dan Türkiye''ye uçak bileti'" :
+                                col === 'defaultKeywords' ? "DEFAULT 'uçak bileti'" : '';
+            
+            const nullConstraint = isNullable ? '' : 'NOT NULL';
+            
+            await prisma.$executeRawUnsafe(`
+              ALTER TABLE "SeoSettings" 
+              ADD COLUMN IF NOT EXISTS "${col}" TEXT ${nullConstraint} ${defaultValue};
+            `);
+          }
+        }
       }
     } catch (createError: any) {
       // Tablo zaten varsa veya başka hata varsa devam et
