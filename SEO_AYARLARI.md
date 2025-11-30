@@ -1064,12 +1064,12 @@ prisma/
 ### 🔵 FAZ 4: İçerik Optimizasyonu (3-6. Hafta)
 
 #### 10. Sayfa Bazlı SEO Optimizasyonu
-- [ ] Ana sayfa (`/`) SEO optimizasyonu
-  - **Title:** "Gurbetbiz - Avrupa'dan Türkiye'ye Uçak Bileti | En Uygun Fiyatlar"
-  - **Description:** 150-160 karakter
-  - **H1:** "Avrupa'dan Türkiye'ye Yol Arkadaşınız"
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Ana sayfa (`/`) SEO optimizasyonu
+  - **Title:** "Gurbetbiz - Avrupa'dan Türkiye'ye Yol Arkadaşınız"
+  - **Description:** 150-160 karakter (Mevcut: "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.")
+  - **H1:** "Avrupa'dan Türkiye'ye Yol Arkadaşınız" ✅ (HeroSection'da var)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
 - [ ] Uçuş arama (`/flights/search`) SEO optimizasyonu
   - **Title:** "Uçak Bileti Ara - Gurbetbiz | Binlerce Seçenek"
