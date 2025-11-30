@@ -77,6 +77,8 @@ export default function SeoClient() {
   const [editingPage, setEditingPage] = useState<SeoPage | null>(null);
   const [editingKeyword, setEditingKeyword] = useState<SeoKeyword | null>(null);
   const [analyzeUrl, setAnalyzeUrl] = useState('');
+  const [showBulkAdd, setShowBulkAdd] = useState(false);
+  const [bulkKeywordsText, setBulkKeywordsText] = useState('');
 
   const tabs = [
     { id: 'general', label: 'Genel SEO', icon: '🌐' },
@@ -183,6 +185,75 @@ export default function SeoClient() {
     } catch (error) {
       console.error('Save keyword error:', error);
       alert('Kaydetme hatası!');
+    }
+  };
+
+  const saveBulkKeywords = async () => {
+    if (!bulkKeywordsText.trim()) {
+      alert('Anahtar kelime girin!');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Satırlara ayır ve boş satırları filtrele
+      const keywordList = bulkKeywordsText
+        .split('\n')
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+
+      if (keywordList.length === 0) {
+        alert('Geçerli anahtar kelime bulunamadı!');
+        setLoading(false);
+        return;
+      }
+
+      let added = 0;
+      let updated = 0;
+      let errors = 0;
+
+      // Her anahtar kelimeyi tek tek ekle
+      for (const keyword of keywordList) {
+        try {
+          const response = await fetch('/api/seo/keywords', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              keyword: keyword,
+              trend: 'stable',
+            }),
+          });
+
+          if (response.ok) {
+            const savedKeyword = await response.json();
+            // Mevcut listede var mı kontrol et
+            const existing = keywords.find(k => k.keyword === keyword);
+            if (existing) {
+              updated++;
+            } else {
+              added++;
+            }
+            // Listeyi güncelle
+            setKeywords(prev => prev.filter(k => k.keyword !== keyword).concat(savedKeyword));
+          } else {
+            errors++;
+          }
+        } catch (error) {
+          errors++;
+          console.error(`Keyword ekleme hatası (${keyword}):`, error);
+        }
+      }
+
+      // Sonuçları göster ve listeyi yeniden yükle
+      await loadData();
+      setBulkKeywordsText('');
+      setShowBulkAdd(false);
+      alert(`✅ ${added} yeni kelime eklendi\n🔄 ${updated} kelime güncellendi\n❌ ${errors} hata`);
+    } catch (error) {
+      console.error('Bulk add error:', error);
+      alert('Toplu ekleme hatası!');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -775,13 +846,55 @@ export default function SeoClient() {
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Anahtar Kelimeler</h3>
-          <button
-            onClick={() => setEditingKeyword({ keyword: '', targetPosition: 1 })}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-          >
-            + Ekle
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowBulkAdd(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              📝 Toplu Ekle
+            </button>
+            <button
+              onClick={() => setEditingKeyword({ keyword: '', targetPosition: 1 })}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+            >
+              + Ekle
+            </button>
+          </div>
         </div>
+
+        {showBulkAdd && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4 border-2 border-blue-200">
+            <h4 className="font-medium text-gray-900 mb-3">Toplu Anahtar Kelime Ekle</h4>
+            <p className="text-sm text-gray-600 mb-3">
+              Her satıra bir anahtar kelime yazın. Boş satırlar otomatik olarak atlanacaktır.
+            </p>
+            <textarea
+              value={bulkKeywordsText}
+              onChange={(e) => setBulkKeywordsText(e.target.value)}
+              placeholder="Almanya Türkiye ucuz uçak bileti&#10;Fransa Türkiye uçuş fırsatları&#10;Belçika Türkiye uçak bileti kampanyası&#10;..."
+              rows={10}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
+            />
+            <div className="flex justify-end gap-2 mt-3">
+              <button
+                onClick={() => {
+                  setShowBulkAdd(false);
+                  setBulkKeywordsText('');
+                }}
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={saveBulkKeywords}
+                disabled={loading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Ekleniyor...' : '✅ Tümünü Ekle'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {editingKeyword && (
           <div className="bg-gray-50 p-4 rounded-lg mb-4">
