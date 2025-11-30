@@ -1041,20 +1041,23 @@ prisma/
   - **Durum:** ✅ Tamamlandı
   - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
-- [ ] BreadcrumbList schema ekle
-  - **Dosya:** Tüm sayfalar
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] BreadcrumbList schema ekle
+  - **Dosya:** Ana sayfa (`src/app/page.tsx`), Uçuş arama (`src/app/flights/search/page.tsx`)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
+  - **Not:** Diğer sayfalara da eklenebilir (hakkımızda, yardım, vb.)
 
-- [ ] Product schema (uçuş biletleri)
-  - **Dosya:** Uçuş arama sonuçları
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Product schema (uçuş biletleri)
+  - **Dosya:** Uçuş arama sonuçları (`src/app/flights/search/page.tsx`)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
+  - **Not:** İlk uçuş sonucu için Product schema eklendi. Fiyat, rota, tarih bilgileri dahil.
 
-- [ ] FAQ schema (yardım sayfası)
-  - **Dosya:** `/yardim` sayfası
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] FAQ schema (yardım sayfası)
+  - **Dosya:** `/yardim` sayfası (`src/app/yardim/page.tsx`)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
+  - **Not:** 4 adet SSS için FAQ schema eklendi.
 
 ---
 
