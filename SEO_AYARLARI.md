@@ -549,7 +549,7 @@ Sitemap: https://gurbetbiz.app/sitemap.xml`
 
 **Hedef:** 4-8 blog yazısı/ay
 
-**Konu Başlıkları:**
+**Konu Başlıkları:** bunlari yazarken uyari ver, bu basliklarin ne olmasini istersiniz diye !!
 1. "Avrupa'dan Türkiye'ye Uçak Bileti Rehberi"
 2. "En Uygun Uçak Bileti Nasıl Bulunur?"
 3. "Türkiye'ye Seyahat İçin Vize Rehberi"
@@ -738,7 +738,8 @@ prisma/
 - [x] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluşturuldu ve eklendi ✅
 - [x] Favicon dosyaları kontrol edildi - `src/app/favicon.ico` mevcut ✅
 - [x] Logo dosyaları kontrol edildi - Logo text olarak kullanılıyor (HeroSection'da) ✅
-  - **Not:** Schema.org'da `logo.png` referansı var (`src/lib/schemas.ts`), dosya yoksa oluşturulmalı veya referans kaldırılmalı
+- [ ] **Schema.org logo.png sorunu** - `src/lib/schemas.ts`'de `logo.png` referansı var ama dosya yok
+  - **Çözüm:** Logo dosyası oluşturulmalı (`public/images/logo.png`) veya referans kaldırılmalı
 
 ### 🟡 Önemli Kontroller
 
@@ -747,29 +748,39 @@ prisma/
 - [x] Google Search Console verification kodu - Meta tag eklendi (`layout.tsx`), HTML dosyası eklendi (`google17c4e136ba9f41b9.html`) ✅
 - [x] Facebook Pixel entegrasyonu - `AnalyticsScripts` component eklendi, admin panel'den ID girilebilir ✅
 - [x] Bing Webmaster Tools verification - Meta tag eklendi (`layout.tsx`), admin panel'den ID girilebilir ✅
+- [ ] **Sitemap Google Search Console'a gönderildi mi?** - `https://gurbetbiz.app/sitemap.xml` gönderilmeli
+- [ ] **Manuel indexleme isteği** - Ana sayfa ve önemli sayfalar için URL Inspection Tool kullanılmalı
 
 #### 5. Teknik Kontroller
 - [ ] Sayfa hızı testi (PageSpeed Insights) - Hedef: < 3 saniye
 - [ ] Mobile-friendly test (Google Mobile-Friendly Test) - Geçmeli
 - [ ] Core Web Vitals kontrolü (LCP, FID, CLS)
 - [ ] SSL/HTTPS kontrolü (Vercel otomatik, doğrulanmalı)
-- [ ] 404 sayfası SEO-friendly (✅ Mevcut ve iyi görünüyor)
+- [x] 404 sayfası SEO-friendly - `src/app/not-found.tsx` mevcut ✅
 
 #### 6. İçerik Kontrolleri
 - [ ] Tüm sayfalarda H1 tag kontrolü (her sayfada tek H1)
 - [ ] Görsellerde alt text kontrolü (tüm img tag'lerinde)
 - [ ] Internal linking yapısı (sayfalar arası bağlantılar)
 - [ ] Duplicate content kontrolü (aynı içerik farklı URL'lerde)
-- [ ] Canonical URL'ler (her sayfada canonical tag)
+- [x] Canonical URL'ler - Ana sayfada var (`metadata.ts`), diğer sayfalarda kontrol edilmeli ⚠️
+  - **Not:** Next.js Metadata API otomatik canonical ekler, sayfa bazlı kontrol gerekli
 
 #### 7. Yasal/KVKK Kontrolleri
-- [ ] KVKK sayfası var (✅ `/kvkk`)
-- [ ] Cookie policy var (✅ `/cerez-politikasi`)
-- [ ] Privacy policy var (✅ `/gizlilik-politikasi`)
-- [ ] Terms of service var (✅ `/kullanim-sartlari`)
+- [x] KVKK sayfası var - `/kvkk` mevcut ✅
+- [x] Cookie policy var - `/cerez-politikasi` mevcut ✅
+- [x] Privacy policy var - `/gizlilik-politikasi` mevcut ✅
+- [x] Terms of service var - `/kullanim-sartlari` mevcut ✅
 - [ ] Cookie consent banner kontrolü - **GDPR için gerekli olabilir, kontrol edilmeli**
   - **Durum:** Şu an cookie consent banner yok
   - **Öneri:** Avrupa kullanıcıları için GDPR uyumlu cookie banner eklenmeli
+
+#### 8. Avrupa Odaklı SEO (Kritik!)
+- [ ] **Hreflang tags implementasyonu** - Avrupa ülkeleri için (tr-DE, tr-FR, tr-NL, vb.)
+  - **Durum:** Şu an yok, Avrupa odaklı SEO için kritik
+  - **Öncelik:** Yüksek (hedef kitle Avrupa'da yaşayan Türkler)
+- [ ] **GDPR uyumlu sayfalar** - Mevcut KVKK sayfaları GDPR'a uyarlanmalı
+  - **Durum:** KVKK sayfaları var ama GDPR'a uyarlanmalı
 
 ### 🟢 Hazır Olanlar
 
