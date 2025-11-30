@@ -76,7 +76,7 @@ export default function DeleteAccountModal({ isOpen, onClose }: DeleteAccountMod
                       Planlanmış veya gerçekleştirilmiş seyahatlerinizle birlikte mevcut rezervasyonlarınıza kolayca ulaşamayacaksınız.
                     </p>
                     <p>
-                      gurbet.biz'den genel bildirimler almaya devam etseniz de, üyelerimize özel promosyonlar ve kampanyalardan haberdar olma fırsatını kaçıracaksınız.
+                      gurbetbiz.app'den genel bildirimler almaya devam etseniz de, üyelerimize özel promosyonlar ve kampanyalardan haberdar olma fırsatını kaçıracaksınız.
                     </p>
                   </div>
 

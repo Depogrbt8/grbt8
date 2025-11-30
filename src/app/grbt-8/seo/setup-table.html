@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SeoSettings Tablosu Oluştur</title>
+</head>
+<body>
+    <h1>SeoSettings Tablosunu Oluştur</h1>
+    <button onclick="createTable()">Tabloyu Oluştur</button>
+    <div id="result"></div>
+    
+    <script>
+        async function createTable() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'İşlem devam ediyor...';
+            
+            try {
+                const response = await fetch('/api/seo/settings');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = '✅ Tablo oluşturuldu veya zaten mevcut!';
+                } else {
+                    resultDiv.innerHTML = '❌ Hata: ' + JSON.stringify(data);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '❌ Hata: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
+

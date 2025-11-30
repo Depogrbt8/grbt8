@@ -35,7 +35,7 @@ async function sendPriceAlertMail(to: string, alert: any) {
     },
   });
   await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'Gurbet.biz <no-reply@gurbet.biz>',
+    from: process.env.SMTP_FROM || 'Gurbetbiz <no-reply@gurbetbiz.app>',
     to,
     subject,
     text,
