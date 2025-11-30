@@ -8,44 +8,44 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  firstName       String
-  lastName        String
-  email           String           @unique
-  password        String
-  customerNo      String?          @unique
-  countryCode     String?
-  phone           String?
-  birthDay        String?
-  birthMonth      String?
-  birthYear       String?
-  gender          String?
-  identityNumber  String?
-  address         String?
-  city            String?
-  isForeigner     Boolean          @default(false)
-  emailVerified   DateTime?
-  image           String?
-  resetToken      String?
+  id               String           @id @default(cuid())
+  firstName        String
+  lastName         String
+  email            String           @unique
+  password         String
+  customerNo       String?          @unique
+  countryCode      String?
+  phone            String?
+  birthDay         String?
+  birthMonth       String?
+  birthYear        String?
+  gender           String?
+  identityNumber   String?
+  address          String?
+  city             String?
+  isForeigner      Boolean          @default(false)
+  emailVerified    DateTime?
+  image            String?
+  resetToken       String?
   resetTokenExpiry DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  lastLoginAt     DateTime?
-  status          String           @default("active")
-  role            String           @default("user")
-  canDelete       Boolean          @default(true)
-  accounts        Account[]
-  passengers      Passenger[]
-  payments        Payment[]
-  priceAlerts     PriceAlert[]
-  reservations    Reservation[]
-  searchFavorites SearchFavorite[]
-  sessions        Session[]
-  surveyResponses SurveyResponse[]
-  systemLogs      SystemLog[]
-  campaigns       Campaign[]
-  emailTemplates  EmailTemplate[]
-  billingInfos    BillingInfo[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  lastLoginAt      DateTime?
+  status           String           @default("active")
+  role             String           @default("user")
+  canDelete        Boolean          @default(true)
+  accounts         Account[]
+  passengers       Passenger[]
+  payments         Payment[]
+  priceAlerts      PriceAlert[]
+  reservations     Reservation[]
+  searchFavorites  SearchFavorite[]
+  sessions         Session[]
+  surveyResponses  SurveyResponse[]
+  systemLogs       SystemLog[]
+  campaigns        Campaign[]
+  emailTemplates   EmailTemplate[]
+  billingInfos     BillingInfo[]
 
   @@index([status])
   @@index([createdAt])
@@ -196,51 +196,51 @@ model SearchFavorite {
 }
 
 model SurveyResponse {
-  id           String   @id @default(cuid())
-  userId       String   // Kullanıcı ID'si eklendi
-  answers      String   // JSON string olarak saklanacak
-  completedAt  DateTime
-  userAgent    String?
-  ipAddress    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  userId      String // Kullanıcı ID'si eklendi
+  answers     String // JSON string olarak saklanacak
+  completedAt DateTime
+  userAgent   String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 // Sistem Ayarları ve Bakım Modu
 model SystemSettings {
-  id                String   @id @default(cuid())
-  maintenanceMode   Boolean  @default(false)
+  id                String    @id @default(cuid())
+  maintenanceMode   Boolean   @default(false)
   maintenanceReason String?
   maintenanceStart  DateTime?
   estimatedDuration String?
-  backupEnabled     Boolean  @default(false)
-  backupSchedule    String   @default("0 2 * * *")
-  backupRetention   Int      @default(7)
-  backupDatabase    Boolean  @default(true)
-  backupUploads     Boolean  @default(true)
-  backupLogs        Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  backupEnabled     Boolean   @default(false)
+  backupSchedule    String    @default("0 2 * * *")
+  backupRetention   Int       @default(7)
+  backupDatabase    Boolean   @default(true)
+  backupUploads     Boolean   @default(true)
+  backupLogs        Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 // Kampanyalar
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   imageUrl    String?
   imageData   String?
   altText     String
   linkUrl     String?
-  status      String   @default("active")
-  position    Int      @default(0)
-  clickCount  Int      @default(0)
-  viewCount   Int      @default(0)
+  status      String    @default("active")
+  position    Int       @default(0)
+  clickCount  Int       @default(0)
+  viewCount   Int       @default(0)
   startDate   DateTime?
   endDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   createdBy   String?
 
   user User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
@@ -268,48 +268,48 @@ model SystemLog {
 
 // Email Template'leri
 model EmailTemplate {
-  id          String   @id @default(cuid())
-  name        String
-  subject     String
-  content     String
-  type        String
-  language    String   @default("tr")
-  variables   String?
-  status      String   @default("active")
-  usageCount  Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String?
+  id         String   @id @default(cuid())
+  name       String
+  subject    String
+  content    String
+  type       String
+  language   String   @default("tr")
+  variables  String?
+  status     String   @default("active")
+  usageCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdBy  String?
 
-  user        User?         @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  user        User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
   emails      EmailLog[]
   queueEmails EmailQueue[]
 }
 
 // Email Kuyruğu
 model EmailQueue {
-  id           String         @id @default(cuid())
+  id           String    @id @default(cuid())
   recipient    String
   cc           String?
   bcc          String?
   subject      String
   content      String
   templateId   String?
-  priority     String         @default("normal")
-  status       String         @default("pending")
+  priority     String    @default("normal")
+  status       String    @default("pending")
   scheduledAt  DateTime?
   sentAt       DateTime?
   errorMessage String?
-  retryCount   Int            @default(0)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  retryCount   Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  template     EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  template EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
 }
 
 // Email Logları
 model EmailLog {
-  id           String         @id @default(cuid())
+  id           String    @id @default(cuid())
   recipient    String
   cc           String?
   bcc          String?
@@ -317,7 +317,7 @@ model EmailLog {
   content      String
   templateId   String?
   status       String
-  sentAt       DateTime       @default(now())
+  sentAt       DateTime  @default(now())
   deliveredAt  DateTime?
   openedAt     DateTime?
   clickedAt    DateTime?
@@ -327,126 +327,150 @@ model EmailLog {
   userAgent    String?
   trackingId   String?
 
-  template     EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  template EmailTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
 }
 
 // Email Ayarları
 model EmailSettings {
-  id            String   @id @default(cuid())
-  smtpHost      String
-  smtpPort      Int      @default(587)
-  smtpUser      String
-  smtpPassword  String
-  fromEmail     String
-  fromName      String
-  dailyLimit    Int      @default(1000)
-  rateLimit     Int      @default(100)
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(cuid())
+  smtpHost     String
+  smtpPort     Int      @default(587)
+  smtpUser     String
+  smtpPassword String
+  fromEmail    String
+  fromName     String
+  dailyLimit   Int      @default(1000)
+  rateLimit    Int      @default(100)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // Fatura Bilgileri
 model BillingInfo {
-  id              String   @id @default(cuid())
-  userId          String
-  type            String   // "individual" veya "corporate"
-  title           String   // "Ev Adresi", "İş Adresi" vs.
+  id     String @id @default(cuid())
+  userId String
+  type   String // "individual" veya "corporate"
+  title  String // "Ev Adresi", "İş Adresi" vs.
 
   // Bireysel bilgiler
-  firstName       String?
-  lastName        String?
+  firstName String?
+  lastName  String?
 
   // Kurumsal bilgiler
-  companyName     String?
-  taxNumber       String?  // Vergi Numarası
+  companyName String?
+  taxNumber   String? // Vergi Numarası
 
   // Adres bilgileri
-  address         String
-  city            String   // İl
-  country         String   // Ülke
+  address String
+  city    String // İl
+  country String // Ülke
 
   // Durum
-  isDefault       Boolean  @default(false)
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isDefault Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // İlişki
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 // SEO Yönetim Tabloları
 model SeoPage {
-  id          String   @id @default(cuid())
-  url         String   @unique
-  title       String
-  description String?
-  keywords    String?
-  h1          String?
-  h2          String?
-  h3          String?
-  metaRobots  String?  @default("index, follow")
-  canonical   String?
-  ogTitle     String?
-  ogDescription String?
-  ogImage     String?
-  twitterTitle String?
+  id                 String   @id @default(cuid())
+  url                String   @unique
+  title              String
+  description        String?
+  keywords           String?
+  h1                 String?
+  h2                 String?
+  h3                 String?
+  metaRobots         String?  @default("index, follow")
+  canonical          String?
+  ogTitle            String?
+  ogDescription      String?
+  ogImage            String?
+  twitterTitle       String?
   twitterDescription String?
-  twitterImage String?
-  schemaJson  String?  // JSON Schema data
-  seoScore    Int      @default(0)
-  lastChecked DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  twitterImage       String?
+  schemaJson         String? // JSON Schema data
+  seoScore           Int      @default(0)
+  lastChecked        DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([url])
   @@index([seoScore])
 }
 
 model SeoKeyword {
-  id            String   @id @default(cuid())
-  keyword       String   @unique
-  targetUrl     String?
+  id              String   @id @default(cuid())
+  keyword         String   @unique
+  targetUrl       String?
   currentPosition Int?
-  targetPosition Int?
-  searchVolume  Int?
-  difficulty    Int?
-  cpc           Float?
-  trend         String?  // up, down, stable
-  lastChecked   DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  targetPosition  Int?
+  searchVolume    Int?
+  difficulty      Int?
+  cpc             Float?
+  trend           String? // up, down, stable
+  lastChecked     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([keyword])
   @@index([currentPosition])
 }
 
 model SeoSettings {
-  id                String   @id @default(cuid())
-  siteName          String
-  siteDescription   String
-  siteUrl           String
-  defaultTitle      String
-  defaultDescription String
-  defaultKeywords   String
-  googleAnalytics   String?
+  id                  String   @id @default(cuid())
+  siteName            String
+  siteDescription     String
+  siteUrl             String
+  defaultTitle        String
+  defaultDescription  String
+  defaultKeywords     String
+  googleAnalytics     String?
   googleSearchConsole String?
-  facebookPixel     String?
-  bingWebmaster     String?
-  twitterSite       String?
-  twitterCreator    String?
-  schemaOrgJson     String?  // Default Schema.org data
-  robotsTxt         String?
-  sitemapUrl        String?
-  faviconUrl        String?
-  logoUrl           String?
-  ogImageUrl        String?
-  twitterImageUrl   String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  facebookPixel       String?
+  bingWebmaster       String?
+  twitterSite         String?
+  twitterCreator      String?
+  schemaOrgJson       String? // Default Schema.org data
+  robotsTxt           String?
+  sitemapUrl          String?
+  faviconUrl          String?
+  logoUrl             String?
+  ogImageUrl          String?
+  twitterImageUrl     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@index([siteName])
+}
+
+// Backlink Yönetimi
+model Backlink {
+  id              String   @id @default(cuid())
+  url             String   @unique
+  domain          String
+  anchorText      String?
+  type            String   @default("dofollow") // dofollow, nofollow
+  status          String   @default("active") // active, inactive, pending, removed
+  qualityScore    Int      @default(0) // 0-100
+  domainAuthority Int? // 0-100
+  pageAuthority   Int? // 0-100
+  notes           String?
+  targetPage      String? // Hangi sayfamıza backlink veriyor
+  lastChecked     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([domain])
+  @@index([status])
+  @@index([qualityScore])
+  @@index([lastChecked])
+  @@index([createdAt])
 }
