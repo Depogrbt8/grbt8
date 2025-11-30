@@ -53,8 +53,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       };
     }
 
-    const title = generateBlogTitle(keyword.keyword);
-    const description = generateBlogDescription(keyword.keyword);
+    const blogSlug = generateSlug(keyword.keyword);
+    const title = `${keyword.keyword} | Hemen Rezervasyon Yap`;
+    const description = `${keyword.keyword} için en uygun fiyatları Gurbetbiz'de bulun. Anında rezervasyon, güvenli ödeme, 7/24 destek.`;
 
     return {
       title,
@@ -67,7 +68,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         url: `https://gurbetbiz.app/arac-kiralama/${params.slug}`,
       },
       alternates: {
-        canonical: `/arac-kiralama/${params.slug}`,
+        canonical: `/blog/${blogSlug}`, // Landing page blog'a canonical point ediyor
+      },
+      robots: {
+        index: true,
+        follow: true,
       },
     };
   } catch (error) {

@@ -3,7 +3,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { generateBlogContent, generateBlogTitle } from '@/lib/seo-content-generator';
+import { generateLandingPageContent, generateSlug } from '@/lib/seo-content-generator';
 
 interface LandingPageClientProps {
   keyword: string;
@@ -12,8 +12,9 @@ interface LandingPageClientProps {
 }
 
 export default function LandingPageClient({ keyword, slug, type }: LandingPageClientProps) {
-  const title = generateBlogTitle(keyword);
-  const content = generateBlogContent(keyword);
+  const title = `${keyword} | Hemen Rezervasyon Yap`;
+  const content = generateLandingPageContent(keyword, type);
+  const blogSlug = generateSlug(keyword);
 
   return (
     <>
@@ -47,6 +48,19 @@ export default function LandingPageClient({ keyword, slug, type }: LandingPageCl
                 className="prose prose-lg max-w-none"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
+
+              {/* Blog link */}
+              <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Daha fazla bilgi mi istiyorsunuz?</strong>
+                </p>
+                <Link 
+                  href={`/blog/${blogSlug}`}
+                  className="text-blue-600 hover:text-blue-800 underline font-medium"
+                >
+                  {keyword} hakkında detaylı blog yazımızı okuyun →
+                </Link>
+              </div>
 
               {/* CTA Section */}
               <div className="mt-12 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">

@@ -188,3 +188,80 @@ function generateGenericContent(keyword: string): string {
   `;
 }
 
+// Landing page'ler için kısa, conversion odaklı içerik
+export function generateLandingPageContent(keyword: string, type: 'flight' | 'hotel' | 'villa' | 'car'): string {
+  const city = keyword.includes('Antalya') ? 'Antalya' :
+               keyword.includes('Muğla') || keyword.includes('Mugla') ? 'Muğla' :
+               keyword.includes('İstanbul') ? 'İstanbul' : 'Türkiye';
+
+  if (type === 'flight') {
+    return `
+      <p class="text-lg text-gray-700 mb-6">
+        ${keyword} arayışınızda Gurbetbiz, Avrupa'dan Türkiye'ye tüm rotalar için en uygun fiyatları karşılaştırıyor. 
+        Anında rezervasyon, güvenli ödeme ve 7/24 Türkçe müşteri desteği ile yanınızdayız.
+      </p>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Neden Gurbetbiz?</h3>
+      <ul class="space-y-2 mb-6">
+        <li>✅ Tüm havayollarının fiyatlarını tek platformda</li>
+        <li>✅ En uygun fiyat garantisi</li>
+        <li>✅ Anında rezervasyon ve onay</li>
+        <li>✅ Güvenli ödeme sistemi</li>
+        <li>✅ 7/24 Türkçe destek</li>
+      </ul>
+    `;
+  }
+
+  if (type === 'hotel') {
+    return `
+      <p class="text-lg text-gray-700 mb-6">
+        ${city}'de ${keyword} için Gurbetbiz'de binlerce otel seçeneği. 
+        Beş yıldızlı lüks otellerden butik otellere kadar tüm konaklama seçenekleri en uygun fiyatlarla.
+      </p>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Otel Rezervasyon Avantajları</h3>
+      <ul class="space-y-2 mb-6">
+        <li>✅ En uygun fiyat garantisi</li>
+        <li>✅ Ücretsiz iptal seçeneği</li>
+        <li>✅ Merkezi konumda oteller</li>
+        <li>✅ Güvenli rezervasyon</li>
+        <li>✅ Türkçe müşteri desteği</li>
+      </ul>
+    `;
+  }
+
+  if (type === 'villa') {
+    return `
+      <p class="text-lg text-gray-700 mb-6">
+        ${city}'de ${keyword} için Gurbetbiz'de özel villalar. 
+        Havuzlu, deniz manzaralı, tam donanımlı villalar en uygun fiyatlarla rezervasyonunuzu bekliyor.
+      </p>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Villa Kiralama Avantajları</h3>
+      <ul class="space-y-2 mb-6">
+        <li>✅ Özel havuzlu villalar</li>
+        <li>✅ Deniz manzaralı konumlar</li>
+        <li>✅ Tam donanımlı mutfak</li>
+        <li>✅ Güvenli ve özel ortam</li>
+        <li>✅ Aile dostu tesisler</li>
+      </ul>
+    `;
+  }
+
+  if (type === 'car') {
+    return `
+      <p class="text-lg text-gray-700 mb-6">
+        ${keyword} için Gurbetbiz'de havalimanı teslim araç kiralama. 
+        Türkiye'de özgürce seyahat etmek için en uygun fiyatlı araç kiralama seçenekleri.
+      </p>
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Araç Kiralama Avantajları</h3>
+      <ul class="space-y-2 mb-6">
+        <li>✅ Havalimanı teslim ve teslim alma</li>
+        <li>✅ Sigorta dahil fiyatlar</li>
+        <li>✅ Yeni model araçlar</li>
+        <li>✅ Uzun dönem kiralama indirimleri</li>
+        <li>✅ Otomatik ve manuel şanzıman</li>
+      </ul>
+    `;
+  }
+
+  return '';
+}
+

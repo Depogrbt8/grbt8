@@ -10,9 +10,10 @@ export async function generateStaticParams() {
   try {
     const keywords = await prisma.seoKeyword.findMany({
       where: {
-        keyword: {
-          contains: 'uçak',
-        },
+        OR: [
+          { keyword: { contains: 'uçak' } },
+          { keyword: { contains: 'uçuş' } },
+        ],
       },
       select: { keyword: true },
     });
@@ -30,9 +31,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   try {
     const keywords = await prisma.seoKeyword.findMany({
       where: {
-        keyword: {
-          contains: 'uçak',
-        },
+        OR: [
+          { keyword: { contains: 'uçak' } },
+          { keyword: { contains: 'uçuş' } },
+        ],
       },
       select: { keyword: true },
     });
@@ -47,8 +49,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       };
     }
 
-    const title = generateBlogTitle(keyword.keyword);
-    const description = generateBlogDescription(keyword.keyword);
+    const blogSlug = generateSlug(keyword.keyword);
+    const title = `${keyword.keyword} | Hemen Rezervasyon Yap`;
+    const description = `${keyword.keyword} için en uygun fiyatları Gurbetbiz'de bulun. Anında rezervasyon, güvenli ödeme, 7/24 destek.`;
 
     return {
       title,
@@ -61,7 +64,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         url: `https://gurbetbiz.app/flights/rotalar/${params.slug}`,
       },
       alternates: {
-        canonical: `/flights/rotalar/${params.slug}`,
+        canonical: `/blog/${blogSlug}`, // Landing page blog'a canonical point ediyor
+      },
+      robots: {
+        index: true,
+        follow: true,
       },
     };
   } catch (error) {
@@ -76,9 +83,10 @@ export default async function FlightRoutePage({ params }: { params: { slug: stri
   try {
     const keywords = await prisma.seoKeyword.findMany({
       where: {
-        keyword: {
-          contains: 'uçak',
-        },
+        OR: [
+          { keyword: { contains: 'uçak' } },
+          { keyword: { contains: 'uçuş' } },
+        ],
       },
       select: { keyword: true },
     });
