@@ -87,20 +87,67 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic blog pages from keywords
+  // Dynamic pages from keywords
   try {
     const keywords = await prisma.seoKeyword.findMany({
       select: { keyword: true, updatedAt: true },
     });
 
-    const blogPages: MetadataRoute.Sitemap = keywords.map((kw) => ({
-      url: `${baseUrl}/blog/${generateSlug(kw.keyword)}`,
-      lastModified: kw.updatedAt || new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }));
+    const dynamicPages: MetadataRoute.Sitemap = [];
 
-    return [...staticPages, ...blogPages];
+    // Blog pages
+    keywords.forEach((kw) => {
+      const slug = generateSlug(kw.keyword);
+      dynamicPages.push({
+        url: `${baseUrl}/blog/${slug}`,
+        lastModified: kw.updatedAt || new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+      });
+
+      // Flight route pages
+      if (kw.keyword.includes('uçak') || kw.keyword.includes('uçuş')) {
+        dynamicPages.push({
+          url: `${baseUrl}/flights/rotalar/${slug}`,
+          lastModified: kw.updatedAt || new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        });
+      }
+
+      // Hotel pages
+      if (kw.keyword.includes('otel') || kw.keyword.includes('hotel')) {
+        dynamicPages.push({
+          url: `${baseUrl}/otel/${slug}`,
+          lastModified: kw.updatedAt || new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        });
+      }
+
+      // Villa pages
+      if (kw.keyword.includes('villa')) {
+        dynamicPages.push({
+          url: `${baseUrl}/villa/${slug}`,
+          lastModified: kw.updatedAt || new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        });
+      }
+
+      // Car rental pages
+      if (kw.keyword.includes('araç') || kw.keyword.includes('araba') || 
+          kw.keyword.includes('rent') || kw.keyword.includes('kiralama')) {
+        dynamicPages.push({
+          url: `${baseUrl}/arac-kiralama/${slug}`,
+          lastModified: kw.updatedAt || new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        });
+      }
+    });
+
+    return [...staticPages, ...dynamicPages];
   } catch (error) {
     console.error('Sitemap generation error:', error);
     return staticPages;
