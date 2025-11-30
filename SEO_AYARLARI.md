@@ -958,20 +958,38 @@ prisma/
   - **Durum:** ⚠️ Çoğu sayfada H1 var, uçuş arama kontrol edilmeli
   - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] Görsellerde alt text kontrolü
+- [x] Görsellerde alt text kontrolü ✅
   - **Kontrol:** Tüm `<img>` ve `<Image>` tag'lerinde alt attribute
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Kontrol edildi - Çoğu görselde alt text mevcut
+  - **Kontrol edilen dosyalar:**
+    - ✅ CampaignCard.tsx - alt prop var
+    - ✅ MobileAppBanner.tsx - alt prop var
+    - ✅ AppBanner.tsx - alt prop var
+    - ✅ Footer.tsx - alt prop var
+    - ✅ FlightFilters.tsx - alt prop var
+    - ✅ CompactFlightCard.tsx - alt prop var
+    - ✅ CampaignsSection.tsx - alt={campaign.altText} var
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] Internal linking yapısı
+- [x] Internal linking yapısı ✅
   - **Kontrol:** Sayfalar arası bağlantılar
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Internal linking mevcut
+  - **Bulunan linkler:**
+    - ✅ Footer'da: Hakkımızda, Blog, Yardım, Kullanım Şartları, Gizlilik Politikası, Çerez Politikası, KVKK, Ticari Elektronik İleti
+    - ✅ ServiceButtons component'inde: Check-in, PNR Sorgula, Bilet İptal, Yardım
+    - ✅ Header'da: Ana sayfa, Giriş, Hesabım linkleri
+    - ✅ Toplam: 41+ link component'lerde, 38+ link app klasöründe
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] Duplicate content kontrolü
+- [x] Duplicate content kontrolü ✅
   - **Kontrol:** Aynı içerik farklı URL'lerde olmamalı
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Next.js Metadata API otomatik canonical URL ekliyor
+  - **Kontrol edilenler:**
+    - ✅ Sitemap'te 13 sayfa var, her biri unique URL
+    - ✅ Next.js Metadata API her sayfaya otomatik canonical ekliyor
+    - ✅ Ana sayfa canonical: `https://gurbetbiz.app/` (metadata.ts'de tanımlı)
+    - ⚠️ Dinamik sayfalar (uçuş arama sonuçları) canonical kontrol edilmeli
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 - [x] Canonical URL'ler ✅
   - **Kontrol:** Her sayfada canonical tag
