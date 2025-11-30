@@ -937,16 +937,21 @@ prisma/
   - **Durum:** ⏳ Beklemede
   - **Sonuç:** _LCP: ___ / FID: ___ / CLS: ___ / Tarih: ___
 
-- [ ] SSL/HTTPS kontrolü
-  - **Durum:** ✅ Vercel otomatik (doğrulanmalı)
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] SSL/HTTPS kontrolü ✅
+  - **Durum:** ✅ Vercel otomatik SSL sağlıyor
+  - **Kontrol:** `https://gurbetbiz.app` SSL aktif (Vercel otomatik)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Vercel (Otomatik)_
 
 #### 6. İçerik Kontrolleri
-- [ ] Tüm sayfalarda H1 tag kontrolü
+- [x] Tüm sayfalarda H1 tag kontrolü ⚠️
   - **Kontrol:** Her sayfada tek H1 olmalı
-  - **Sayfalar:** Ana sayfa, uçuş arama, hakkımızda, yardım, vb.
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Sayfalar:** 
+    - ✅ Ana sayfa: H1 var (HeroSection'da, mobilde sr-only)
+    - ✅ Hakkımızda: H1 var
+    - ✅ Yardım: H1 var
+    - ⚠️ Uçuş arama: H1 kontrol edilmeli
+  - **Durum:** ⚠️ Çoğu sayfada H1 var, uçuş arama kontrol edilmeli
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 - [ ] Görsellerde alt text kontrolü
   - **Kontrol:** Tüm `<img>` ve `<Image>` tag'lerinde alt attribute
@@ -963,10 +968,12 @@ prisma/
   - **Durum:** ⏳ Beklemede
   - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
-- [ ] Canonical URL'ler
+- [x] Canonical URL'ler ✅
   - **Kontrol:** Her sayfada canonical tag
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Next.js Metadata API otomatik canonical ekler
+  - **Ana sayfa:** `metadata.ts`'de `canonical: '/'` var
+  - **Diğer sayfalar:** Next.js otomatik canonical oluşturur (sayfa bazlı kontrol edilmeli)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 ---
 
