@@ -79,7 +79,7 @@ export default function Header() {
                     {/* Masaüstü: Eski yapı */}
                     <div className="hidden sm:flex flex-row justify-between items-center py-3.5">
                         <div className="flex items-center gap-2">
-                            <Link href="/" className="text-sm font-normal text-white leading-tight underline hover:text-gray-100 transition-colors">gurbetbiz.com</Link>
+                            <Link href="/" className="text-sm font-normal text-white leading-tight underline hover:text-gray-100 transition-colors">gurbetbiz.app</Link>
                             {/* Döviz alanı - Sadece masaüstünde görünür */}
                             <span className="sm:ml-6 ml-2 items-center flex-nowrap whitespace-nowrap text-sm sm:text-base flex">
                                 <span className="font-medium">€ = {euroRate?.toFixed(2) || 'Yükleniyor...'} TL</span>

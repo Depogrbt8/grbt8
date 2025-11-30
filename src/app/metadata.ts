@@ -2,10 +2,10 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    default: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+    default: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
     template: '%s | Gurbet.biz'
   },
-  description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri. Güvenli ödeme, 7/24 destek.',
+  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
   keywords: [
     'uçak bileti',
     'yurt dışı seyahat',
@@ -36,41 +36,34 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     url: 'https://gurbetbiz.app',
     siteName: 'Gurbet.biz',
-    title: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
-    description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
+    title: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: '/images/gurbetbiz-og.png',
         width: 1200,
         height: 630,
-        alt: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+        alt: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
-    description: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
-    images: ['/images/og-image.jpg'],
+    title: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
+    images: ['/images/gurbetbiz-og.png'],
   },
-  // ⚠️ TÜM ARAMA MOTORLARI - INDEXLEME KAPALI
+  // ✅ INDEXLEME AÇILDI - Production'a geçildi
   // Site domain'de (gurbetbiz.app)
   robots: {
-    index: false,
-    follow: false,
-    noarchive: true,
-    nosnippet: true,
-    noimageindex: true,
-    nocache: true,
+    index: true,
+    follow: true,
     googleBot: {
-      index: false,
-      follow: false,
-      noarchive: true,
-      nosnippet: true,
-      noimageindex: true,
-      'max-video-preview': 0,
-      'max-image-preview': 'none',
-      'max-snippet': 0,
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   },
   // Verification kodlarını kaldır (geçici site)

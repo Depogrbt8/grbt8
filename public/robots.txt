@@ -1,23 +1,12 @@
-# TÜM ARAMA MOTORLARI - TÜM SİTE KAPALI
-# Site geçici domain'de, indexlenmemeli!
+# SEO Optimize Edilmiş robots.txt
+# Site: https://gurbetbiz.app
 
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /api/
+Disallow: /grbt-8/
+Disallow: /admin/
+Disallow: /hesabim/
 
-# Google
-User-agent: Googlebot
-Disallow: /
-
-# Yandex
-User-agent: Yandex
-Disallow: /
-
-# Bing
-User-agent: Bingbot
-Disallow: /
-
-# Diğer tüm botlar
-User-agent: *
-Disallow: /
-
-# Sitemap yok (geçici site)
+# Sitemap
+Sitemap: https://gurbetbiz.app/sitemap.xml

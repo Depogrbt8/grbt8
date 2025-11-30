@@ -2,9 +2,9 @@ export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Gurbet.biz",
-  "url": "https://gurbet.biz",
-  "logo": "https://gurbet.biz/images/logo.png",
-  "description": "Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.",
+  "url": "https://gurbetbiz.app",
+  "logo": "https://gurbetbiz.app/images/logo.png",
+  "description": "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.",
   "foundingDate": "2024",
   "contactPoint": {
     "@type": "ContactPoint",
@@ -23,11 +23,11 @@ export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Gurbet.biz",
-  "url": "https://gurbet.biz",
-  "description": "Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.",
+  "url": "https://gurbetbiz.app",
+  "description": "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://gurbet.biz/flights/search?q={search_term_string}",
+    "target": "https://gurbetbiz.app/flights/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }

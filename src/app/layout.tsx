@@ -12,24 +12,53 @@ import { setupErrorTracking } from '@/lib/errorTracking'
 import '@/lib/monitoringClient'
 import { logger } from '@/lib/logger'
 import SurveyPopup from '@/components/SurveyPopup'
+import AnalyticsScripts from '@/components/Analytics'
+import { prisma } from '@/lib/prisma'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = siteMetadata
 
-export default function RootLayout({
+async function getSeoSettings() {
+  try {
+    const settings = await prisma.seoSettings.findFirst()
+    return {
+      googleAnalytics: settings?.googleAnalytics || null,
+      facebookPixel: settings?.facebookPixel || null,
+      googleSearchConsole: settings?.googleSearchConsole || null,
+      bingWebmaster: settings?.bingWebmaster || null,
+    }
+  } catch (error) {
+    logger.error('SEO settings fetch error', { error })
+    return {
+      googleAnalytics: null,
+      facebookPixel: null,
+      googleSearchConsole: null,
+      bingWebmaster: null,
+    }
+  }
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const seoSettings = await getSeoSettings()
   return (
     <html lang="tr">
       <head>
-        {/* ARAMA MOTORLARI - TÜM SİTE KAPALI */}
-        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, nocache" />
-        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-        <meta name="bingbot" content="noindex, nofollow" />
-        <meta name="yandex" content="noindex, nofollow" />
+        {/* Robots meta tag'ler metadata.ts'de yönetiliyor */}
+        
+        {/* Google Search Console Verification */}
+        {seoSettings.googleSearchConsole && (
+          <meta name="google-site-verification" content={seoSettings.googleSearchConsole} />
+        )}
+        
+        {/* Bing Webmaster Tools Verification */}
+        {seoSettings.bingWebmaster && (
+          <meta name="msvalidate.01" content={seoSettings.bingWebmaster} />
+        )}
         
         <script
           type="application/ld+json"
@@ -52,6 +81,10 @@ export default function RootLayout({
           </SessionProviderWrapper>
         </ErrorBoundary>
         <Toaster position="bottom-right" toastOptions={{ duration: 3500, style: { zIndex: 999999 } }} />
+        <AnalyticsScripts 
+          googleAnalyticsId={seoSettings.googleAnalytics || undefined}
+          facebookPixelId={seoSettings.facebookPixel || undefined}
+        />
         <Analytics />
         <SpeedInsights />
         <script
