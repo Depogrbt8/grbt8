@@ -931,19 +931,16 @@ prisma/
     - **Mobile:** Performans 81, Erişilebilirlik 89, Best Practices 92, SEO 100 ⚠️ (İyileştirme gerekli)
   - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Kullanıcı_
 
-- [x] Mobile-friendly test ✅
+- [ ] Mobile-friendly test
   - **URL:** https://search.google.com/test/mobile-friendly
-  - **Durum:** ✅ Tamamlandı (PageSpeed Insights'tan)
-  - **Sonuç:** SEO skoru 100/100 = Mobile-friendly ✅
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Kullanıcı_
+  - **Durum:** ⏳ İleride yapılacak
+  - **Not:** PageSpeed Insights'ta mobile performans 81, iyileştirme gerekli
 
-- [x] Core Web Vitals kontrolü ✅
+- [ ] Core Web Vitals kontrolü
   - **Metrikler:** LCP, FID, CLS
   - **URL:** Google Search Console > Core Web Vitals
-  - **Durum:** ✅ Kontrol edildi
-  - **Sonuç:** Henüz yeterli veri yok (site yeni eklendi, 90 gün içinde veri toplanacak)
-  - **Not:** PageSpeed Insights'tan Desktop 100, Mobile 81 - Mobile iyileştirme gerekli
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Kullanıcı_
+  - **Durum:** ⏳ Veriler işleniyor, birkaç gün sonra kontrol edilecek
+  - **Not:** Site yeni eklendi, veriler birkaç gün içinde görünecek
 
 - [x] SSL/HTTPS kontrolü ✅
   - **Durum:** ✅ Vercel otomatik SSL sağlıyor
