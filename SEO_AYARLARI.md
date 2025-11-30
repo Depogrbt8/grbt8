@@ -886,38 +886,38 @@ prisma/
 ### 🟡 FAZ 2: Önemli Kontroller (1-2. Hafta)
 
 #### 4. Analytics ve Verification
-- [x] Google Analytics 4 kurulumu ✅
+- [ ] Google Analytics 4 kurulumu
   - **Adımlar:** 
-    1. GA4 property oluştur (Manuel - Google Analytics'te yapılmalı)
-    2. Measurement ID al (Manuel - Google Analytics'ten alınmalı)
-    3. ✅ `src/app/layout.tsx`'e eklendi (`AnalyticsScripts` component)
-    4. ✅ Admin panel'de ID'yi kaydetme özelliği hazır (`/grbt-8/seo`)
-  - **Durum:** ✅ Kod entegrasyonu tamamlandı, ID admin panel'den girilebilir
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
+    1. ⏳ GA4 property oluştur (Manuel - Google Analytics'te yapılmalı)
+    2. ⏳ Measurement ID al (Manuel - Google Analytics'ten alınmalı)
+    3. ✅ `src/app/layout.tsx`'e eklendi (`AnalyticsScripts` component) - **Kod hazır**
+    4. ✅ Admin panel'de ID'yi kaydetme özelliği hazır (`/grbt-8/seo`) - **Kod hazır**
+  - **Durum:** ⚠️ Kod entegrasyonu hazır, ama ID alınıp admin panel'den girilmeli
+  - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
-- [x] Google Search Console verification ✅
+- [ ] Google Search Console verification
   - **Adımlar:**
-    1. Search Console'da property oluştur (Manuel - Google Search Console'da yapılmalı)
-    2. ✅ HTML tag verification eklendi (`src/app/layout.tsx` - meta tag)
-    3. ✅ HTML dosyası verification eklendi (`public/google17c4e136ba9f41b9.html`)
-  - **Durum:** ✅ Kod entegrasyonu tamamlandı, verification kodu admin panel'den girilebilir
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
+    1. ⏳ Search Console'da property oluştur (Manuel - Google Search Console'da yapılmalı)
+    2. ✅ HTML tag verification eklendi (`src/app/layout.tsx` - meta tag) - **Kod hazır**
+    3. ✅ HTML dosyası verification eklendi (`public/google17c4e136ba9f41b9.html`) - **Kod hazır**
+  - **Durum:** ⚠️ Kod entegrasyonu hazır, ama verification kodu alınıp admin panel'den girilmeli
+  - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
-- [x] Facebook Pixel entegrasyonu ✅
+- [ ] Facebook Pixel entegrasyonu
   - **Adımlar:**
-    1. Facebook Pixel ID al (Manuel - Facebook Business Manager'da yapılmalı)
-    2. ✅ `src/app/layout.tsx`'e pixel kodu eklendi (`AnalyticsScripts` component)
-    3. ✅ Admin panel'de ID'yi kaydetme özelliği hazır (`/grbt-8/seo`)
-  - **Durum:** ✅ Kod entegrasyonu tamamlandı, ID admin panel'den girilebilir
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
+    1. ⏳ Facebook Pixel ID al (Manuel - Facebook Business Manager'da yapılmalı)
+    2. ✅ `src/app/layout.tsx`'e pixel kodu eklendi (`AnalyticsScripts` component) - **Kod hazır**
+    3. ✅ Admin panel'de ID'yi kaydetme özelliği hazır (`/grbt-8/seo`) - **Kod hazır**
+  - **Durum:** ⚠️ Kod entegrasyonu hazır, ama ID alınıp admin panel'den girilmeli
+  - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
-- [x] Bing Webmaster Tools verification ✅
+- [ ] Bing Webmaster Tools verification
   - **Adımlar:**
-    1. Bing Webmaster Tools'da property oluştur (Manuel - Bing Webmaster Tools'da yapılmalı)
-    2. ✅ Meta tag verification eklendi (`src/app/layout.tsx` - msvalidate.01)
-    3. ✅ Admin panel'de verification kodu kaydetme özelliği hazır (`/grbt-8/seo`)
-  - **Durum:** ✅ Kod entegrasyonu tamamlandı, verification kodu admin panel'den girilebilir
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
+    1. ⏳ Bing Webmaster Tools'da property oluştur (Manuel - Bing Webmaster Tools'da yapılmalı)
+    2. ✅ Meta tag verification eklendi (`src/app/layout.tsx` - msvalidate.01) - **Kod hazır**
+    3. ✅ Admin panel'de verification kodu kaydetme özelliği hazır (`/grbt-8/seo`) - **Kod hazır**
+  - **Durum:** ⚠️ Kod entegrasyonu hazır, ama verification kodu alınıp admin panel'den girilmeli
+  - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
 #### 5. Teknik Kontroller
 - [ ] Sayfa hızı testi (PageSpeed Insights)
