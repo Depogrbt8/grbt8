@@ -3,7 +3,8 @@ export const organizationSchema = {
   "@type": "Organization",
   "name": "Gurbet.biz",
   "url": "https://gurbetbiz.app",
-  "logo": "https://gurbetbiz.app/images/logo.png",
+  // Logo referansı kaldırıldı - Logo text olarak kullanılıyor, görsel logo dosyası yok
+  // "logo": "https://gurbetbiz.app/images/logo.png",
   "description": "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.",
   "foundingDate": "2024",
   "contactPoint": {

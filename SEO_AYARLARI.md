@@ -738,8 +738,8 @@ prisma/
 - [x] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluşturuldu ve eklendi ✅
 - [x] Favicon dosyaları kontrol edildi - `src/app/favicon.ico` mevcut ✅
 - [x] Logo dosyaları kontrol edildi - Logo text olarak kullanılıyor (HeroSection'da) ✅
-- [ ] **Schema.org logo.png sorunu** - `src/lib/schemas.ts`'de `logo.png` referansı var ama dosya yok
-  - **Çözüm:** Logo dosyası oluşturulmalı (`public/images/logo.png`) veya referans kaldırılmalı
+- [x] **Schema.org logo.png sorunu** - `src/lib/schemas.ts`'de `logo.png` referansı kaldırıldı ✅
+  - **Çözüm:** Logo referansı kaldırıldı (logo text olarak kullanılıyor, görsel logo dosyası gerekli değil)
 
 ### 🟡 Önemli Kontroller
 
@@ -759,7 +759,9 @@ prisma/
 - [x] 404 sayfası SEO-friendly - `src/app/not-found.tsx` mevcut ✅
 
 #### 6. İçerik Kontrolleri
-- [ ] Tüm sayfalarda H1 tag kontrolü (her sayfada tek H1)
+- [x] Tüm sayfalarda H1 tag kontrolü - Ana sayfa mobil H1 eklendi (sr-only), diğer sayfalar kontrol edilmeli ⚠️
+  - **Ana sayfa:** H1 var (mobilde sr-only ile SEO için görünür)
+  - **Diğer sayfalar:** Kontrol edilmeli
 - [ ] Görsellerde alt text kontrolü (tüm img tag'lerinde)
 - [ ] Internal linking yapısı (sayfalar arası bağlantılar)
 - [ ] Duplicate content kontrolü (aynı içerik farklı URL'lerde)
