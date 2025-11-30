@@ -3,7 +3,7 @@ import YardimPageClient from './YardimPageClient';
 
 export const metadata: Metadata = {
   title: 'Sık Sorulan Sorular - Gurbetbiz | Yardım Merkezi',
-  description: 'Gurbetbiz yardım merkezi ve sık sorulan sorular. Uçak bileti rezervasyonu, iptal, check-in ve PNR sorgulama hakkında tüm sorularınızın cevapları.',
+  description: 'Gurbetbiz yardım merkezi ve sık sorulan sorular. Uçak bileti rezervasyonu, iptal, check-in ve PNR sorgulama hakkında tüm sorularınızın cevapları burada.',
   keywords: [
     'gurbetbiz yardım',
     'sık sorulan sorular',
