@@ -827,59 +827,59 @@ prisma/
 ### 🔴 FAZ 1: Kritik Düzeltmeler (Hemen - 1. Hafta)
 
 #### 1. Domain Güncellemeleri
-- [ ] `src/app/sitemap.ts` - baseUrl `gurbet.biz` → `gurbetbiz.app` güncelle
+- [x] `src/app/sitemap.ts` - baseUrl `gurbet.biz` → `gurbetbiz.app` güncelle ✅
   - **Dosya:** `src/app/sitemap.ts`
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] `src/app/metadata.ts` - Title'da `gurbetbiz.com` → `gurbetbiz.app` güncelle
+- [x] `src/app/metadata.ts` - Title'da `gurbetbiz.com` → `gurbetbiz.app` güncelle ✅
   - **Dosya:** `src/app/metadata.ts` (satır 5, 39, 52)
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] `src/app/metadata.ts` - Open Graph title'da da aynı düzeltme
+- [x] `src/app/metadata.ts` - Open Graph title'da da aynı düzeltme ✅
   - **Dosya:** `src/app/metadata.ts` (satır 39, 46)
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] Tüm kod içinde eski domain referansları kontrol et
+- [x] Tüm kod içinde eski domain referansları kontrol et ✅
   - **Araştırma:** `grep -r "gurbet.biz\|gurbetbiz.com" src/`
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı (Email domain'leri ve marka adı sorun değil)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 #### 2. Indexleme Ayarları
-- [ ] `src/app/metadata.ts` - `robots: { index: false }` → `index: true` aç
+- [x] `src/app/metadata.ts` - `robots: { index: false }` → `index: true` aç ✅
   - **Dosya:** `src/app/metadata.ts` (satır 58-75)
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] `src/app/layout.tsx` - Robots meta tag'ler kaldır (metadata.ts yeterli)
+- [x] `src/app/layout.tsx` - Robots meta tag'ler kaldır (metadata.ts yeterli) ✅
   - **Dosya:** `src/app/layout.tsx` (satır 29-32)
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] `public/robots.txt` - Tüm site `Disallow` → aç, sitemap ekle
+- [x] `public/robots.txt` - Tüm site `Disallow` → aç, sitemap ekle ✅
   - **Dosya:** `public/robots.txt`
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı (`Allow: /` ve sitemap eklendi)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 #### 3. Eksik Dosyalar
-- [ ] `/public/images/og-image.jpg` - 1200x630px OG image oluştur
+- [x] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluştur ✅
   - **Boyut:** 1200x630px
-  - **Format:** JPG veya PNG
+  - **Format:** PNG
   - **İçerik:** Gurbetbiz logo + "Avrupa'dan Türkiye'ye Yol Arkadaşınız"
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Durum:** ✅ Tamamlandı (`gurbetbiz-og.png` eklendi)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: User_
 
-- [ ] Favicon dosyaları kontrol et
-  - **Konum:** `public/favicon.ico` veya `app/icon.*`
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Favicon dosyaları kontrol et ✅
+  - **Konum:** `src/app/favicon.ico`
+  - **Durum:** ✅ Tamamlandı (Mevcut)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
-- [ ] Logo dosyaları kontrol et
-  - **Konum:** `public/images/logo.*`
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Logo dosyaları kontrol et ✅
+  - **Konum:** Logo text olarak kullanılıyor (HeroSection'da)
+  - **Durum:** ✅ Tamamlandı (Görsel logo gerekli değil, Schema.org referansı kaldırıldı)
+  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 ---
 
