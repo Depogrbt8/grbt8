@@ -1,31 +1,11 @@
-import { Metadata } from 'next';
-import YardimPageClient from './YardimPageClient';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Sık Sorulan Sorular - Gurbetbiz | Yardım Merkezi',
-  description: 'Gurbetbiz yardım merkezi ve sık sorulan sorular. Uçak bileti rezervasyonu, iptal, check-in ve PNR sorgulama hakkında tüm sorularınızın cevapları.',
-  keywords: [
-    'gurbetbiz yardım',
-    'sık sorulan sorular',
-    'uçak bileti yardım',
-    'rezervasyon yardımı',
-    'PNR sorgulama',
-    'check-in yardım'
-  ],
-  openGraph: {
-    title: 'Sık Sorulan Sorular - Gurbetbiz | Yardım Merkezi',
-    description: 'Gurbetbiz yardım merkezi ve sık sorulan sorular. Uçak bileti rezervasyonu, iptal, check-in ve PNR sorgulama hakkında tüm sorularınızın cevapları.',
-    type: 'website',
-    url: 'https://gurbetbiz.app/yardim',
-  },
-  alternates: {
-    canonical: '/yardim',
-  },
-};
-
-export default function YardimPage() {
-  return <YardimPageClient />;
-}
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { HelpCircle, Phone, Mail, MessageCircle, Clock, MapPin } from 'lucide-react';
+import Link from 'next/link';
+import Script from 'next/script';
+import { faqSchema, breadcrumbSchema } from '@/lib/schemas';
 
 const faqs = [
   {
@@ -46,7 +26,12 @@ const faqs = [
   }
 ];
 
-export default function YardimPage() {
+export default function YardimPageClient() {
+  const breadcrumbItems = [
+    { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
+    { name: 'Yardım ve İletişim', url: 'https://gurbetbiz.app/yardim' }
+  ];
+
   return (
     <>
       <Script
@@ -54,6 +39,13 @@ export default function YardimPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(faqSchema(faqs))
+        }}
+      />
+      <Script
+        id="breadcrumb-schema-yardim"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema(breadcrumbItems))
         }}
       />
       <Header />
@@ -226,3 +218,4 @@ export default function YardimPage() {
     </>
   );
 }
+
