@@ -864,12 +864,12 @@ prisma/
   - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: Auto_
 
 #### 3. Eksik Dosyalar
-- [x] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluştur ✅
-  - **Boyut:** 1200x630px
+- [ ] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluştur ⚠️
+  - **Boyut:** 1200x630px (Şu an: 1536x1024 - YANLIŞ!)
   - **Format:** PNG
   - **İçerik:** Gurbetbiz logo + "Avrupa'dan Türkiye'ye Yol Arkadaşınız"
-  - **Durum:** ✅ Tamamlandı (`gurbetbiz-og.png` eklendi)
-  - **Yapıldı:** _Tarih: 30 Kasım 2025 / Yapan: User_
+  - **Durum:** ⚠️ Dosya var ama boyut yanlış (1536x1024 → 1200x630 olmalı)
+  - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
 - [x] Favicon dosyaları kontrol et ✅
   - **Konum:** `src/app/favicon.ico`
