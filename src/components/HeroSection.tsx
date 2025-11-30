@@ -4,28 +4,19 @@ export default function HeroSection() {
   return (
     <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
       <div className="container mx-auto px-4">
-        {/* Masaüstü Logo ve Slogan */}
-        <div className="hidden sm:block sm:relative z-30">
-          {/* Logo - SEO için H1 içinde ama görsel olarak logo */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-2 sm:mb-3 leading-tight">
-            <span className="text-white">gurbet</span>
-            <span className="text-black">biz</span>
-          </h1>
-          {/* Slogan */}
-          <p className="text-sm sm:text-lg md:text-xl font-light text-white">
-            Gurbetten Memlekete, Yol Arkadaşınız!
-          </p>
-        </div>
+        {/* Masaüstü Logo ve Slogan - Eski Tasarım */}
+        <h1 className="hidden sm:block sm:relative text-2xl sm:text-5xl font-bold mb-0 sm:mb-0 z-30">
+          <span className="text-white">gurbet</span>
+          <span className="text-black">biz</span>
+        </h1>
+        <h2 className="hidden sm:block text-xs sm:text-xl font-light">Gurbetten Memlekete, Yol Arkadaşınız!</h2>
+        
         {/* Mobil Logo ve Slogan */}
-        <div className="sm:hidden z-30">
-          <h1 className="text-2xl font-bold mb-1 leading-tight">
-            <span className="text-white">gurbet</span>
-            <span className="text-black">biz</span>
-          </h1>
-          <p className="text-xs font-light text-white">
-            Gurbetten Memlekete, Yol Arkadaşınız!
-          </p>
-        </div>
+        <h1 className="sm:hidden text-2xl font-bold mb-0 z-30">
+          <span className="text-white">gurbet</span>
+          <span className="text-black">biz</span>
+        </h1>
+        <h2 className="sm:hidden text-xs font-light">Gurbetten Memlekete, Yol Arkadaşınız!</h2>
       </div>
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full pointer-events-none">
