@@ -51,56 +51,51 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
     
-    const settings = await prisma.seoSettings.upsert({
-      where: { id: data.id || 'default' },
-      update: {
-        siteName: data.siteName,
-        siteDescription: data.siteDescription,
-        siteUrl: data.siteUrl,
-        defaultTitle: data.defaultTitle,
-        defaultDescription: data.defaultDescription,
-        defaultKeywords: data.defaultKeywords,
-        googleAnalytics: data.googleAnalytics,
-        googleSearchConsole: data.googleSearchConsole,
-        facebookPixel: data.facebookPixel,
-        bingWebmaster: data.bingWebmaster,
-        twitterSite: data.twitterSite,
-        twitterCreator: data.twitterCreator,
-        schemaOrgJson: data.schemaOrgJson,
-        robotsTxt: data.robotsTxt,
-        sitemapUrl: data.sitemapUrl,
-        faviconUrl: data.faviconUrl,
-        logoUrl: data.logoUrl,
-        ogImageUrl: data.ogImageUrl,
-        twitterImageUrl: data.twitterImageUrl,
-        updatedAt: new Date(),
-      },
-      create: {
-        siteName: data.siteName,
-        siteDescription: data.siteDescription,
-        siteUrl: data.siteUrl,
-        defaultTitle: data.defaultTitle,
-        defaultDescription: data.defaultDescription,
-        defaultKeywords: data.defaultKeywords,
-        googleAnalytics: data.googleAnalytics,
-        googleSearchConsole: data.googleSearchConsole,
-        facebookPixel: data.facebookPixel,
-        bingWebmaster: data.bingWebmaster,
-        twitterSite: data.twitterSite,
-        twitterCreator: data.twitterCreator,
-        schemaOrgJson: data.schemaOrgJson,
-        robotsTxt: data.robotsTxt,
-        sitemapUrl: data.sitemapUrl,
-        faviconUrl: data.faviconUrl,
-        logoUrl: data.logoUrl,
-        ogImageUrl: data.ogImageUrl,
-        twitterImageUrl: data.twitterImageUrl,
-      }
-    });
+    // Mevcut kaydı bul
+    const existing = await prisma.seoSettings.findFirst();
+    
+    const settingsData = {
+      siteName: data.siteName || 'gurbetbiz.app',
+      siteDescription: data.siteDescription || 'Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+      siteUrl: data.siteUrl || 'https://gurbetbiz.app',
+      defaultTitle: data.defaultTitle || 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+      defaultDescription: data.defaultDescription || 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
+      defaultKeywords: data.defaultKeywords || 'uçak bileti, yurt dışı seyahat, otel rezervasyonu, araç kiralama, gurbet, seyahat platformu',
+      googleAnalytics: data.googleAnalytics || null,
+      googleSearchConsole: data.googleSearchConsole || null,
+      facebookPixel: data.facebookPixel || null,
+      bingWebmaster: data.bingWebmaster || null,
+      twitterSite: data.twitterSite || null,
+      twitterCreator: data.twitterCreator || null,
+      schemaOrgJson: data.schemaOrgJson || null,
+      robotsTxt: data.robotsTxt || null,
+      sitemapUrl: data.sitemapUrl || null,
+      faviconUrl: data.faviconUrl || null,
+      logoUrl: data.logoUrl || null,
+      ogImageUrl: data.ogImageUrl || null,
+      twitterImageUrl: data.twitterImageUrl || null,
+    };
+    
+    let settings;
+    if (existing) {
+      // Mevcut kaydı güncelle
+      settings = await prisma.seoSettings.update({
+        where: { id: existing.id },
+        data: settingsData,
+      });
+    } else {
+      // Yeni kayıt oluştur
+      settings = await prisma.seoSettings.create({
+        data: settingsData,
+      });
+    }
 
     return NextResponse.json(settings);
   } catch (error) {
     console.error('SEO Settings POST error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
