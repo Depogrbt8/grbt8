@@ -4,10 +4,38 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { HelpCircle, Phone, Mail, MessageCircle, Clock, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import Script from 'next/script';
+import { faqSchema } from '@/lib/schemas';
+
+const faqs = [
+  {
+    question: "Uçak bileti nasıl rezerve edebilirim?",
+    answer: "Ana sayfada uçuş bilgilerinizi girerek bilet arayabilir ve rezervasyon yapabilirsiniz."
+  },
+  {
+    question: "Biletimi nasıl iptal edebilirim?",
+    answer: "\"Biletimi İptal Et\" sayfasından PNR numaranızı girerek iptal işlemi yapabilirsiniz."
+  },
+  {
+    question: "Online check-in nasıl yapılır?",
+    answer: "\"Online Check-in\" sayfasından rezervasyon bilgilerinizi girerek check-in yapabilirsiniz."
+  },
+  {
+    question: "PNR sorgulama nedir?",
+    answer: "PNR (Passenger Name Record) ile rezervasyon detaylarınızı görüntüleyebilirsiniz."
+  }
+];
 
 export default function YardimPage() {
   return (
     <>
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema(faqs))
+        }}
+      />
       <Header />
       
       <main className="min-h-screen bg-gray-50 py-8">

@@ -16,6 +16,8 @@ import Image from 'next/image';
 
 import CampaignsSection from '@/components/CampaignsSection';
 import { logger } from '@/lib/logger';
+import Script from 'next/script';
+import { breadcrumbSchema } from '@/lib/schemas';
 
 // Type tanımları
 interface Airport {
@@ -120,8 +122,19 @@ export default function Home() {
     }
   };
 
+  const breadcrumbItems = [
+    { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' }
+  ];
+
   return (
     <main className="min-h-screen overflow-x-hidden max-w-full">
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema(breadcrumbItems))
+        }}
+      />
       <Header />
       <div className="relative overflow-x-hidden max-w-full">
         {/* Hero Section - Yeşil alan ve Service Icons */}

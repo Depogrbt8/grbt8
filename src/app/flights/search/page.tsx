@@ -22,6 +22,8 @@ import React from 'react';
 import { useFlightState, useFilterState, useModalState, useUIState, usePriceState } from '@/hooks';
 import CompactFlightCard from '@/components/CompactFlightCard';
 import { logger } from '@/lib/logger';
+import Script from 'next/script';
+import { breadcrumbSchema, productSchema } from '@/lib/schemas';
 
 // Demo fiyat verisi fonksiyonu (API'ye hazır)
 function getDemoPrices(baseDate: Date, currency: string = "EUR") {
@@ -682,8 +684,48 @@ export default function FlightSearchPage() {
 
   // Mobil fiyat-tarih barı pencere başlangıcı için state artık usePriceState hook'unda yönetiliyor
 
+  // Breadcrumb items
+  const breadcrumbItems = useMemo(() => [
+    { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
+    { name: 'Uçuş Arama', url: `https://gurbetbiz.app/flights/search?origin=${origin}&destination=${destination}&departureDate=${departureDateStr}` }
+  ], [origin, destination, departureDateStr]);
+
+  // Product schema için ilk uçuş sonucu (varsa)
+  const firstFlightProduct = useMemo(() => {
+    if (departureFlights && departureFlights.length > 0) {
+      const flight = departureFlights[0];
+      return productSchema({
+        name: `${originObj.code} - ${destinationObj.code} Uçuş Bileti`,
+        description: `${originObj.code} şehrinden ${destinationObj.code} şehrine uçak bileti. En uygun fiyatlar, anında rezervasyon.`,
+        price: flight.price || 0,
+        currency: 'EUR',
+        origin: originObj.code,
+        destination: destinationObj.code,
+        departureDate: format(departureDate, 'yyyy-MM-dd'),
+        airline: flight.airline || undefined
+      });
+    }
+    return null;
+  }, [departureFlights, originObj, destinationObj, departureDate]);
+
   return (
     <>
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema(breadcrumbItems))
+        }}
+      />
+      {firstFlightProduct && (
+        <Script
+          id="product-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(firstFlightProduct)
+          }}
+        />
+      )}
       <Header />
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sol filtre paneli */}

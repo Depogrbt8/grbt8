@@ -50,3 +50,67 @@ export const breadcrumbSchema = (items: Array<{name: string, url: string}>) => (
     "item": item.url
   }))
 })
+
+export const faqSchema = (faqs: Array<{question: string, answer: string}>) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+})
+
+export const productSchema = (flight: {
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  origin: string;
+  destination: string;
+  departureDate: string;
+  arrivalDate?: string;
+  airline?: string;
+  availability?: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": flight.name,
+  "description": flight.description,
+  "offers": {
+    "@type": "Offer",
+    "price": flight.price,
+    "priceCurrency": flight.currency,
+    "availability": flight.availability || "https://schema.org/InStock",
+    "url": `https://gurbetbiz.app/flights/search?origin=${flight.origin}&destination=${flight.destination}&departureDate=${flight.departureDate}`
+  },
+  "brand": {
+    "@type": "Brand",
+    "name": flight.airline || "Gurbetbiz"
+  },
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "Origin",
+      "value": flight.origin
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Destination",
+      "value": flight.destination
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Departure Date",
+      "value": flight.departureDate
+    },
+    ...(flight.arrivalDate ? [{
+      "@type": "PropertyValue",
+      "name": "Arrival Date",
+      "value": flight.arrivalDate
+    }] : [])
+  ]
+})
