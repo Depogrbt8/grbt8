@@ -173,10 +173,13 @@ export async function POST(request: NextRequest) {
         const trimmedKeyword = keywordText.trim();
         if (!trimmedKeyword) continue;
 
+        // SQL injection'a karşı escape et
+        const escapedKeyword = trimmedKeyword.replace(/'/g, "''");
+        
         // Önce kontrol et - var mı?
         const existingCheck = await prisma.$queryRawUnsafe(`
-          SELECT id FROM "SeoKeyword" WHERE keyword = $1 LIMIT 1
-        `, trimmedKeyword) as any[];
+          SELECT id FROM "SeoKeyword" WHERE keyword = '${escapedKeyword}' LIMIT 1
+        `) as any[];
 
         const exists = existingCheck && existingCheck.length > 0;
 
@@ -185,17 +188,16 @@ export async function POST(request: NextRequest) {
           await prisma.$executeRawUnsafe(`
             UPDATE "SeoKeyword" 
             SET "lastChecked" = NOW(), "updatedAt" = NOW()
-            WHERE keyword = $1
-          `, trimmedKeyword);
+            WHERE keyword = '${escapedKeyword}'
+          `);
           updated++;
         } else {
           // Yeni ekle
-          const { v4: uuidv4 } = await import('crypto');
           const id = require('crypto').randomUUID();
           await prisma.$executeRawUnsafe(`
             INSERT INTO "SeoKeyword" (id, keyword, trend, "lastChecked", "createdAt", "updatedAt")
-            VALUES ($1, $2, 'stable', NOW(), NOW(), NOW())
-          `, id, trimmedKeyword);
+            VALUES ('${id}', '${escapedKeyword}', 'stable', NOW(), NOW(), NOW())
+          `);
           added++;
         }
       } catch (error: any) {
