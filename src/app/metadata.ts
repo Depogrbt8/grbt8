@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     default: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
     template: '%s | Gurbetbiz'
   },
-  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
+  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama hizmetleri. En uygun fiyatlar, anında rezervasyon, güvenli ödeme sistemi ve 7/24 müşteri desteği.',
   keywords: [
     'uçak bileti',
     'yurt dışı seyahat',
