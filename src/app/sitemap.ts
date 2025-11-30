@@ -1,9 +1,12 @@
 import { MetadataRoute } from 'next'
+import { prisma } from '@/lib/prisma'
+import { generateSlug } from '@/lib/seo-content-generator'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gurbetbiz.app'
   
-  return [
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -82,5 +85,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.4,
     },
-  ]
+  ];
+
+  // Dynamic blog pages from keywords
+  try {
+    const keywords = await prisma.seoKeyword.findMany({
+      select: { keyword: true, updatedAt: true },
+    });
+
+    const blogPages: MetadataRoute.Sitemap = keywords.map((kw) => ({
+      url: `${baseUrl}/blog/${generateSlug(kw.keyword)}`,
+      lastModified: kw.updatedAt || new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }));
+
+    return [...staticPages, ...blogPages];
+  } catch (error) {
+    console.error('Sitemap generation error:', error);
+    return staticPages;
+  }
 }

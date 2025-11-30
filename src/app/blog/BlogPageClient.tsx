@@ -7,76 +7,64 @@ import Image from 'next/image';
 import { CalendarDays, Clock, User, ArrowRight } from 'lucide-react';
 import Script from 'next/script';
 import { breadcrumbSchema } from '@/lib/schemas';
+import { useEffect, useState } from 'react';
+import { generateSlug, generateBlogTitle, generateBlogDescription } from '@/lib/seo-content-generator';
+
+interface Keyword {
+  id: string;
+  keyword: string;
+}
 
 export default function BlogPageClient() {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Gurbetçiler İçin İndirimli Uçak Bileti: Bu Sizin Hakkınız!",
-      excerpt: "Avrupa'dan Türkiye'ye dönüş yolculuğunuzda uygun fiyatlı uçak bileti bulmanın püf noktaları ve Gurbetbiz garantisi.",
-      content: "Gurbet hayatının en zor yanlarından biri, memlekete dönüş yolculuğunun masraflarıdır. Yüksek uçak bileti fiyatları, gurbetçilerin vatan özlemini daha da artırır. Ancak unutmayın ki indirimli uçak bileti bulmak, gurbetçilerin en doğal hakkıdır! Gurbetbiz olarak, Avrupa'dan Türkiye'ye en uygun fiyatlı uçak biletlerini sizler için sürekli güncelliyoruz.",
-      author: "Gurbetbiz Ekibi",
-      date: "4 Eylül 2025",
-      readTime: "5 dk",
-      category: "Gurbetçi Rehberi",
-      image: "/images/blog/cheap-flights.jpg"
-    },
-    {
-      id: 2,
-      title: "Vatan Yolunda Dikkat Edilmesi Gerekenler",
-      excerpt: "Gurbetçilerin Türkiye'ye dönüş yolculuğunda bilmesi gereken önemli detaylar ve pratik ipuçları.",
-      content: "Vatan yolculuğu, gurbetçiler için sadece bir seyahat değil, özlemle dolu bir kavuşma anıdır. Bu yolculukta uçak bileti seçimi, otel rezervasyonu ve araç kiralama işlemlerini doğru planlamak çok önemlidir. Gurbetbiz, gurbetçilerin bu yolculukta ihtiyaç duyacağı tüm hizmetleri tek platformda sunuyor.",
-      author: "Seyahat Uzmanı",
-      date: "3 Eylül 2025",
-      readTime: "7 dk",
-      category: "Vatan Yolculuğu",
-      image: "/images/blog/homeland-travel.jpg"
-    },
-    {
-      id: 3,
-      title: "Türkiye'nin En Popüler Otelleri: Gurbetçiler İçin Özel Seçimler",
-      excerpt: "İstanbul, Antalya ve diğer şehirlerimizde gurbetçilerin tercih ettiği en iyi oteller ve konaklama fırsatları.",
-      content: "Gurbetçilerin memlekete dönüşünde konforlu bir konaklama deneyimi yaşamaları çok önemlidir. İstanbul'un tarihi otellerinden Antalya'nın sahil resortlarına kadar, Türkiye'nin en popüler otellerini gurbetçiler için özenle seçtik. Gurbetbiz garantisiyle sunulan bu oteller, hem ekonomik hem de kaliteli konaklama imkanı sağlıyor.",
-      author: "Konaklama Uzmanı",
-      date: "2 Eylül 2025",
-      readTime: "6 dk",
-      category: "Otel Rehberi",
-      image: "/images/blog/turkey-hotels.jpg"
-    },
-    {
-      id: 4,
-      title: "Gurbetçiler İçin Araç Kiralama Rehberi",
-      excerpt: "Türkiye'de araç kiralarken gurbetçilerin bilmesi gereken tüm detaylar ve en uygun fiyatlı seçenekler.",
-      content: "Memlekete döndüğünüzde ailenizi ziyaret etmek, eski dostlarınızla buluşmak için araç kiralama hizmeti çok önemlidir. Gurbetbiz, gurbetçilerin ihtiyaçlarına özel araç kiralama seçenekleri sunuyor. İstanbul, Antalya ve diğer şehirlerde en uygun fiyatlı araç kiralama fırsatları sizleri bekliyor.",
-      author: "Araç Kiralama Uzmanı",
-      date: "1 Eylül 2025",
-      readTime: "8 dk",
-      category: "Araç Kiralama",
-      image: "/images/blog/car-rental.jpg"
-    },
-    {
-      id: 5,
-      title: "Bayramda Memlekete Dönüş: Gurbetçiler İçin Özel Fırsatlar",
-      excerpt: "Bayram sezonunda en uygun fiyatlı uçak biletleri, otel rezervasyonları ve araç kiralama fırsatları.",
-      content: "Bayramlar, gurbetçilerin memlekete dönüş için en özel zamanlardır. Bu dönemde uçak bileti fiyatları yükselse de, Gurbetbiz gurbetçilere özel bayram fırsatları sunuyor. Uygun fiyatlı uçak biletleri, otel rezervasyonları ve araç kiralama hizmetleriyle bayramınızı sevdiklerinizle geçirin.",
-      author: "Bayram Fırsatları Uzmanı",
-      date: "31 Ağustos 2025",
-      readTime: "6 dk",
-      category: "Bayram Seyahati",
-      image: "/images/blog/holiday-travel.jpg"
-    },
-    {
-      id: 6,
-      title: "Gurbetçilerin Bütçe Dostu Seyahat Planlaması",
-      excerpt: "Avrupa'dan Türkiye'ye seyahat ederken bütçenizi koruyacak akıllı planlama yöntemleri.",
-      content: "Gurbetçilerin memlekete dönüş yolculuğunda bütçe planlaması kritik öneme sahiptir. Uçak bileti, otel ve araç kiralama masraflarını optimize etmek için Gurbetbiz size özel stratejiler sunuyor. Erken rezervasyon, sezonluk fırsatlar ve paket seyahat seçenekleriyle bütçenizi koruyun.",
-      author: "Bütçe Planlama Uzmanı",
-      date: "30 Ağustos 2025",
-      readTime: "9 dk",
-      category: "Bütçe Planlama",
-      image: "/images/blog/budget-travel.jpg"
-    }
-  ];
+  const [keywords, setKeywords] = useState<Keyword[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/seo/keywords/public')
+      .then(res => res.json())
+      .then(data => {
+        setKeywords(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching keywords:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Convert keywords to blog posts format
+  const blogPosts = keywords.slice(0, 12).map((kw) => {
+    const slug = generateSlug(kw.keyword);
+    const title = generateBlogTitle(kw.keyword);
+    const excerpt = generateBlogDescription(kw.keyword);
+    
+    const category = kw.keyword.includes('uçak') || kw.keyword.includes('uçuş') ? 'Uçuş Rehberi' :
+                     kw.keyword.includes('otel') || kw.keyword.includes('hotel') ? 'Otel Rehberi' :
+                     kw.keyword.includes('villa') ? 'Villa Rehberi' :
+                     kw.keyword.includes('araç') || kw.keyword.includes('araba') || kw.keyword.includes('rent') ? 'Araç Kiralama' :
+                     'Seyahat Rehberi';
+
+    const image = kw.keyword.includes('uçak') || kw.keyword.includes('uçuş') ? '/images/blog/cheap-flights.jpg' :
+                  kw.keyword.includes('otel') || kw.keyword.includes('hotel') ? '/images/blog/turkey-hotels.jpg' :
+                  kw.keyword.includes('villa') ? '/images/blog/car-rental.jpg' :
+                  kw.keyword.includes('araç') || kw.keyword.includes('araba') || kw.keyword.includes('rent') ? '/images/blog/car-rental.jpg' :
+                  '/images/blog/cheap-flights.jpg';
+
+    return {
+      id: slug,
+      title,
+      excerpt: excerpt.substring(0, 150) + '...',
+      author: 'Gurbetbiz Ekibi',
+      date: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' }),
+      readTime: '5 dk',
+      category,
+      image,
+      slug,
+    };
+  });
+
+  // Combine all posts (use all keywords if available, otherwise empty)
+  const allPosts = blogPosts.length > 0 ? blogPosts : [];
 
   const breadcrumbItems = [
     { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
@@ -107,8 +95,18 @@ export default function BlogPageClient() {
         {/* Blog Posts */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogPosts.map((post) => (
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                <p className="mt-4 text-gray-600">Blog yazıları yükleniyor...</p>
+              </div>
+            ) : allPosts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">Henüz blog yazısı bulunmamaktadır.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {allPosts.map((post) => (
                 <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <div className="h-48 relative overflow-hidden">
                     <Image
@@ -159,7 +157,7 @@ export default function BlogPageClient() {
                     </div>
                     
                     <Link 
-                      href={`/blog/${post.id}`}
+                      href={`/blog/${post.slug || post.id}`}
                       className="inline-flex items-center text-green-600 hover:text-green-700 font-medium transition-colors duration-200"
                     >
                       Devamını Oku
@@ -167,8 +165,9 @@ export default function BlogPageClient() {
                     </Link>
                   </div>
                 </article>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
