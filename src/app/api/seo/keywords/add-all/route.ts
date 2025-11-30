@@ -173,26 +173,29 @@ export async function POST(request: NextRequest) {
         const trimmedKeyword = keywordText.trim();
         if (!trimmedKeyword) continue;
 
-        const existing = await prisma.seoKeyword.findUnique({
-          where: { keyword: trimmedKeyword },
-        });
+        // Önce kontrol et - var mı?
+        const existingCheck = await prisma.$queryRawUnsafe(`
+          SELECT id FROM "SeoKeyword" WHERE keyword = $1 LIMIT 1
+        `, trimmedKeyword) as any[];
 
-        await prisma.seoKeyword.upsert({
-          where: { keyword: trimmedKeyword },
-          update: {
-            lastChecked: new Date(),
-            updatedAt: new Date(),
-          },
-          create: {
-            keyword: trimmedKeyword,
-            trend: 'stable',
-            lastChecked: new Date(),
-          },
-        });
+        const exists = existingCheck && existingCheck.length > 0;
 
-        if (existing) {
+        if (exists) {
+          // Güncelle
+          await prisma.$executeRawUnsafe(`
+            UPDATE "SeoKeyword" 
+            SET "lastChecked" = NOW(), "updatedAt" = NOW()
+            WHERE keyword = $1
+          `, trimmedKeyword);
           updated++;
         } else {
+          // Yeni ekle
+          const { v4: uuidv4 } = await import('crypto');
+          const id = require('crypto').randomUUID();
+          await prisma.$executeRawUnsafe(`
+            INSERT INTO "SeoKeyword" (id, keyword, trend, "lastChecked", "createdAt", "updatedAt")
+            VALUES ($1, $2, 'stable', NOW(), NOW(), NOW())
+          `, id, trimmedKeyword);
           added++;
         }
       } catch (error: any) {
