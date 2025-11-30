@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
 interface AnalyticsProps {
@@ -8,11 +8,65 @@ interface AnalyticsProps {
   facebookPixelId?: string;
 }
 
+type CookiePreferences = {
+  necessary?: boolean;
+  analytics?: boolean;
+  functional?: boolean;
+  marketing?: boolean;
+};
+
 export default function AnalyticsScripts({ googleAnalyticsId, facebookPixelId }: AnalyticsProps) {
+  const [cookiePreferences, setCookiePreferences] = useState<CookiePreferences | null>(null);
+
+  useEffect(() => {
+    // Cookie tercihlerini localStorage'dan oku
+    const checkCookiePreferences = () => {
+      if (typeof window === 'undefined') return;
+      
+      const savedPreferences = localStorage.getItem('cookiePreferences');
+      const consentGiven = localStorage.getItem('cookieConsent');
+
+      if (consentGiven && savedPreferences) {
+        try {
+          const parsed = JSON.parse(savedPreferences);
+          setCookiePreferences(parsed);
+        } catch (e) {
+          console.error('Cookie preferences parse error:', e);
+          // Varsayılan olarak sadece zorunlu çerezler
+          setCookiePreferences({ necessary: true, analytics: false, functional: false, marketing: false });
+        }
+      } else {
+        // Onay verilmemişse hiçbir script yükleme (GDPR uyumlu)
+        setCookiePreferences({ necessary: true, analytics: false, functional: false, marketing: false });
+      }
+    };
+
+    checkCookiePreferences();
+
+    // Cookie tercihleri değiştiğinde güncellemek için event listener
+    const handleStorageChange = () => {
+      checkCookiePreferences();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Custom event için de dinle (aynı tab'da değişiklik olduğunda)
+    window.addEventListener('cookiePreferencesChanged', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cookiePreferencesChanged', handleStorageChange);
+    };
+  }, []);
+
+  // Cookie tercihleri yüklenene kadar hiçbir script yükleme
+  if (cookiePreferences === null) {
+    return null;
+  }
+
   return (
     <>
-      {/* Google Analytics 4 */}
-      {googleAnalyticsId && (
+      {/* Google Analytics 4 - Sadece analytics çerezleri kabul edildiyse */}
+      {googleAnalyticsId && cookiePreferences.analytics && (
         <>
           <Script
             strategy="afterInteractive"
@@ -35,8 +89,8 @@ export default function AnalyticsScripts({ googleAnalyticsId, facebookPixelId }:
         </>
       )}
 
-      {/* Facebook Pixel */}
-      {facebookPixelId && (
+      {/* Facebook Pixel - Sadece marketing çerezleri kabul edildiyse */}
+      {facebookPixelId && cookiePreferences.marketing && (
         <>
           <Script
             id="facebook-pixel"

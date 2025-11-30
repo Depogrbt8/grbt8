@@ -13,6 +13,7 @@ import '@/lib/monitoringClient'
 import { logger } from '@/lib/logger'
 import SurveyPopup from '@/components/SurveyPopup'
 import AnalyticsScripts from '@/components/Analytics'
+import CookieConsent from '@/components/CookieConsent'
 import { prisma } from '@/lib/prisma'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -78,6 +79,7 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             {children}
             <SurveyPopup />
+            <CookieConsent />
           </SessionProviderWrapper>
         </ErrorBoundary>
         <Toaster position="bottom-right" toastOptions={{ duration: 3500, style: { zIndex: 999999 } }} />
