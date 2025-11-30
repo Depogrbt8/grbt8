@@ -58,6 +58,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Admin paneli (/grbt-8) için kesinlikle indexlenmesin
+  if (request.nextUrl.pathname.startsWith('/grbt-8')) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+  }
+
   // Security headers
   response.headers.set('X-DNS-Prefetch-Control', 'on');
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');

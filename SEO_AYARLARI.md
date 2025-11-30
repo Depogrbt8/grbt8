@@ -718,6 +718,21 @@ prisma/
 - [ ] `src/app/layout.tsx` - Robots meta tag'ler kaldırılmalı (metadata.ts yeterli)
 - [ ] `public/robots.txt` - Tüm site `Disallow` → açılmalı, sitemap eklenmeli
 
+#### 2.1. Admin Paneli Indexleme Koruması (Kritik!)
+- [x] `/grbt-8` sayfası **KESINLIKLE** indexlenmemeli
+- [x] `public/robots.txt` - `Disallow: /grbt-8/` eklendi ✅
+- [x] `src/app/grbt-8/layout.tsx` - `robots: noindex, nofollow` metadata eklendi ✅
+- [x] `src/app/grbt-8/layout.tsx` - `<meta name="robots">` ve `<meta name="googlebot">` eklendi ✅
+- [x] `src/middleware.ts` - `/grbt-8` path'i için `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex` header eklendi ✅
+- [x] Sitemap'te `/grbt-8` sayfaları yok (zaten protected sayfalar sitemap'ten çıkarıldı) ✅
+
+**Not:** Admin paneli (`/grbt-8`) için 3 katmanlı koruma:
+1. **robots.txt** - Crawler'ları engeller
+2. **Meta tags** - HTML'de noindex direktifi
+3. **HTTP Header** - X-Robots-Tag ile ekstra koruma
+
+**Tarih:** 30 Kasım 2025
+
 #### 3. Eksik Dosyalar
 - [ ] `/public/images/og-image.jpg` - 1200x630px OG image oluşturulmalı
 - [ ] Favicon dosyaları kontrol edilmeli
