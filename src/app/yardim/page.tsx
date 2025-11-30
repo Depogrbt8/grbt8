@@ -3,6 +3,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { HelpCircle, Phone, Mail, MessageCircle, Clock, MapPin } from 'lucide-react';
+import Link from 'next/link';
 
 export default function YardimPage() {
   return (

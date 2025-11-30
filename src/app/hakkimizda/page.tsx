@@ -3,6 +3,7 @@
 import { Plane, Home, Car, Shield, Users, Heart } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 export default function HakkimizdaPage() {
   return (
@@ -16,7 +17,10 @@ export default function HakkimizdaPage() {
             Gurbetbiz Hakkında
           </h1>
           <p className="text-gray-600 text-sm sm:text-base">
-            Avrupa'da yaşayan Türk gurbetçiler için özel olarak tasarlanmış seyahat platformu
+            Avrupa'da yaşayan Türk gurbetçiler için özel olarak tasarlanmış seyahat platformu. 
+            <Link href="/flights/search" className="text-green-600 hover:text-green-700 ml-1 underline">Uçak bileti</Link>, 
+            <Link href="/yardim" className="text-green-600 hover:text-green-700 ml-1 underline">yardım</Link> ve 
+            <Link href="/blog" className="text-green-600 hover:text-green-700 ml-1 underline">blog</Link> sayfalarımızı ziyaret edin.
           </p>
         </div>
 
