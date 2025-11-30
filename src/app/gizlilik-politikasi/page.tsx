@@ -74,15 +74,66 @@ export default function GizlilikPolitikasiPage() {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">7. Kullanıcı Hakları</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">7. GDPR Kapsamında Kullanıcı Hakları (Avrupa Birliği)</h2>
+                <p className="text-gray-600 mb-4">Avrupa Birliği'nde bulunan kullanıcılarımız GDPR (Genel Veri Koruma Yönetmeliği) kapsamında aşağıdaki haklara sahiptir:</p>
                 <ul className="list-disc list-inside text-gray-600 space-y-3 ml-4">
-                  <li>Kişisel verilerinize erişim, düzeltme veya silme taleplerinizi bize iletebilirsiniz.</li>
-                  <li>Pazarlama izinlerinizi istediğiniz zaman geri çekebilirsiniz.</li>
+                  <li><strong>Erişim Hakkı:</strong> Kişisel verilerinize erişim talep edebilirsiniz.</li>
+                  <li><strong>Düzeltme Hakkı:</strong> Yanlış veya eksik verilerinizi düzeltme talep edebilirsiniz.</li>
+                  <li><strong>Silme Hakkı (Unutulma Hakkı):</strong> Kişisel verilerinizin silinmesini talep edebilirsiniz.</li>
+                  <li><strong>Veri Taşınabilirliği:</strong> Verilerinizi başka bir hizmet sağlayıcıya aktarma talep edebilirsiniz.</li>
+                  <li><strong>İtiraz Hakkı:</strong> Veri işlemeye itiraz edebilirsiniz.</li>
+                  <li><strong>İşlemeyi Kısıtlama:</strong> Veri işlemeyi kısıtlama talep edebilirsiniz.</li>
+                  <li><strong>Pazarlama İzni:</strong> Pazarlama izinlerinizi istediğiniz zaman geri çekebilirsiniz.</li>
+                </ul>
+                <p className="text-gray-600 mt-4">
+                  Bu haklarınızı kullanmak için bizimle{' '}
+                  <Link href="/yardim" className="text-green-600 hover:text-green-700 underline">
+                    iletişime geçebilirsiniz
+                  </Link>.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">8. Veri İşleme Yasal Dayanağı</h2>
+                <p className="text-gray-600 mb-4">Kişisel verileriniz aşağıdaki yasal dayanaklara göre işlenmektedir:</p>
+                <ul className="list-disc list-inside text-gray-600 space-y-3 ml-4">
+                  <li><strong>Sözleşmenin İfası:</strong> Rezervasyon ve hizmet sunumu için gerekli veriler</li>
+                  <li><strong>Yasal Yükümlülük:</strong> Yasal zorunlulukların yerine getirilmesi</li>
+                  <li><strong>Meşru Menfaat:</strong> İşletme faaliyetlerinin yürütülmesi</li>
+                  <li><strong>Açık Rıza:</strong> Pazarlama ve analitik amaçlı veri işleme (izin verdiğiniz takdirde)</li>
                 </ul>
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">8. 18 Yaş Altı Kullanıcılar</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">9. Veri Saklama Süreleri</h2>
+                <ul className="list-disc list-inside text-gray-600 space-y-3 ml-4">
+                  <li>Rezervasyon verileri: Rezervasyon tamamlandıktan sonra 5 yıl (yasal zorunluluk)</li>
+                  <li>Hesap bilgileri: Hesap aktif olduğu sürece</li>
+                  <li>Analitik veriler: 26 ay (Google Analytics varsayılan süresi)</li>
+                  <li>Pazarlama izinleri: İzin geri çekilene kadar</li>
+                </ul>
+              </section>
+
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">10. Veri İhlali Bildirimi</h2>
+                <p className="text-gray-600 leading-relaxed">
+                  Kişisel verilerinizin güvenliğini etkileyen bir ihlal durumunda, yasal süre içinde (72 saat) ilgili veri koruma otoritesine bildirim yapılacak ve etkilenen kullanıcılar bilgilendirilecektir.
+                </p>
+              </section>
+
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">11. Data Protection Officer (DPO)</h2>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  GDPR gerekliliklerine uygun olarak, veri koruma sorumlusu (DPO) ile iletişim için:
+                </p>
+                <ul className="list-disc list-inside text-gray-600 space-y-2 ml-4">
+                  <li><strong>E-posta:</strong> dpo@gurbetbiz.app</li>
+                  <li><strong>Adres:</strong> [Şirket Adresi, Berlin, Almanya]</li>
+                </ul>
+              </section>
+
+              <section className="mb-8">
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">12. 18 Yaş Altı Kullanıcılar</h2>
                 <ul className="list-disc list-inside text-gray-600 space-y-3 ml-4">
                   <li>Hizmetlerimizi kullanabilmek için 18 yaşından büyük olmanız gerekmektedir.</li>
                   <li>18 yaş altı kullanıcıların bilgileri yasal vasilerinin izni olmadan toplanmaz.</li>
@@ -90,7 +141,7 @@ export default function GizlilikPolitikasiPage() {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">9. Politikadaki Değişiklikler</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">13. Politikadaki Değişiklikler</h2>
                 <ul className="list-disc list-inside text-gray-600 space-y-3 ml-4">
                   <li>Bu gizlilik politikası zaman zaman güncellenebilir.</li>
                   <li>Güncellemeler sitemizde yayımlanır ve önemli değişikliklerde kullanıcılar bilgilendirilir.</li>
@@ -98,7 +149,7 @@ export default function GizlilikPolitikasiPage() {
               </section>
 
               <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-700 mb-4">10. İletişim</h2>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">14. İletişim</h2>
                 <p className="text-gray-600 leading-relaxed">
                   Gizlilik politikamızla ilgili sorularınız için bizimle iletişime geçebilirsiniz.{' '}
                   <Link href="/yardim" className="text-green-600 hover:text-green-700 underline">
@@ -110,7 +161,8 @@ export default function GizlilikPolitikasiPage() {
 
               <div className="mt-12 p-6 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-500 text-center">
-                  Son güncelleme: 4 Eylül 2025
+                  Son güncelleme: 30 Kasım 2025<br />
+                  <span className="text-xs">GDPR (Genel Veri Koruma Yönetmeliği) uyumlu</span>
                 </p>
               </div>
             </div>
