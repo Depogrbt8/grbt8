@@ -14,6 +14,7 @@ interface SeoSettings {
   googleAnalytics?: string;
   googleSearchConsole?: string;
   facebookPixel?: string;
+  bingWebmaster?: string;
   twitterSite?: string;
   twitterCreator?: string;
   schemaOrgJson?: string;
@@ -546,6 +547,16 @@ export default function SeoClient() {
               value={settings.facebookPixel || ''}
               onChange={(e) => setSettings({...settings, facebookPixel: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bing Webmaster Tools</label>
+            <input
+              type="text"
+              value={settings.bingWebmaster || ''}
+              onChange={(e) => setSettings({...settings, bingWebmaster: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Verification code"
             />
           </div>
           <div>

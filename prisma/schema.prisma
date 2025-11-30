@@ -435,6 +435,7 @@ model SeoSettings {
   googleAnalytics   String?
   googleSearchConsole String?
   facebookPixel     String?
+  bingWebmaster     String?
   twitterSite       String?
   twitterCreator    String?
   schemaOrgJson     String?  // Default Schema.org data
