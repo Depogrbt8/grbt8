@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     default: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
     template: '%s | Gurbetbiz'
   },
-  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama hizmetleri. En uygun fiyatlar, anında rezervasyon, güvenli ödeme sistemi ve 7/24 müşteri desteği.',
+  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 müşteri desteği ile seyahatinizi planlayın.',
   keywords: [
     'uçak bileti',
     'yurt dışı seyahat',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     url: 'https://gurbetbiz.app',
     siteName: 'Gurbet.biz',
     title: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
-    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 destek.',
+    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 müşteri desteği ile seyahatinizi planlayın.',
     images: [
       {
         url: '/images/gurbetbiz-og.png',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
-    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 destek.',
+    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 müşteri desteği ile seyahatinizi planlayın.',
     images: ['/images/gurbetbiz-og.png'],
   },
   // ✅ INDEXLEME AÇILDI - Production'a geçildi
