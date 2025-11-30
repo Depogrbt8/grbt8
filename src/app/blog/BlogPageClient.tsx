@@ -1,33 +1,14 @@
-import { Metadata } from 'next';
-import BlogPageClient from './BlogPageClient';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Gurbetbiz Blog - Gurbetçiler İçin Seyahat Rehberi ve İpuçları',
-  description: 'Avrupa\'dan Türkiye\'ye seyahat rehberleri, uçak bileti ipuçları, otel önerileri ve araç kiralama kılavuzları. Gurbetçiler için özel seyahat içerikleri.',
-  keywords: [
-    'gurbetçi blog',
-    'seyahat rehberi',
-    'uçak bileti ipuçları',
-    'otel önerileri',
-    'araç kiralama rehberi',
-    'vatan yolculuğu',
-    'gurbetçi seyahat',
-    'Türkiye seyahat'
-  ],
-  openGraph: {
-    title: 'Gurbetbiz Blog - Gurbetçiler İçin Seyahat Rehberi ve İpuçları',
-    description: 'Avrupa\'dan Türkiye\'ye seyahat rehberleri, uçak bileti ipuçları, otel önerileri ve araç kiralama kılavuzları. Gurbetçiler için özel seyahat içerikleri.',
-    type: 'website',
-    url: 'https://gurbetbiz.app/blog',
-  },
-  alternates: {
-    canonical: '/blog',
-  },
-};
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import Link from 'next/link';
+import Image from 'next/image';
+import { CalendarDays, Clock, User, ArrowRight } from 'lucide-react';
+import Script from 'next/script';
+import { breadcrumbSchema } from '@/lib/schemas';
 
-export default function BlogPage() {
-  return <BlogPageClient />;
-}
+export default function BlogPageClient() {
   const blogPosts = [
     {
       id: 1,
@@ -97,14 +78,26 @@ export default function BlogPage() {
     }
   ];
 
+  const breadcrumbItems = [
+    { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
+    { name: 'Blog', url: 'https://gurbetbiz.app/blog' }
+  ];
+
   return (
     <>
+      <Script
+        id="breadcrumb-schema-blog"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema(breadcrumbItems))
+        }}
+      />
       <Header />
       <main className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl font-bold mb-4">gurbetbiz Blog</h1>
+            <h1 className="text-4xl font-bold mb-4">Gurbetbiz Blog</h1>
             <p className="text-xl text-green-100 max-w-2xl mx-auto">
               Gurbetçilerin vatan yolculuğunda yanındayız! Uygun uçak bileti, otel ve araç kiralama fırsatları
             </p>
@@ -205,3 +198,4 @@ export default function BlogPage() {
     </>
   );
 }
+
