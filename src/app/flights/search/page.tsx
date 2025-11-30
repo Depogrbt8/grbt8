@@ -701,7 +701,7 @@ export default function FlightSearchPage() {
         name: `${originObj.code} - ${destinationObj.code} Uçuş Bileti`,
         description: `${originObj.code} şehrinden ${destinationObj.code} şehrine uçak bileti. En uygun fiyatlar, anında rezervasyon.`,
         price: flight.price || 0,
-        currency: flight.currency || 'EUR',
+        currency: (flight as any).currency || 'EUR',
         origin: originObj.code || origin,
         destination: destinationObj.code || destination,
         departureDate: format(flightDate, 'yyyy-MM-dd'),
