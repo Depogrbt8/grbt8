@@ -1,17 +1,24 @@
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Gurbet.biz",
+  "name": "Gurbetbiz",
   "url": "https://gurbetbiz.app",
   // Logo referansı kaldırıldı - Logo text olarak kullanılıyor, görsel logo dosyası yok
   // "logo": "https://gurbetbiz.app/images/logo.png",
   "description": "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.",
   "foundingDate": "2024",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "DE", // Avrupa lokasyonu (Almanya)
+    "addressLocality": "Berlin", // Avrupa şehri
+    "addressRegion": "Berlin",
+    "streetAddress": "[Şirket Adresi]" // Gerçek adres eklenecek
+  },
   "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "+90-XXX-XXX-XXXX",
     "contactType": "customer service",
-    "availableLanguage": "Turkish"
+    "availableLanguage": ["Turkish", "German", "French", "Dutch"]
   },
   "sameAs": [
     "https://www.facebook.com/gurbetbiz",
@@ -23,7 +30,7 @@ export const organizationSchema = {
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Gurbet.biz",
+  "name": "Gurbetbiz",
   "url": "https://gurbetbiz.app",
   "description": "Avrupa'dan Türkiye'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.",
   "potentialAction": {
