@@ -122,6 +122,7 @@ export default function SeoClient() {
 
   const saveSettings = async (data: SeoSettings) => {
     try {
+      setLoading(true);
       const response = await fetch('/api/seo/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -132,10 +133,16 @@ export default function SeoClient() {
         const savedSettings = await response.json();
         setSettings(savedSettings);
         alert('Ayarlar kaydedildi!');
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }));
+        console.error('Save settings error:', errorData);
+        alert(`Kaydetme hatası: ${errorData.error || response.statusText}`);
       }
     } catch (error) {
       console.error('Save settings error:', error);
-      alert('Kaydetme hatası!');
+      alert(`Kaydetme hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -368,9 +375,10 @@ export default function SeoClient() {
         </div>
         <button
           onClick={() => saveSettings(settings)}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Kaydet
+          {loading ? 'Kaydediliyor...' : 'Kaydet'}
         </button>
       </div>
 
@@ -591,9 +599,10 @@ export default function SeoClient() {
         </div>
         <button
           onClick={() => saveSettings(settings)}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Kaydet
+          {loading ? 'Kaydediliyor...' : 'Kaydet'}
         </button>
       </div>
     </div>
@@ -636,9 +645,10 @@ export default function SeoClient() {
         </div>
         <button
           onClick={() => saveSettings(settings)}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Kaydet
+          {loading ? 'Kaydediliyor...' : 'Kaydet'}
         </button>
       </div>
     </div>
@@ -660,9 +670,10 @@ export default function SeoClient() {
         </div>
         <button
           onClick={() => saveSettings(settings)}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Kaydet
+          {loading ? 'Kaydediliyor...' : 'Kaydet'}
         </button>
       </div>
     </div>
@@ -754,9 +765,10 @@ export default function SeoClient() {
         </div>
         <button
           onClick={() => saveSettings(settings)}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          disabled={loading}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Kaydet
+          {loading ? 'Kaydediliyor...' : 'Kaydet'}
         </button>
       </div>
 
