@@ -1003,41 +1003,43 @@ prisma/
 ### 🟢 FAZ 3: Avrupa Odaklı SEO (2-4. Hafta)
 
 #### 7. GDPR Uyumluluk
-- [ ] GDPR Privacy Policy sayfası oluştur/güncelle
-  - **Dosya:** `src/app/gizlilik-politikasi/page.tsx` veya yeni sayfa
-  - **İçerik:** Veri işleme, kullanıcı hakları, DPO bilgisi
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] GDPR Privacy Policy sayfası oluştur/güncelle
+  - **Dosya:** `src/app/gizlilik-politikasi/page.tsx`
+  - **İçerik:** Veri işleme, kullanıcı hakları, DPO bilgisi, veri saklama süreleri, veri ihlali bildirimi
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
-- [ ] GDPR Cookie Policy güncelle
+- [x] GDPR Cookie Policy güncelle
   - **Dosya:** `src/app/cerez-politikasi/page.tsx`
-  - **İçerik:** Cookie kategorileri, süreleri, onay mekanizması
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **İçerik:** Cookie kategorileri, süreleri, onay mekanizması (tablo formatında)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
-- [ ] Cookie consent banner ekle
-  - **Bileşen:** Cookie consent modal/banner
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Cookie consent banner ekle
+  - **Bileşen:** `src/components/CookieConsent.tsx`
+  - **Özellikler:** GDPR uyumlu, kategorilere göre onay, tercih yönetimi, Analytics entegrasyonu
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
 #### 8. Hreflang Tags
-- [ ] Hreflang tags implementasyonu
+- [x] Hreflang tags implementasyonu
   - **Ülkeler:** tr-DE, tr-FR, tr-NL, tr-BE, tr-AT, tr-CH
-  - **Dosya:** `src/app/layout.tsx` veya metadata.ts
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Dosya:** `src/app/layout.tsx`
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
+  - **Not:** Şu an tüm hreflang'ler aynı URL'ye işaret ediyor. İleride dil sayfaları eklendiğinde güncellenecek.
 
 #### 9. Schema.org - Organization
-- [ ] Organization schema ekle (Avrupa lokasyonu)
-  - **Dosya:** Ana sayfa veya layout
-  - **İçerik:** Address (Avrupa şehri), contactPoint, sameAs
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] Organization schema ekle (Avrupa lokasyonu)
+  - **Dosya:** `src/lib/schemas.ts` (layout.tsx'de kullanılıyor)
+  - **İçerik:** Address (Berlin, DE), contactPoint (çoklu dil desteği), sameAs
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
-- [ ] WebSite schema ekle
-  - **Dosya:** Ana sayfa
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+- [x] WebSite schema ekle
+  - **Dosya:** `src/lib/schemas.ts` (layout.tsx'de kullanılıyor)
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
 - [ ] BreadcrumbList schema ekle
   - **Dosya:** Tüm sayfalar
