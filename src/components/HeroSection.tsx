@@ -4,15 +4,17 @@ export default function HeroSection() {
   return (
     <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
       <div className="container mx-auto px-4">
-        {/* Masaüstü Logo ve Slogan - Eski Tasarım */}
-        <h1 className="hidden sm:block sm:relative text-2xl sm:text-5xl font-bold mb-0 sm:mb-0 z-30">
-          <span className="text-white">gurbet</span>
-          <span className="text-black">biz</span>
-        </h1>
+        {/* Masaüstü Logo ve Slogan */}
+        <div className="hidden sm:block sm:relative mb-0 sm:mb-0 z-30">
+          <div className="text-2xl sm:text-5xl font-bold">
+            <span className="text-white">gurbet</span>
+            <span className="text-black">biz</span>
+          </div>
+        </div>
         <h2 className="hidden sm:block text-xs sm:text-xl font-light">Gurbetten Memlekete, Yol Arkadaşınız!</h2>
         
-        {/* Mobil: H1 SEO için görünür ama stil gizli */}
-        <h1 className="sr-only sm:hidden">gurbetbiz - Avrupa'dan Türkiye'ye yol arkadaşınız</h1>
+        {/* H1 SEO için - Desktop ve Mobil */}
+        <h1 className="sr-only">Avrupa'dan Türkiye'ye Yol Arkadaşınız</h1>
       </div>
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full pointer-events-none">
