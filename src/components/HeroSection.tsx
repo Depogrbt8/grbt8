@@ -11,12 +11,7 @@ export default function HeroSection() {
         </h1>
         <h2 className="hidden sm:block text-xs sm:text-xl font-light">Gurbetten Memlekete, Yol Arkadaşınız!</h2>
         
-        {/* Mobil Logo ve Slogan */}
-        <h1 className="sm:hidden text-2xl font-bold mb-0 z-30">
-          <span className="text-white">gurbet</span>
-          <span className="text-black">biz</span>
-        </h1>
-        <h2 className="sm:hidden text-xs font-light">Gurbetten Memlekete, Yol Arkadaşınız!</h2>
+        {/* Mobil: Logo ve slogan gizli (Header'da zaten var) */}
       </div>
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full pointer-events-none">
