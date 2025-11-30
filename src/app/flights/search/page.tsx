@@ -687,26 +687,29 @@ export default function FlightSearchPage() {
   // Breadcrumb items
   const breadcrumbItems = useMemo(() => [
     { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
-    { name: 'Uçuş Arama', url: `https://gurbetbiz.app/flights/search?origin=${origin}&destination=${destination}&departureDate=${departureDateStr}` }
+    { name: 'Uçuş Arama', url: `https://gurbetbiz.app/flights/search?origin=${origin}&destination=${destination}&departureDate=${departureDateStr || ''}` }
   ], [origin, destination, departureDateStr]);
 
   // Product schema için ilk uçuş sonucu (varsa)
   const firstFlightProduct = useMemo(() => {
-    if (departureFlights && departureFlights.length > 0) {
+    if (departureFlights && departureFlights.length > 0 && originObj && destinationObj) {
       const flight = departureFlights[0];
+      const flightDate = departureDate instanceof Date && !isNaN(departureDate.getTime()) 
+        ? departureDate 
+        : (departureDateStr ? parseISO(departureDateStr) : new Date());
       return productSchema({
         name: `${originObj.code} - ${destinationObj.code} Uçuş Bileti`,
         description: `${originObj.code} şehrinden ${destinationObj.code} şehrine uçak bileti. En uygun fiyatlar, anında rezervasyon.`,
         price: flight.price || 0,
         currency: 'EUR',
-        origin: originObj.code,
-        destination: destinationObj.code,
-        departureDate: format(departureDate, 'yyyy-MM-dd'),
+        origin: originObj.code || origin,
+        destination: destinationObj.code || destination,
+        departureDate: format(flightDate, 'yyyy-MM-dd'),
         airline: flight.airline || undefined
       });
     }
     return null;
-  }, [departureFlights, originObj, destinationObj, departureDate]);
+  }, [departureFlights, originObj, destinationObj, departureDateStr, origin, destination]);
 
   return (
     <>
