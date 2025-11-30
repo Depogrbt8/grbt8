@@ -115,6 +115,54 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SeoKeyword tablosunu kontrol et ve oluştur
+    try {
+      const tableCheck = await prisma.$queryRaw`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'SeoKeyword'
+        );
+      `;
+      
+      const tableExists = (tableCheck as any)[0]?.exists || false;
+      
+      if (!tableExists) {
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE "SeoKeyword" (
+            "id" TEXT NOT NULL,
+            "keyword" TEXT NOT NULL,
+            "targetUrl" TEXT,
+            "currentPosition" INTEGER,
+            "targetPosition" INTEGER,
+            "searchVolume" INTEGER,
+            "difficulty" INTEGER,
+            "cpc" DOUBLE PRECISION,
+            "trend" TEXT,
+            "lastChecked" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "SeoKeyword_pkey" PRIMARY KEY ("id")
+          );
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE UNIQUE INDEX IF NOT EXISTS "SeoKeyword_keyword_key" ON "SeoKeyword"("keyword");
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS "SeoKeyword_keyword_idx" ON "SeoKeyword"("keyword");
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS "SeoKeyword_currentPosition_idx" ON "SeoKeyword"("currentPosition");
+        `);
+      }
+    } catch (createError: any) {
+      // Tablo zaten varsa veya başka hata varsa devam et
+      console.log('SeoKeyword table check:', createError.message);
+    }
+
     let added = 0;
     let updated = 0;
     let errors = 0;
