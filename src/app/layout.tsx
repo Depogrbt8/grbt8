@@ -51,6 +51,16 @@ export default async function RootLayout({
       <head>
         {/* Robots meta tag'ler metadata.ts'de yönetiliyor */}
         
+        {/* Hreflang Tags - Avrupa ülkeleri için */}
+        <link rel="alternate" hreflang="tr" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-DE" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-FR" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-NL" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-BE" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-AT" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="tr-CH" href="https://gurbetbiz.app" />
+        <link rel="alternate" hreflang="x-default" href="https://gurbetbiz.app" />
+        
         {/* Google Search Console Verification */}
         {seoSettings.googleSearchConsole && (
           <meta name="google-site-verification" content={seoSettings.googleSearchConsole} />
