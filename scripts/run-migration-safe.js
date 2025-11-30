@@ -43,7 +43,12 @@ async function checkAndCreateTable() {
   }
 }
 
-checkAndCreateTable().catch(() => {
-  console.log('⚠️  Migration kontrolü atlandı, build devam ediyor...');
-});
+// Ana fonksiyon - await ile çalıştır
+(async () => {
+  try {
+    await checkAndCreateTable();
+  } catch (error) {
+    console.log('⚠️  Migration kontrolü atlandı, build devam ediyor...');
+  }
+})();
 
