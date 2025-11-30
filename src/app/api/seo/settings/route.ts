@@ -16,11 +16,11 @@ export async function GET() {
       // Default settings oluştur
       const defaultSettings = await prisma.seoSettings.create({
         data: {
-          siteName: 'gurbetbiz.com',
+          siteName: 'gurbetbiz.app',
           siteDescription: 'Avrupa\'dan Türkiye\'ye yol arkadaşınız',
           siteUrl: 'https://gurbetbiz.app',
-          defaultTitle: 'gurbetbiz.com - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
-          defaultDescription: 'Yurt dışı seyahatleriniz için en uygun fiyatlı uçak bileti, otel ve araç kiralama hizmetleri.',
+          defaultTitle: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+          defaultDescription: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
           defaultKeywords: 'uçak bileti, yurt dışı seyahat, otel rezervasyonu, araç kiralama, gurbet, seyahat platformu',
           robotsTxt: `User-agent: *
 Disallow: /
