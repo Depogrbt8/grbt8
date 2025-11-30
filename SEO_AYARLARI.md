@@ -524,7 +524,7 @@ Sitemap: https://gurbetbiz.app/sitemap.xml`
 - [ ] Review/Rating schema (müşteri yorumları varsa)
 
 ### Technical
-- [ ] Sitemap.xml oluşturuldu ve Google'a gönderildi
+- [x] Sitemap.xml oluşturuldu ve Google'a gönderildi ✅ - 16 sayfa keşfedildi
 - [ ] robots.txt optimize edildi
 - [ ] 404 sayfası SEO-friendly
 - [ ] 301 redirects (eski domain'den yeni domain'e)
@@ -748,7 +748,7 @@ prisma/
 - [x] Google Search Console verification kodu - Meta tag eklendi (`layout.tsx`), HTML dosyası eklendi (`google17c4e136ba9f41b9.html`) ✅
 - [x] Facebook Pixel entegrasyonu - `AnalyticsScripts` component eklendi, admin panel'den ID girilebilir ✅
 - [x] Bing Webmaster Tools verification - Meta tag eklendi (`layout.tsx`), admin panel'den ID girilebilir ✅
-- [ ] **Sitemap Google Search Console'a gönderildi mi?** - `https://gurbetbiz.app/sitemap.xml` gönderilmeli
+- [x] **Sitemap Google Search Console'a gönderildi** ✅ - `https://gurbetbiz.app/sitemap.xml` gönderildi, 16 sayfa keşfedildi, durum: Başarılı
 - [ ] **Manuel indexleme isteği** - Ana sayfa ve önemli sayfalar için URL Inspection Tool kullanılmalı
 
 #### 5. Teknik Kontroller
