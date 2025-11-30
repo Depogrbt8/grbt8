@@ -1088,9 +1088,18 @@ prisma/
 - [ ] Yardım/SSS (`/yardim`) SEO optimizasyonu
   - **Title:** "Sık Sorulan Sorular - Gurbetbiz | Yardım Merkezi"
   - **Description:** 150-160 karakter
-  - **FAQ Schema:** Ekle
+  - **FAQ Schema:** ✅ Eklendi (zaten var)
   - **Durum:** ⏳ Beklemede
   - **Yapıldı:** _Tarih: ___ / Yapan: ___
+
+- [x] Blog sayfası (`/blog`) SEO optimizasyonu
+  - **Title:** "Gurbetbiz Blog - Gurbetçiler İçin Seyahat Rehberi ve İpuçları"
+  - **Description:** 150 karakter (150-160 aralığında)
+  - **H1:** "Gurbetbiz Blog" ✅
+  - **BreadcrumbList Schema:** ✅ Eklendi
+  - **Keywords:** Gurbetçi blog, seyahat rehberi, uçak bileti ipuçları, otel önerileri
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
 #### 11. Anahtar Kelime Takibi
 - [ ] Admin panel'de anahtar kelimeleri ekle
