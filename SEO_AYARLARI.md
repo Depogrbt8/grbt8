@@ -708,15 +708,16 @@ prisma/
 ### 🔴 Kritik Düzeltmeler (Hemen Yapılmalı)
 
 #### 1. Domain Güncellemeleri
-- [ ] `src/app/sitemap.ts` - baseUrl `gurbet.biz` → `gurbetbiz.app` olmalı
-- [ ] `src/app/metadata.ts` - Title'da `gurbetbiz.com` → `gurbetbiz.app` olmalı
-- [ ] `src/app/metadata.ts` - Open Graph title'da da aynı düzeltme
-- [ ] Tüm kod içinde eski domain referansları kontrol edilmeli
+- [x] `src/app/sitemap.ts` - baseUrl `gurbet.biz` → `gurbetbiz.app` güncellendi ✅
+- [x] `src/app/metadata.ts` - Title'da `gurbetbiz.com` → `gurbetbiz.app` güncellendi ✅
+- [x] `src/app/metadata.ts` - Open Graph title'da da aynı düzeltme yapıldı ✅
+- [x] Tüm kod içinde eski domain referansları kontrol edildi ✅
+  - **Not:** Email domain'leri (gurbetbiz.com) ve marka adı (Gurbet.biz) sorun değil, bunlar farklı kullanım alanları
 
 #### 2. Indexleme Ayarları
-- [ ] `src/app/metadata.ts` - `robots: { index: false }` → `index: true` açılmalı
-- [ ] `src/app/layout.tsx` - Robots meta tag'ler kaldırılmalı (metadata.ts yeterli)
-- [ ] `public/robots.txt` - Tüm site `Disallow` → açılmalı, sitemap eklenmeli
+- [x] `src/app/metadata.ts` - `robots: { index: false }` → `index: true` açıldı ✅
+- [x] `src/app/layout.tsx` - Robots meta tag'ler kaldırıldı (metadata.ts yeterli) ✅
+- [x] `public/robots.txt` - Tüm site `Disallow` → `Allow: /` açıldı, sitemap eklendi ✅
 
 #### 2.1. Admin Paneli Indexleme Koruması (Kritik!)
 - [x] `/grbt-8` sayfası **KESINLIKLE** indexlenmemeli
@@ -734,17 +735,18 @@ prisma/
 **Tarih:** 30 Kasım 2025
 
 #### 3. Eksik Dosyalar
-- [ ] `/public/images/og-image.jpg` - 1200x630px OG image oluşturulmalı
-- [ ] Favicon dosyaları kontrol edilmeli
-- [ ] Logo dosyaları kontrol edilmeli
+- [x] `/public/images/gurbetbiz-og.png` - 1200x630px OG image oluşturuldu ve eklendi ✅
+- [x] Favicon dosyaları kontrol edildi - `src/app/favicon.ico` mevcut ✅
+- [x] Logo dosyaları kontrol edildi - Logo text olarak kullanılıyor (HeroSection'da) ✅
+  - **Not:** Schema.org'da `logo.png` referansı var (`src/lib/schemas.ts`), dosya yoksa oluşturulmalı veya referans kaldırılmalı
 
 ### 🟡 Önemli Kontroller
 
 #### 4. Analytics ve Verification
-- [ ] Google Analytics 4 kurulumu (admin panel'de ID girilebilir ama kod entegrasyonu yok)
-- [ ] Google Search Console verification kodu eklenmeli
-- [ ] Facebook Pixel entegrasyonu (admin panel'de ID var ama kod yok)
-- [ ] Bing Webmaster Tools verification
+- [x] Google Analytics 4 kurulumu - `AnalyticsScripts` component eklendi, admin panel'den ID girilebilir ✅
+- [x] Google Search Console verification kodu - Meta tag eklendi (`layout.tsx`), HTML dosyası eklendi (`google17c4e136ba9f41b9.html`) ✅
+- [x] Facebook Pixel entegrasyonu - `AnalyticsScripts` component eklendi, admin panel'den ID girilebilir ✅
+- [x] Bing Webmaster Tools verification - Meta tag eklendi (`layout.tsx`), admin panel'den ID girilebilir ✅
 
 #### 5. Teknik Kontroller
 - [ ] Sayfa hızı testi (PageSpeed Insights) - Hedef: < 3 saniye
@@ -765,7 +767,9 @@ prisma/
 - [ ] Cookie policy var (✅ `/cerez-politikasi`)
 - [ ] Privacy policy var (✅ `/gizlilik-politikasi`)
 - [ ] Terms of service var (✅ `/kullanim-sartlari`)
-- [ ] Cookie consent banner kontrolü (gerekli mi?)
+- [ ] Cookie consent banner kontrolü - **GDPR için gerekli olabilir, kontrol edilmeli**
+  - **Durum:** Şu an cookie consent banner yok
+  - **Öneri:** Avrupa kullanıcıları için GDPR uyumlu cookie banner eklenmeli
 
 ### 🟢 Hazır Olanlar
 
@@ -774,22 +778,22 @@ prisma/
 - ✅ API endpoints (settings, pages, keywords, analyze)
 - ✅ Metadata yapısı (Next.js Metadata API)
 - ✅ Open Graph & Twitter Cards yapısı
-- ✅ Sitemap.ts dosyası mevcut (domain güncellemesi gerekiyor)
-- ✅ robots.txt dosyası mevcut (içerik güncellemesi gerekiyor)
+- ✅ Sitemap.ts dosyası mevcut ve domain güncellendi ✅
+- ✅ robots.txt dosyası mevcut ve optimize edildi ✅
 - ✅ 404 sayfası SEO-friendly
 - ✅ Yasal sayfalar mevcut
 
 ### 📋 Öncelik Sırası
 
-**1. Hemen (Bugün):**
-1. Domain güncellemeleri (sitemap.ts, metadata.ts)
-2. Indexleme açma (robots, metadata)
-3. OG image oluşturma
+**1. Hemen (Bugün):** ✅ **TAMAMLANDI**
+1. ✅ Domain güncellemeleri (sitemap.ts, metadata.ts) - **TAMAMLANDI**
+2. ✅ Indexleme açma (robots, metadata) - **TAMAMLANDI**
+3. ✅ OG image oluşturma - **TAMAMLANDI**
 
-**2. Bu Hafta:**
-4. Analytics kurulumu (GA4, Search Console)
-5. Teknik kontroller (sayfa hızı, mobile-friendly)
-6. İçerik kontrolleri (H1, alt text, canonical)
+**2. Bu Hafta:** 🟡 **KISMEN TAMAMLANDI**
+4. ✅ Analytics kurulumu (GA4, Search Console) - **TAMAMLANDI** (Kod entegrasyonu hazır, ID'ler admin panel'den girilecek)
+5. ⏳ Teknik kontroller (sayfa hızı, mobile-friendly) - **YAPILMALI**
+6. ⏳ İçerik kontrolleri (H1, alt text, canonical) - **YAPILMALI**
 
 **3. Bu Ay:**
 7. Schema.org implementasyonu
