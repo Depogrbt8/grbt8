@@ -1112,6 +1112,275 @@ export default function SeoClient() {
     </div>
   );
 
+  const renderBacklinks = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">Backlink Yönetimi</h3>
+          <div className="flex gap-2">
+            <button
+              onClick={async () => {
+                if (!confirm('Önceden tanımlı 13 backlink\'i eklemek istediğinizden emin misiniz?')) return;
+                try {
+                  setLoading(true);
+                  const response = await fetch('/api/seo/backlinks/add-predefined', {
+                    method: 'POST',
+                  });
+                  const result = await response.json();
+                  if (response.ok) {
+                    alert(`Başarılı! ${result.added} yeni, ${result.updated} güncellenmiş backlink eklendi.`);
+                    loadData();
+                  } else {
+                    alert(`Hata: ${result.error || 'Bilinmeyen hata'}\n${result.message || ''}`);
+                  }
+                } catch (error) {
+                  console.error('Add predefined backlinks error:', error);
+                  alert(`Hata: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Ekleniyor...' : '✨ Önceden Tanımlı Backlink\'leri Ekle (13)'}
+            </button>
+            <button
+              onClick={() => setShowBulkAddBacklink(!showBulkAddBacklink)}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            >
+              {showBulkAddBacklink ? 'İptal' : 'Toplu Ekle'}
+            </button>
+            <button
+              onClick={() => setEditingBacklink({
+                url: '',
+                domain: '',
+                status: 'active',
+                type: 'dofollow',
+                qualityScore: 0,
+              })}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              + Yeni Backlink
+            </button>
+          </div>
+        </div>
+
+        {showBulkAddBacklink && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-900 mb-2">Toplu Backlink Ekle</h4>
+            <p className="text-sm text-gray-600 mb-3">Her satıra bir backlink URL'si yazın:</p>
+            <textarea
+              value={bulkBacklinksText}
+              onChange={(e) => setBulkBacklinksText(e.target.value)}
+              rows={8}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm mb-3"
+              placeholder="https://example.com/page1&#10;https://example2.com/page2&#10;..."
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setBulkBacklinksText('');
+                  setShowBulkAddBacklink(false);
+                }}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={bulkAddBacklinks}
+                disabled={loading}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Ekleniyor...' : 'Ekle'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {editingBacklink && (
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="font-medium text-gray-900 mb-4">
+              {editingBacklink.id ? 'Backlink Düzenle' : 'Yeni Backlink Ekle'}
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">URL *</label>
+                <input
+                  type="url"
+                  value={editingBacklink.url}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, url: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/page"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
+                <input
+                  type="text"
+                  value={editingBacklink.domain}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, domain: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Anchor Text</label>
+                <input
+                  type="text"
+                  value={editingBacklink.anchorText || ''}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, anchorText: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  value={editingBacklink.type || 'dofollow'}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, type: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="dofollow">Dofollow</option>
+                  <option value="nofollow">Nofollow</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select
+                  value={editingBacklink.status || 'active'}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, status: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="pending">Pending</option>
+                  <option value="removed">Removed</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Quality Score (0-100)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={editingBacklink.qualityScore || 0}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, qualityScore: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Target Page</label>
+                <input
+                  type="text"
+                  value={editingBacklink.targetPage || ''}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, targetPage: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="/blog/example"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <input
+                  type="text"
+                  value={editingBacklink.notes || ''}
+                  onChange={(e) => setEditingBacklink({...editingBacklink, notes: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setEditingBacklink(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                İptal
+              </button>
+              <button
+                onClick={() => saveBacklink(editingBacklink)}
+                disabled={loading || !editingBacklink.url}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Kaydediliyor...' : 'Kaydet'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {backlinks.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    Henüz backlink eklenmemiş. Yeni backlink eklemek için yukarıdaki butona tıklayın.
+                  </td>
+                </tr>
+              ) : (
+                backlinks.map((backlink) => (
+                  <tr key={backlink.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <a
+                        href={backlink.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline text-sm truncate max-w-xs block"
+                        title={backlink.url}
+                      >
+                        {backlink.url}
+                      </a>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{backlink.domain}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        backlink.type === 'dofollow' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {backlink.type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        backlink.status === 'active' ? 'bg-green-100 text-green-800' :
+                        backlink.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        backlink.status === 'removed' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {backlink.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{backlink.qualityScore || 0}/100</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => setEditingBacklink(backlink)}
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        Düzenle
+                      </button>
+                      <button
+                        onClick={() => backlink.id && deleteBacklink(backlink.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Sil
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading && !settings.siteName) {
     return (
       <div className="min-h-screen flex">
@@ -1172,379 +1441,3 @@ export default function SeoClient() {
     </div>
   );
 }
-
-  const renderBacklinks = () => (
-  try {
-    setLoading(true);
-    const response = await fetch('/api/seo/backlinks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(backlink),
-    });
-
-    if (response.ok) {
-      const savedBacklink = await response.json();
-      setBacklinks([...backlinks.filter(b => b.id !== savedBacklink.id), savedBacklink]);
-      setEditingBacklink(null);
-      alert('Backlink kaydedildi!');
-      loadData();
-    } else {
-      const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }));
-      alert(`Kaydetme hatası: ${errorData.error || response.statusText}`);
-    }
-  } catch (error) {
-    console.error('Save backlink error:', error);
-    alert(`Kaydetme hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
-  } finally {
-    setLoading(false);
-  }
-};
-
-const deleteBacklink = async (id: string) => {
-  if (!confirm('Bu backlink\'i silmek istediğinizden emin misiniz?')) return;
-
-  try {
-    setLoading(true);
-    const response = await fetch(`/api/seo/backlinks?id=${id}`, {
-      method: 'DELETE',
-    });
-
-    if (response.ok) {
-      setBacklinks(backlinks.filter(b => b.id !== id));
-      alert('Backlink silindi!');
-    } else {
-      alert('Silme hatası!');
-    }
-  } catch (error) {
-    console.error('Delete backlink error:', error);
-    alert('Silme hatası!');
-  } finally {
-    setLoading(false);
-  }
-};
-
-const bulkAddBacklinks = async () => {
-  if (!bulkBacklinksText.trim()) {
-    alert('Lütfen en az bir backlink URL\'si girin!');
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const lines = bulkBacklinksText.split('\n').filter(line => line.trim());
-    const backlinksData = lines.map(line => {
-      const url = line.trim();
-      try {
-        const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
-        const domain = urlObj.hostname.replace('www.', '');
-        return {
-          url: url.startsWith('http') ? url : `https://${url}`,
-          domain,
-          status: 'active',
-          type: 'dofollow',
-        };
-      } catch (e) {
-        return {
-          url: url.startsWith('http') ? url : `https://${url}`,
-          domain: url.split('/')[0].replace('www.', ''),
-          status: 'active',
-          type: 'dofollow',
-        };
-      }
-    });
-
-    const response = await fetch('/api/seo/backlinks/bulk', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ backlinks: backlinksData }),
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      alert(`Başarılı! ${result.added} yeni, ${result.updated} güncellenmiş backlink eklendi.`);
-      setBulkBacklinksText('');
-      setShowBulkAddBacklink(false);
-      loadData();
-    } else {
-      const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }));
-      alert(`Hata: ${errorData.error || response.statusText}`);
-    }
-  } catch (error) {
-    console.error('Bulk add backlinks error:', error);
-    alert(`Hata: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
-  } finally {
-    setLoading(false);
-  }
-};
-
-const renderBacklinks = () => (
-  <div className="space-y-6">
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Backlink Yönetimi</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={async () => {
-              if (!confirm('Önceden tanımlı 13 backlink\'i eklemek istediğinizden emin misiniz?')) return;
-              try {
-                setLoading(true);
-                const response = await fetch('/api/seo/backlinks/add-predefined', {
-                  method: 'POST',
-                });
-                const result = await response.json();
-                if (response.ok) {
-                  alert(`Başarılı! ${result.added} yeni, ${result.updated} güncellenmiş backlink eklendi.`);
-                  loadData();
-                } else {
-                  alert(`Hata: ${result.error || 'Bilinmeyen hata'}\n${result.message || ''}`);
-                }
-              } catch (error) {
-                console.error('Add predefined backlinks error:', error);
-                alert(`Hata: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
-              } finally {
-                setLoading(false);
-              }
-            }}
-            disabled={loading}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Ekleniyor...' : '✨ Önceden Tanımlı Backlink\'leri Ekle (13)'}
-          </button>
-          <button
-            onClick={() => setShowBulkAddBacklink(!showBulkAddBacklink)}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-          >
-            {showBulkAddBacklink ? 'İptal' : 'Toplu Ekle'}
-          </button>
-          <button
-            onClick={() => setEditingBacklink({
-              url: '',
-              domain: '',
-              status: 'active',
-              type: 'dofollow',
-              qualityScore: 0,
-            })}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            + Yeni Backlink
-          </button>
-        </div>
-      </div>
-
-      {/* Toplu Ekle Modal */}
-      {showBulkAddBacklink && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h4 className="font-medium text-gray-900 mb-2">Toplu Backlink Ekle</h4>
-          <p className="text-sm text-gray-600 mb-3">Her satıra bir backlink URL'si yazın:</p>
-          <textarea
-            value={bulkBacklinksText}
-            onChange={(e) => setBulkBacklinksText(e.target.value)}
-            rows={8}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm mb-3"
-            placeholder="https://example.com/page1&#10;https://example2.com/page2&#10;..."
-          />
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={() => {
-                setBulkBacklinksText('');
-                setShowBulkAddBacklink(false);
-              }}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
-            >
-              İptal
-            </button>
-            <button
-              onClick={bulkAddBacklinks}
-              disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Ekleniyor...' : 'Ekle'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Backlink Form */}
-      {editingBacklink && (
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-gray-900 mb-4">
-            {editingBacklink.id ? 'Backlink Düzenle' : 'Yeni Backlink Ekle'}
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL *</label>
-              <input
-                type="url"
-                value={editingBacklink.url}
-                onChange={(e) => setEditingBacklink({...editingBacklink, url: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/page"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
-              <input
-                type="text"
-                value={editingBacklink.domain}
-                onChange={(e) => setEditingBacklink({...editingBacklink, domain: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Anchor Text</label>
-              <input
-                type="text"
-                value={editingBacklink.anchorText || ''}
-                onChange={(e) => setEditingBacklink({...editingBacklink, anchorText: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-              <select
-                value={editingBacklink.type || 'dofollow'}
-                onChange={(e) => setEditingBacklink({...editingBacklink, type: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="dofollow">Dofollow</option>
-                <option value="nofollow">Nofollow</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-              <select
-                value={editingBacklink.status || 'active'}
-                onChange={(e) => setEditingBacklink({...editingBacklink, status: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="pending">Pending</option>
-                <option value="removed">Removed</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quality Score (0-100)</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={editingBacklink.qualityScore || 0}
-                onChange={(e) => setEditingBacklink({...editingBacklink, qualityScore: parseInt(e.target.value) || 0})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Target Page</label>
-              <input
-                type="text"
-                value={editingBacklink.targetPage || ''}
-                onChange={(e) => setEditingBacklink({...editingBacklink, targetPage: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="/blog/example"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-              <input
-                type="text"
-                value={editingBacklink.notes || ''}
-                onChange={(e) => setEditingBacklink({...editingBacklink, notes: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              onClick={() => setEditingBacklink(null)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
-            >
-              İptal
-            </button>
-            <button
-              onClick={() => saveBacklink(editingBacklink)}
-              disabled={loading || !editingBacklink.url}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Kaydediliyor...' : 'Kaydet'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Backlink Listesi */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {backlinks.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  Henüz backlink eklenmemiş. Yeni backlink eklemek için yukarıdaki butona tıklayın.
-                </td>
-              </tr>
-            ) : (
-              backlinks.map((backlink) => (
-                <tr key={backlink.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <a
-                      href={backlink.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline text-sm truncate max-w-xs block"
-                      title={backlink.url}
-                    >
-                      {backlink.url}
-                    </a>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{backlink.domain}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      backlink.type === 'dofollow' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {backlink.type}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      backlink.status === 'active' ? 'bg-green-100 text-green-800' :
-                      backlink.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      backlink.status === 'removed' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {backlink.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{backlink.qualityScore || 0}/100</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => setEditingBacklink(backlink)}
-                      className="text-blue-600 hover:text-blue-900 mr-3"
-                    >
-                      Düzenle
-                    </button>
-                    <button
-                      onClick={() => backlink.id && deleteBacklink(backlink.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Sil
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-);
