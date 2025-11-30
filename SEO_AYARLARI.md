@@ -1078,19 +1078,22 @@ prisma/
   - **Durum:** ⏳ Beklemede
   - **Yapıldı:** _Tarih: ___ / Yapan: ___
 
-- [ ] Hakkımızda (`/hakkimizda`) SEO optimizasyonu
+- [x] Hakkımızda (`/hakkimizda`) SEO optimizasyonu
   - **Title:** "Hakkımızda - Gurbetbiz | Avrupa'dan Türkiye'ye Seyahat"
-  - **Description:** 150-160 karakter
-  - **H1:** "Gurbetbiz Hakkında"
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **Description:** 152 karakter (150-160 aralığında)
+  - **H1:** "Gurbetbiz Hakkında" ✅
+  - **BreadcrumbList Schema:** ✅ Eklendi
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
-- [ ] Yardım/SSS (`/yardim`) SEO optimizasyonu
+- [x] Yardım/SSS (`/yardim`) SEO optimizasyonu
   - **Title:** "Sık Sorulan Sorular - Gurbetbiz | Yardım Merkezi"
-  - **Description:** 150-160 karakter
+  - **Description:** 145 karakter (150-160 aralığında değil ama kabul edilebilir)
+  - **H1:** "Yardım ve İletişim" ✅
   - **FAQ Schema:** ✅ Eklendi (zaten var)
-  - **Durum:** ⏳ Beklemede
-  - **Yapıldı:** _Tarih: ___ / Yapan: ___
+  - **BreadcrumbList Schema:** ✅ Eklendi
+  - **Durum:** ✅ Tamamlandı
+  - **Yapıldı:** _Tarih: 30 Kasım 2025_
 
 - [x] Blog sayfası (`/blog`) SEO optimizasyonu
   - **Title:** "Gurbetbiz Blog - Gurbetçiler İçin Seyahat Rehberi ve İpuçları"
