@@ -4,7 +4,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { generateBlogContent, generateBlogTitle } from '@/lib/seo-content-generator';
-import FlightSearchForm from '@/components/FlightSearchForm';
 
 interface LandingPageClientProps {
   keyword: string;
@@ -16,36 +15,11 @@ export default function LandingPageClient({ keyword, slug, type }: LandingPageCl
   const title = generateBlogTitle(keyword);
   const content = generateBlogContent(keyword);
 
-  // Extract cities from keyword for flight search
-  const extractCities = (kw: string) => {
-    const countries = ['Almanya', 'Fransa', 'Belçika', 'Hollanda', 'Danimarka'];
-    const turkishCities = ['İstanbul', 'Ankara', 'İzmir', 'Antalya', 'Muğla'];
-    
-    let from = '';
-    let to = 'İstanbul'; // Default
-
-    countries.forEach(country => {
-      if (kw.includes(country)) {
-        from = country;
-      }
-    });
-
-    turkishCities.forEach(city => {
-      if (kw.includes(city)) {
-        to = city;
-      }
-    });
-
-    return { from, to };
-  };
-
-  const { from, to } = extractCities(keyword);
-
   return (
     <>
       <Header />
       <main className="min-h-screen bg-gray-50">
-        {/* Hero Section with Search */}
+        {/* Hero Section */}
         <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-16">
           <div className="container mx-auto px-4">
             <h1 className="text-4xl font-bold mb-4 text-center">{title}</h1>
@@ -53,11 +27,14 @@ export default function LandingPageClient({ keyword, slug, type }: LandingPageCl
               {keyword} için en uygun fiyatları Gurbetbiz'de bulun. Anında rezervasyon, güvenli ödeme.
             </p>
             
-            {/* Flight Search Form */}
-            <div className="max-w-4xl mx-auto mt-8">
-              <div className="bg-white rounded-lg shadow-xl p-6">
-                <FlightSearchForm />
-              </div>
+            {/* CTA Button */}
+            <div className="text-center mt-8">
+              <Link
+                href="/flights/search"
+                className="inline-block bg-white text-green-600 px-8 py-4 rounded-lg hover:bg-green-50 transition-colors duration-200 font-bold text-lg shadow-xl"
+              >
+                Hemen Uçak Bileti Ara
+              </Link>
             </div>
           </div>
         </section>
