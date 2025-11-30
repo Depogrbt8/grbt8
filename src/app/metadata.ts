@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    default: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
-    template: '%s | Gurbet.biz'
+    default: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
+    template: '%s | Gurbetbiz'
   },
   description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
   keywords: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     locale: 'tr_TR',
     url: 'https://gurbetbiz.app',
     siteName: 'Gurbet.biz',
-    title: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+    title: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
     description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
     images: [
       {
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'gurbetbiz.app - Avrupa\'dan Türkiye\'ye yol arkadaşınız',
+    title: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Yol Arkadaşınız',
     description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. En uygun fiyatlar, anında rezervasyon, güvenli ödeme, 7/24 destek.',
     images: ['/images/gurbetbiz-og.png'],
   },
