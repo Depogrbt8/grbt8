@@ -64,7 +64,7 @@
   },
   "scripts": {
     "dev": "next dev -p 4000",
-    "build": "node vercel-protection.js && prisma generate && next build",
+    "build": "node vercel-protection.js && prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
