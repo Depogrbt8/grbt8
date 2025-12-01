@@ -15,6 +15,7 @@ export default function AdminSidebar() {
     { href: '/grbt-8/kampanyalar', label: 'Kampanyalar', icon: '🎯' },
     { href: '/grbt-8/monitor', label: 'Monitor', icon: '🔍' },
     { href: '/grbt-8/seo', label: 'SEO Yönetimi', icon: '🚀' },
+    { href: '/grbt-8/blog', label: 'Blog Yönetimi', icon: '📝' },
   ];
 
   return (
