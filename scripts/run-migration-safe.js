@@ -73,6 +73,54 @@ async function checkAndCreateTable() {
       console.log('✅ Backlink tablosu zaten mevcut');
     }
 
+    // BlogPost tablosunu kontrol et ve oluştur
+    const blogPostTableCheck = await prisma.$queryRaw`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'BlogPost'
+      );
+    `;
+    const blogPostTableExists = (blogPostTableCheck[0]?.exists || false);
+
+    if (!blogPostTableExists) {
+      console.log('📦 BlogPost tablosu yok, oluşturuluyor...');
+      try {
+        await prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS "BlogPost" (
+            "id" TEXT NOT NULL,
+            "slug" TEXT NOT NULL,
+            "title" TEXT NOT NULL,
+            "excerpt" TEXT,
+            "content" TEXT NOT NULL,
+            "category" TEXT NOT NULL,
+            "author" TEXT NOT NULL DEFAULT 'Gurbetbiz Ekibi',
+            "coverImage" TEXT,
+            "tags" TEXT,
+            "status" TEXT NOT NULL DEFAULT 'draft',
+            "viewCount" INTEGER NOT NULL DEFAULT 0,
+            "publishedAt" TIMESTAMP(3),
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            
+            CONSTRAINT "BlogPost_pkey" PRIMARY KEY ("id")
+          )
+        `;
+
+        await prisma.$executeRaw`CREATE UNIQUE INDEX IF NOT EXISTS "BlogPost_slug_key" ON "BlogPost"("slug")`;
+        await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "BlogPost_slug_idx" ON "BlogPost"("slug")`;
+        await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "BlogPost_status_idx" ON "BlogPost"("status")`;
+        await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "BlogPost_publishedAt_idx" ON "BlogPost"("publishedAt")`;
+        await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "BlogPost_category_idx" ON "BlogPost"("category")`;
+        
+        console.log('✅ BlogPost tablosu oluşturuldu');
+      } catch (error) {
+        console.log('⚠️  BlogPost tablosu oluşturma hatası, devam ediliyor:', error.message);
+      }
+    } else {
+      console.log('✅ BlogPost tablosu zaten mevcut');
+    }
+
     if (backlinkTableExists) {
       // Her backlink'i tek tek kontrol et ve eksik olanları ekle
       console.log(`📝 ${predefinedBacklinks.length} backlink kontrol ediliyor...`);
