@@ -977,8 +977,37 @@ export default function SeoClient() {
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Anahtar Kelimeler</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Anahtar Kelimeler ({keywords.length})</h3>
           <div className="flex gap-2">
+            {keywords.length > 0 && (
+              <button
+                onClick={async () => {
+                  if (!confirm(`${keywords.length} anahtar kelime silinecek. Emin misiniz?`)) return;
+                  try {
+                    setLoading(true);
+                    const response = await fetch('/api/seo/keywords/clear-all', {
+                      method: 'DELETE',
+                    });
+                    if (response.ok) {
+                      const result = await response.json();
+                      alert(`✅ ${result.deletedCount} anahtar kelime temizlendi!`);
+                      loadData();
+                    } else {
+                      alert('❌ Temizleme hatası!');
+                    }
+                  } catch (error) {
+                    console.error('Clear keywords error:', error);
+                    alert('❌ Temizleme hatası!');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                🗑️ Tümünü Temizle
+              </button>
+            )}
             <button
               onClick={() => setShowBulkAdd(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
