@@ -13,12 +13,12 @@ interface BlogPost {
   id: string;
   slug: string;
   title: string;
-  excerpt?: string;
+  excerpt?: string | null;
   content: string;
   category: string;
   author: string;
-  coverImage?: string;
-  publishedAt?: Date;
+  coverImage?: string | null;
+  publishedAt?: Date | null;
 }
 
 interface BlogDetailClientProps {
