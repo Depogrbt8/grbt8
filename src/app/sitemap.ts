@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { prisma } from '@/lib/prisma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gurbetbiz.app'
@@ -85,5 +86,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  return staticPages;
+  // Blog sayfalarını ekle
+  const blogPages: MetadataRoute.Sitemap = [];
+  
+  try {
+    // Manuel blog yazılarını al
+    const blogPosts = await prisma.blogPost.findMany({
+      where: { status: 'published' },
+      select: { 
+        slug: true, 
+        updatedAt: true 
+      },
+    });
+
+    blogPosts.forEach(post => {
+      blogPages.push({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: post.updatedAt,
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+    });
+  } catch (error) {
+    console.log('Blog posts not available for sitemap');
+  }
+
+  return [...staticPages, ...blogPages];
 }
