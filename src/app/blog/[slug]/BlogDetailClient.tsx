@@ -24,9 +24,9 @@ export default function BlogDetailClient({ cluster, slug }: BlogDetailClientProp
     setReadTime(`${estimatedMinutes} dk`);
   }, [cluster]);
 
-  // Ana keyword'den başlık oluştur ama cluster'ı belirt
+  // Ana keyword'den başlık oluştur
   const title = cluster.country 
-    ? `${cluster.country} ${cluster.category}: Kapsamlı Rehber 2025`
+    ? `${cluster.country} ${cluster.category} | Gurbetbiz`
     : generateBlogTitle(cluster.mainKeyword);
   
   // Tüm keyword'leri kapsayan içerik üret

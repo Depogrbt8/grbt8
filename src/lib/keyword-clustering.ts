@@ -125,9 +125,9 @@ export function getClusterSlug(cluster: KeywordCluster): string {
 
 export function getClusterTitle(cluster: KeywordCluster): string {
   if (cluster.country) {
-    return `${cluster.country} ${cluster.category}: Kapsamlı Rehber 2025`;
+    return `${cluster.country} ${cluster.category} | Gurbetbiz`;
   }
-  return `${cluster.mainKeyword} | Kapsamlı Rehber`;
+  return `${cluster.mainKeyword} | Gurbetbiz`;
 }
 
 export function getClusterDescription(cluster: KeywordCluster): string {
