@@ -9,6 +9,7 @@ import Script from 'next/script';
 import { breadcrumbSchema } from '@/lib/schemas';
 import { useEffect, useState } from 'react';
 import { generateSlug, generateBlogTitle, generateBlogDescription } from '@/lib/seo-content-generator';
+import { clusterKeywords, getClusterSlug, getClusterTitle, getClusterDescription } from '@/lib/keyword-clustering';
 
 interface Keyword {
   id: string;
@@ -32,34 +33,38 @@ export default function BlogPageClient() {
       });
   }, []);
 
-  // Convert keywords to blog posts format
-  const blogPosts = keywords.slice(0, 12).map((kw) => {
-    const slug = generateSlug(kw.keyword);
-    const title = generateBlogTitle(kw.keyword);
-    const excerpt = generateBlogDescription(kw.keyword);
+  // Cluster keywords - 5 keyword = 1 blog
+  const allKeywordStrings = keywords.map(kw => kw.keyword);
+  const clusters = clusterKeywords(allKeywordStrings);
+  
+  // Convert clusters to blog posts format
+  const blogPosts = clusters.slice(0, 12).map((cluster) => {
+    const slug = getClusterSlug(cluster);
+    const title = getClusterTitle(cluster);
+    const excerpt = getClusterDescription(cluster);
     
-    const category = kw.keyword.includes('uçak') || kw.keyword.includes('uçuş') ? 'Uçuş Rehberi' :
-                     kw.keyword.includes('otel') || kw.keyword.includes('hotel') ? 'Otel Rehberi' :
-                     kw.keyword.includes('villa') ? 'Villa Rehberi' :
-                     kw.keyword.includes('araç') || kw.keyword.includes('araba') || kw.keyword.includes('rent') ? 'Araç Kiralama' :
-                     'Seyahat Rehberi';
+    const category = cluster.category || 'Seyahat Rehberi';
 
-    const image = kw.keyword.includes('uçak') || kw.keyword.includes('uçuş') ? '/images/blog/cheap-flights.jpg' :
-                  kw.keyword.includes('otel') || kw.keyword.includes('hotel') ? '/images/blog/turkey-hotels.jpg' :
-                  kw.keyword.includes('villa') ? '/images/blog/car-rental.jpg' :
-                  kw.keyword.includes('araç') || kw.keyword.includes('araba') || kw.keyword.includes('rent') ? '/images/blog/car-rental.jpg' :
+    const image = category === 'Uçak Bileti' ? '/images/blog/cheap-flights.jpg' :
+                  category === 'Otel' ? '/images/blog/turkey-hotels.jpg' :
+                  category === 'Villa' ? '/images/blog/car-rental.jpg' :
+                  category === 'Araç Kiralama' ? '/images/blog/car-rental.jpg' :
                   '/images/blog/cheap-flights.jpg';
+
+    const keywordCount = cluster.allKeywords.length;
+    const readTime = Math.max(10, keywordCount * 3); // Her keyword için 3 dk
 
     return {
       id: slug,
       title,
-      excerpt: excerpt.substring(0, 150) + '...',
+      excerpt: excerpt.substring(0, 180) + '...',
       author: 'Gurbetbiz Ekibi',
       date: new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' }),
-      readTime: '5 dk',
+      readTime: `${readTime} dk`,
       category,
       image,
       slug,
+      keywordCount, // Kaç keyword'ü kapsıyor
     };
   });
 

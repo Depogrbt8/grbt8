@@ -4,40 +4,63 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CalendarDays, Clock, User, ArrowLeft, Share2, Bookmark } from 'lucide-react';
+import { CalendarDays, Clock, User, ArrowLeft, Share2, Bookmark, Tag } from 'lucide-react';
 import { generateBlogContent, generateBlogTitle } from '@/lib/seo-content-generator';
+import type { KeywordCluster } from '@/lib/keyword-clustering';
 import { useState, useEffect } from 'react';
 
 interface BlogDetailClientProps {
-  keyword: string;
+  cluster: KeywordCluster;
   slug: string;
 }
 
-export default function BlogDetailClient({ keyword, slug }: BlogDetailClientProps) {
-  const [readTime, setReadTime] = useState('5 dk');
+export default function BlogDetailClient({ cluster, slug }: BlogDetailClientProps) {
+  const [readTime, setReadTime] = useState('10 dk');
 
   useEffect(() => {
-    // İçeriğe göre okuma süresi hesapla
-    const content = generateBlogContent(keyword);
-    const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-    const minutes = Math.ceil(wordCount / 200); // Ortalama 200 kelime/dakika
-    setReadTime(`${minutes} dk`);
-  }, [keyword]);
+    // Cluster'daki tüm keyword'ler için daha uzun içerik
+    const keywordCount = cluster.allKeywords.length;
+    const estimatedMinutes = Math.max(10, keywordCount * 3);
+    setReadTime(`${estimatedMinutes} dk`);
+  }, [cluster]);
 
-  const title = generateBlogTitle(keyword);
-  const content = generateBlogContent(keyword);
-  const category = keyword.includes('uçak') || keyword.includes('uçuş') ? 'Uçuş Rehberi' :
-                   keyword.includes('otel') || keyword.includes('hotel') ? 'Otel Rehberi' :
-                   keyword.includes('villa') ? 'Villa Rehberi' :
-                   keyword.includes('araç') || keyword.includes('araba') || keyword.includes('rent') ? 'Araç Kiralama' :
-                   'Seyahat Rehberi';
+  // Ana keyword'den başlık oluştur ama cluster'ı belirt
+  const title = cluster.country 
+    ? `${cluster.country} ${cluster.category}: Kapsamlı Rehber 2025`
+    : generateBlogTitle(cluster.mainKeyword);
+  
+  // Tüm keyword'leri kapsayan içerik üret
+  const content = generateClusteredContent(cluster);
+  const category = cluster.category || 'Seyahat Rehberi';
 
-  // Default image based on category
-  const image = keyword.includes('uçak') || keyword.includes('uçuş') ? '/images/blog/cheap-flights.jpg' :
-                keyword.includes('otel') || keyword.includes('hotel') ? '/images/blog/turkey-hotels.jpg' :
-                keyword.includes('villa') ? '/images/blog/car-rental.jpg' :
-                keyword.includes('araç') || keyword.includes('araba') || keyword.includes('rent') ? '/images/blog/car-rental.jpg' :
+  // Kategori bazlı görsel
+  const image = category === 'Uçak Bileti' ? '/images/blog/cheap-flights.jpg' :
+                category === 'Otel' ? '/images/blog/turkey-hotels.jpg' :
+                category === 'Villa' ? '/images/blog/car-rental.jpg' :
+                category === 'Araç Kiralama' ? '/images/blog/car-rental.jpg' :
                 '/images/blog/cheap-flights.jpg';
+
+  function generateClusteredContent(cluster: KeywordCluster): string {
+    // Ana içerik
+    let content = generateBlogContent(cluster.mainKeyword);
+    
+    // İlgili keyword'ler için ek bölümler ekle
+    if (cluster.relatedKeywords.length > 0) {
+      content += `\n\n<h2>Kapsanan Konular</h2>\n<p>Bu rehberde aşağıdaki konuları detaylıca inceleyeceğiz:</p>\n<ul>`;
+      cluster.allKeywords.forEach(kw => {
+        content += `\n  <li>${kw}</li>`;
+      });
+      content += `\n</ul>`;
+      
+      // Her keyword için mini bölüm ekle
+      cluster.relatedKeywords.forEach((kw, index) => {
+        content += `\n\n<h3>${index + 1}. ${kw}</h3>`;
+        content += `\n<p>${kw} için Gurbetbiz'de en uygun fiyatlar ve seçenekler. Detaylı bilgi ve rezervasyon imkanları ile yanınızdayız.</p>`;
+      });
+    }
+    
+    return content;
+  }
 
   return (
     <>
@@ -115,11 +138,31 @@ export default function BlogDetailClient({ keyword, slug }: BlogDetailClientProp
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
 
+                {/* Kapsanan Konular / Tags */}
+                {cluster.allKeywords.length > 1 && (
+                  <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center mb-3">
+                      <Tag className="w-5 h-5 mr-2 text-blue-600" />
+                      <h3 className="text-lg font-semibold text-gray-800">Bu Rehberde Kapsanan Konular ({cluster.allKeywords.length})</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {cluster.allKeywords.map((kw, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-white border border-blue-300 text-blue-700 rounded-full text-sm"
+                        >
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* CTA Section */}
                 <div className="mt-12 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{keyword} İçin Hemen Rezervasyon Yapın!</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">Hemen Rezervasyon Yapın!</h3>
                   <p className="text-gray-700 mb-4">
-                    Gurbetbiz'de {keyword.toLowerCase()} için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
+                    Gurbetbiz'de {cluster.mainKeyword.toLowerCase()} için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
                   </p>
                   <Link
                     href="/flights/search"

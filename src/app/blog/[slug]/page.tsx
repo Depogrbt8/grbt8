@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import BlogDetailClient from './BlogDetailClient';
 import { generateSlug, generateBlogTitle, generateBlogDescription } from '@/lib/seo-content-generator';
+import { clusterKeywords, getClusterSlug, getClusterTitle, getClusterDescription } from '@/lib/keyword-clustering';
 import { prisma } from '@/lib/prisma';
 import { breadcrumbSchema } from '@/lib/schemas';
 import Script from 'next/script';
@@ -12,8 +13,12 @@ export async function generateStaticParams() {
       select: { keyword: true },
     });
 
-    return keywords.map((kw) => ({
-      slug: generateSlug(kw.keyword),
+    // Cluster'lara göre slug'ları üret
+    const allKeywordStrings = keywords.map(kw => kw.keyword);
+    const clusters = clusterKeywords(allKeywordStrings);
+
+    return clusters.map((cluster) => ({
+      slug: getClusterSlug(cluster),
     }));
   } catch (error) {
     console.error('generateStaticParams error:', error);
@@ -27,23 +32,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       select: { keyword: true },
     });
 
-    const keyword = keywords.find(
-      (kw) => generateSlug(kw.keyword) === params.slug
+    // Cluster'ları oluştur ve slug'a göre bul
+    const allKeywordStrings = keywords.map(kw => kw.keyword);
+    const clusters = clusterKeywords(allKeywordStrings);
+    
+    const cluster = clusters.find(
+      (c) => getClusterSlug(c) === params.slug
     );
 
-    if (!keyword) {
+    if (!cluster) {
       return {
         title: 'Blog Yazısı Bulunamadı',
       };
     }
 
-    const title = generateBlogTitle(keyword.keyword);
-    const description = generateBlogDescription(keyword.keyword);
+    const title = getClusterTitle(cluster);
+    const description = getClusterDescription(cluster);
 
     return {
       title,
       description,
-      keywords: [keyword.keyword],
+      keywords: cluster.allKeywords,
       openGraph: {
         title,
         description,
@@ -68,18 +77,22 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
       select: { keyword: true },
     });
 
-    const keyword = keywords.find(
-      (kw) => generateSlug(kw.keyword) === params.slug
+    // Cluster'ları oluştur ve slug'a göre bul
+    const allKeywordStrings = keywords.map(kw => kw.keyword);
+    const clusters = clusterKeywords(allKeywordStrings);
+    
+    const cluster = clusters.find(
+      (c) => getClusterSlug(c) === params.slug
     );
 
-    if (!keyword) {
+    if (!cluster) {
       notFound();
     }
 
     const breadcrumbItems = [
       { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
       { name: 'Blog', url: 'https://gurbetbiz.app/blog' },
-      { name: keyword.keyword, url: `https://gurbetbiz.app/blog/${params.slug}` }
+      { name: cluster.mainKeyword, url: `https://gurbetbiz.app/blog/${params.slug}` }
     ];
 
     return (
@@ -91,7 +104,7 @@ export default async function BlogDetailPage({ params }: { params: { slug: strin
             __html: JSON.stringify(breadcrumbSchema(breadcrumbItems))
           }}
         />
-        <BlogDetailClient keyword={keyword.keyword} slug={params.slug} />
+        <BlogDetailClient cluster={cluster} slug={params.slug} />
       </>
     );
   } catch (error) {
