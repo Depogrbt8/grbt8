@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { clusterKeywords, getClusterSlug } from '@/lib/keyword-clustering'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gurbetbiz.app'
@@ -90,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogPages: MetadataRoute.Sitemap = [];
   
   try {
-    // Manuel blog yazılarını al
+    // 1. Manuel blog yazılarını al
     const blogPosts = await prisma.blogPost.findMany({
       where: { status: 'published' },
       select: { 
@@ -107,8 +108,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       });
     });
+
+    // 2. Keyword cluster'lardan oluşan blog sayfalarını al
+    const keywords = await prisma.seoKeyword.findMany({
+      select: { keyword: true },
+    });
+
+    if (keywords.length > 0) {
+      const allKeywordStrings = keywords.map(kw => kw.keyword);
+      const clusters = clusterKeywords(allKeywordStrings);
+
+      clusters.forEach(cluster => {
+        const slug = getClusterSlug(cluster);
+        blogPages.push({
+          url: `${baseUrl}/blog/${slug}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.7,
+        });
+      });
+    }
   } catch (error) {
-    console.log('Blog posts not available for sitemap');
+    console.log('Blog posts not available for sitemap:', error);
   }
 
   return [...staticPages, ...blogPages];
