@@ -190,7 +190,7 @@ export default function BlogDetailClient({ cluster, blogPost, slug }: BlogDetail
                 <div className="mt-12 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">Hemen Rezervasyon Yapın!</h3>
                   <p className="text-gray-700 mb-4">
-                    Gurbetbiz'de {cluster.mainKeyword.toLowerCase()} için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
+                    Gurbetbiz'de {cluster ? cluster.mainKeyword.toLowerCase() : 'seyahatiniz'} için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
                   </p>
                   <Link
                     href="/flights/search"
