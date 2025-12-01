@@ -16,29 +16,59 @@ interface Keyword {
   keyword: string;
 }
 
+interface ManualBlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  category: string;
+  author: string;
+  coverImage?: string;
+  publishedAt: string;
+}
+
 export default function BlogPageClient() {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
+  const [manualPosts, setManualPosts] = useState<ManualBlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/seo/keywords/public')
-      .then(res => res.json())
-      .then(data => {
-        setKeywords(data);
+    // Hem keyword-based hem de manuel blogları yükle
+    Promise.all([
+      fetch('/api/seo/keywords/public').then(res => res.json()).catch(() => []),
+      fetch('/api/blog/posts').then(res => res.json()).catch(() => []),
+    ])
+      .then(([keywordsData, manualData]) => {
+        setKeywords(keywordsData);
+        setManualPosts(manualData);
         setLoading(false);
       })
       .catch(err => {
-        console.error('Error fetching keywords:', err);
+        console.error('Error fetching data:', err);
         setLoading(false);
       });
   }, []);
 
-  // Cluster keywords - 5 keyword = 1 blog
+  // Manuel blogları formatla
+  const manualBlogFormatted = manualPosts.map(post => ({
+    id: post.slug,
+    title: post.title,
+    excerpt: post.excerpt || '',
+    author: post.author,
+    date: new Date(post.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' }),
+    readTime: '10 dk',
+    category: post.category,
+    image: post.coverImage || '/images/blog/cheap-flights.jpg',
+    slug: post.slug,
+    isManual: true,
+  }));
+
+  // Cluster keywords - 5 keyword = 1 blog (otomatik)
   const allKeywordStrings = keywords.map(kw => kw.keyword);
   const clusters = clusterKeywords(allKeywordStrings);
   
   // Convert clusters to blog posts format
-  const blogPosts = clusters.slice(0, 12).map((cluster) => {
+  const autoBlogs = clusters.slice(0, 12).map((cluster) => {
     const slug = getClusterSlug(cluster);
     const title = getClusterTitle(cluster);
     const excerpt = getClusterDescription(cluster);
@@ -65,11 +95,12 @@ export default function BlogPageClient() {
       image,
       slug,
       keywordCount, // Kaç keyword'ü kapsıyor
+      isManual: false,
     };
   });
 
-  // Combine all posts (use all keywords if available, otherwise empty)
-  const allPosts = blogPosts.length > 0 ? blogPosts : [];
+  // Manuel blogları önce göster, sonra otomatik
+  const allPosts = [...manualBlogFormatted, ...autoBlogs];
 
   const breadcrumbItems = [
     { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },

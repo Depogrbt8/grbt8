@@ -474,3 +474,26 @@ model Backlink {
   @@index([lastChecked])
   @@index([createdAt])
 }
+
+// Manuel Blog Yazıları
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String?
+  content     String   @db.Text
+  category    String
+  author      String   @default("Gurbetbiz Ekibi")
+  coverImage  String?
+  tags        String?  // JSON array as string
+  status      String   @default("draft") // draft, published
+  viewCount   Int      @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([category])
+}
