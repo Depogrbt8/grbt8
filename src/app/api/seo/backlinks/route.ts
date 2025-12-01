@@ -3,6 +3,46 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
+// Backlink tablosunu kontrol et ve gerekirse oluştur
+async function ensureBacklinkTable() {
+  try {
+    await prisma.$queryRaw`SELECT 1 FROM "Backlink" LIMIT 1`;
+  } catch (error: any) {
+    // Tablo yoksa oluştur
+    console.log('Backlink tablosu bulunamadı, oluşturuluyor...');
+    
+    await prisma.$executeRaw`
+      CREATE TABLE IF NOT EXISTS "Backlink" (
+        "id" TEXT NOT NULL,
+        "url" TEXT NOT NULL,
+        "domain" TEXT NOT NULL,
+        "anchorText" TEXT,
+        "type" TEXT NOT NULL DEFAULT 'dofollow',
+        "status" TEXT NOT NULL DEFAULT 'active',
+        "qualityScore" INTEGER NOT NULL DEFAULT 0,
+        "domainAuthority" INTEGER,
+        "pageAuthority" INTEGER,
+        "notes" TEXT,
+        "targetPage" TEXT,
+        "lastChecked" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        
+        CONSTRAINT "Backlink_pkey" PRIMARY KEY ("id")
+      )
+    `;
+
+    await prisma.$executeRaw`CREATE UNIQUE INDEX IF NOT EXISTS "Backlink_url_key" ON "Backlink"("url")`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "Backlink_domain_idx" ON "Backlink"("domain")`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "Backlink_status_idx" ON "Backlink"("status")`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "Backlink_qualityScore_idx" ON "Backlink"("qualityScore")`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "Backlink_lastChecked_idx" ON "Backlink"("lastChecked")`;
+    await prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "Backlink_createdAt_idx" ON "Backlink"("createdAt")`;
+    
+    console.log('Backlink tablosu başarıyla oluşturuldu!');
+  }
+}
+
 // GET - Tüm backlink'leri listele
 export async function GET(request: NextRequest) {
   try {
@@ -10,6 +50,9 @@ export async function GET(request: NextRequest) {
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Tablo kontrolü
+    await ensureBacklinkTable();
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -46,6 +89,9 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Tablo kontrolü
+    await ensureBacklinkTable();
 
     const body = await request.json();
     const {
