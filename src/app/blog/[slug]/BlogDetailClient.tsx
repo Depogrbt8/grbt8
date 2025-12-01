@@ -9,36 +9,64 @@ import { generateBlogContent, generateBlogTitle } from '@/lib/seo-content-genera
 import type { KeywordCluster } from '@/lib/keyword-clustering';
 import { useState, useEffect } from 'react';
 
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  content: string;
+  category: string;
+  author: string;
+  coverImage?: string;
+  publishedAt?: Date;
+}
+
 interface BlogDetailClientProps {
-  cluster: KeywordCluster;
+  cluster?: KeywordCluster;
+  blogPost?: BlogPost;
   slug: string;
 }
 
-export default function BlogDetailClient({ cluster, slug }: BlogDetailClientProps) {
+export default function BlogDetailClient({ cluster, blogPost, slug }: BlogDetailClientProps) {
   const [readTime, setReadTime] = useState('10 dk');
 
   useEffect(() => {
-    // Cluster'daki tüm keyword'ler için daha uzun içerik
-    const keywordCount = cluster.allKeywords.length;
-    const estimatedMinutes = Math.max(10, keywordCount * 3);
-    setReadTime(`${estimatedMinutes} dk`);
-  }, [cluster]);
+    if (blogPost) {
+      // Manuel blog için içerik uzunluğuna göre okuma süresi hesapla
+      const wordCount = blogPost.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+      const estimatedMinutes = Math.max(5, Math.ceil(wordCount / 200));
+      setReadTime(`${estimatedMinutes} dk`);
+    } else if (cluster) {
+      // Cluster'daki tüm keyword'ler için daha uzun içerik
+      const keywordCount = cluster.allKeywords.length;
+      const estimatedMinutes = Math.max(10, keywordCount * 3);
+      setReadTime(`${estimatedMinutes} dk`);
+    }
+  }, [cluster, blogPost]);
 
-  // Ana keyword'den başlık oluştur
-  const title = cluster.country 
-    ? `${cluster.country} ${cluster.category} | Gurbetbiz`
-    : generateBlogTitle(cluster.mainKeyword);
+  // Manuel blog veya cluster'dan verileri al
+  const title = blogPost ? blogPost.title : 
+                cluster ? (cluster.country 
+                  ? `${cluster.country} ${cluster.category} | Gurbetbiz`
+                  : generateBlogTitle(cluster.mainKeyword)) : '';
   
-  // Tüm keyword'leri kapsayan içerik üret
-  const content = generateClusteredContent(cluster);
-  const category = cluster.category || 'Seyahat Rehberi';
+  const content = blogPost ? blogPost.content : 
+                  cluster ? generateClusteredContent(cluster) : '';
+  
+  const category = blogPost ? blogPost.category : 
+                   cluster ? (cluster.category || 'Seyahat Rehberi') : 'Blog';
 
-  // Kategori bazlı görsel
-  const image = category === 'Uçak Bileti' ? '/images/blog/cheap-flights.jpg' :
-                category === 'Otel' ? '/images/blog/turkey-hotels.jpg' :
-                category === 'Villa' ? '/images/blog/car-rental.jpg' :
-                category === 'Araç Kiralama' ? '/images/blog/car-rental.jpg' :
-                '/images/blog/cheap-flights.jpg';
+  const image = blogPost?.coverImage || 
+                (category === 'Uçak Bileti' ? '/images/blog/cheap-flights.jpg' :
+                 category === 'Otel' ? '/images/blog/turkey-hotels.jpg' :
+                 category === 'Villa' ? '/images/blog/car-rental.jpg' :
+                 category === 'Araç Kiralama' ? '/images/blog/car-rental.jpg' :
+                 '/images/blog/cheap-flights.jpg');
+
+  const author = blogPost?.author || 'Gurbetbiz Ekibi';
+  const date = blogPost?.publishedAt 
+    ? new Date(blogPost.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' });
 
   function generateClusteredContent(cluster: KeywordCluster): string {
     // Ana içerik
@@ -80,11 +108,11 @@ export default function BlogDetailClient({ cluster, slug }: BlogDetailClientProp
             <div className="flex items-center space-x-6 text-green-100">
               <div className="flex items-center">
                 <User className="w-5 h-5 mr-2" />
-                Gurbetbiz Ekibi
+                {author}
               </div>
               <div className="flex items-center">
                 <CalendarDays className="w-5 h-5 mr-2" />
-                {new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {date}
               </div>
               <div className="flex items-center">
                 <Clock className="w-5 h-5 mr-2" />
@@ -139,7 +167,7 @@ export default function BlogDetailClient({ cluster, slug }: BlogDetailClientProp
                 />
 
                 {/* Kapsanan Konular / Tags */}
-                {cluster.allKeywords.length > 1 && (
+                {cluster && cluster.allKeywords.length > 1 && (
                   <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center mb-3">
                       <Tag className="w-5 h-5 mr-2 text-blue-600" />
