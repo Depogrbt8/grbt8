@@ -2,6 +2,43 @@
  * Anahtar kelimelere göre otomatik içerik oluşturma helper'ı
  */
 
+// İngilizce keyword'leri Türkçeye çevir
+function translateKeyword(keyword: string): string {
+  const translations: { [key: string]: string } = {
+    'Buy now pay later flight Turkey': 'Şimdi Al Sonra Öde Türkiye Uçak Bileti',
+    'Installment flight tickets Europe Turkey': 'Taksitli Uçak Bileti Avrupa Türkiye',
+    'Europe Turkey installment travel platform': 'Avrupa Türkiye Taksitli Seyahat Platformu',
+    'Cheap flights to Turkey': 'Türkiye\'ye Ucuz Uçak Biletleri',
+    'Flights to Turkey from Europe': 'Avrupa\'dan Türkiye\'ye Uçuşlar',
+    'Turkey travel deals': 'Türkiye Seyahat Fırsatları',
+    'flights Turkey': 'Türkiye uçuşları',
+    'flight Turkey': 'Türkiye uçuşu',
+    'cheap flights': 'ucuz uçak biletleri',
+    'installment': 'taksitli',
+    'buy now pay later': 'şimdi al sonra öde',
+    'travel deals': 'seyahat fırsatları',
+    'Turkey hotels': 'Türkiye otelleri',
+    'hotel': 'otel',
+    'hotels': 'oteller',
+    'rent a car': 'araç kiralama',
+    'car rental': 'araç kiralama',
+  };
+
+  // Tam eşleşme kontrolü
+  if (translations[keyword]) {
+    return translations[keyword];
+  }
+
+  // Kısmi eşleşme (case-insensitive)
+  let translatedKeyword = keyword;
+  for (const [english, turkish] of Object.entries(translations)) {
+    const regex = new RegExp(english, 'gi');
+    translatedKeyword = translatedKeyword.replace(regex, turkish);
+  }
+
+  return translatedKeyword;
+}
+
 export function generateSlug(keyword: string): string {
   return keyword
     .toLowerCase()
@@ -16,55 +53,68 @@ export function generateSlug(keyword: string): string {
 }
 
 export function generateBlogTitle(keyword: string): string {
-  // Anahtar kelimeyi başlığa dönüştür
-  if (keyword.includes('ucuz uçak bileti') || keyword.includes('uçuş')) {
-    return `${keyword} | Gurbetbiz Rehberi`;
-  } else if (keyword.includes('otel') || keyword.includes('hotel')) {
-    return `${keyword} | Gurbetbiz'de En Uygun Fiyatlar`;
-  } else if (keyword.includes('villa') || keyword.includes('kiralık')) {
-    return `${keyword} | Gurbetbiz'de Güvenli Rezervasyon`;
-  } else if (keyword.includes('araç') || keyword.includes('araba') || keyword.includes('rent')) {
-    return `${keyword} | Gurbetbiz'de Hızlı Rezervasyon`;
+  // İngilizce keyword'leri Türkçeye çevir
+  const translatedKeyword = translateKeyword(keyword);
+  
+  // Başlığı oluştur
+  if (translatedKeyword.includes('ucuz uçak bileti') || translatedKeyword.includes('uçuş') || translatedKeyword.includes('uçak bileti')) {
+    return `${translatedKeyword} | Gurbetbiz Rehberi`;
+  } else if (translatedKeyword.includes('otel') || translatedKeyword.includes('konaklama')) {
+    return `${translatedKeyword} | Gurbetbiz'de En Uygun Fiyatlar`;
+  } else if (translatedKeyword.includes('villa') || translatedKeyword.includes('kiralık')) {
+    return `${translatedKeyword} | Gurbetbiz'de Güvenli Rezervasyon`;
+  } else if (translatedKeyword.includes('araç') || translatedKeyword.includes('araba') || translatedKeyword.includes('kiralama')) {
+    return `${translatedKeyword} | Gurbetbiz'de Hızlı Rezervasyon`;
   }
-  return `${keyword} | Gurbetbiz Seyahat Rehberi`;
+  return `${translatedKeyword} | Gurbetbiz Seyahat Rehberi`;
 }
 
 export function generateBlogDescription(keyword: string): string {
+  // İngilizce keyword'leri Türkçeye çevir
+  const translatedKeyword = translateKeyword(keyword);
+  
   const descriptions: { [key: string]: string } = {
-    'ucuz uçak bileti': `En uygun fiyatlı ${keyword} için Gurbetbiz'i tercih edin. Avrupa'dan Türkiye'ye en ucuz uçak biletleri, anında rezervasyon, güvenli ödeme.`,
-    'otel': `${keyword} için Gurbetbiz'de binlerce otel seçeneği. En uygun fiyat garantisi, ücretsiz iptal, güvenli rezervasyon.`,
-    'villa': `${keyword} için Gurbetbiz'de özel villalar. Havuzlu, deniz manzaralı, özel villalar en uygun fiyatlarla.`,
-    'araç': `${keyword} için Gurbetbiz'de havalimanı teslim. En uygun fiyatlar, sigorta dahil, güvenli rezervasyon.`,
+    'ucuz uçak bileti': `En uygun fiyatlı ${translatedKeyword} için Gurbetbiz'i tercih edin. Avrupa'dan Türkiye'ye en ucuz uçak biletleri, anında rezervasyon, güvenli ödeme.`,
+    'uçak bileti': `En uygun fiyatlı ${translatedKeyword} için Gurbetbiz'i tercih edin. Avrupa'dan Türkiye'ye en ucuz uçak biletleri, anında rezervasyon, güvenli ödeme.`,
+    'taksitli': `${translatedKeyword} ile Gurbetbiz'de kolayca ödeme yapın. Şimdi al sonra öde seçeneği, taksit imkanı, güvenli rezervasyon.`,
+    'otel': `${translatedKeyword} için Gurbetbiz'de binlerce otel seçeneği. En uygun fiyat garantisi, ücretsiz iptal, güvenli rezervasyon.`,
+    'villa': `${translatedKeyword} için Gurbetbiz'de özel villalar. Havuzlu, deniz manzaralı, özel villalar en uygun fiyatlarla.`,
+    'araç': `${translatedKeyword} için Gurbetbiz'de havalimanı teslim. En uygun fiyatlar, sigorta dahil, güvenli rezervasyon.`,
   };
 
   for (const [key, desc] of Object.entries(descriptions)) {
-    if (keyword.toLowerCase().includes(key)) {
+    if (translatedKeyword.toLowerCase().includes(key)) {
       return desc;
     }
   }
 
-  return `${keyword} için Gurbetbiz'de en uygun fiyatlar. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.`;
+  return `${translatedKeyword} için Gurbetbiz'de en uygun fiyatlar. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.`;
 }
 
 export function generateBlogContent(keyword: string): string {
+  // İngilizce keyword'leri Türkçeye çevir
+  const translatedKeyword = translateKeyword(keyword);
+  
   const contentTemplates = {
-    'ucuz uçak bileti': generateFlightContent(keyword),
-    'uçuş': generateFlightContent(keyword),
-    'otel': generateHotelContent(keyword),
-    'hotel': generateHotelContent(keyword),
-    'villa': generateVillaContent(keyword),
-    'araç': generateCarContent(keyword),
-    'araba': generateCarContent(keyword),
-    'rent': generateCarContent(keyword),
+    'ucuz uçak bileti': generateFlightContent(translatedKeyword),
+    'uçak bileti': generateFlightContent(translatedKeyword),
+    'uçuş': generateFlightContent(translatedKeyword),
+    'taksitli': generateInstallmentFlightContent(translatedKeyword),
+    'otel': generateHotelContent(translatedKeyword),
+    'hotel': generateHotelContent(translatedKeyword),
+    'villa': generateVillaContent(translatedKeyword),
+    'araç': generateCarContent(translatedKeyword),
+    'araba': generateCarContent(translatedKeyword),
+    'kiralama': generateCarContent(translatedKeyword),
   };
 
   for (const [key, generator] of Object.entries(contentTemplates)) {
-    if (keyword.toLowerCase().includes(key)) {
+    if (translatedKeyword.toLowerCase().includes(key)) {
       return generator;
     }
   }
 
-  return generateGenericContent(keyword);
+  return generateGenericContent(translatedKeyword);
 }
 
 function generateFlightContent(keyword: string): string {
@@ -76,11 +126,11 @@ function generateFlightContent(keyword: string): string {
 
   return `
     <h2>${keyword}: Gurbetçiler İçin Kapsamlı Rehber</h2>
-    <p>${country}’da yaşayan gurbetçiler için Türkiye’ye en uygun fiyatlı uçak biletleri Gurbetbiz’de. Yılların deneyimi ile ${country}’dan Türkiye’ye giden tüm havayollarının fiyatlarını karşılaştırıyoruz.</p>
+    <p>${country}'da yaşayan gurbetçiler için Türkiye'ye en uygun fiyatlı uçak biletleri Gurbetbiz'de. Yılların deneyimi ile ${country}'dan Türkiye'ye giden tüm havayollarının fiyatlarını karşılaştırıyoruz.</p>
     
     <h3>${keyword} İçin Neden Gurbetbiz?</h3>
     <ul>
-      <li>Avrupa’dan Türkiye’ye tüm rotalar için en uygun fiyatlar</li>
+      <li>Avrupa'dan Türkiye'ye tüm rotalar için en uygun fiyatlar</li>
       <li>Anında rezervasyon ve onay</li>
       <li>Güvenli ödeme sistemi</li>
       <li>7/24 Türkçe müşteri desteği</li>
@@ -90,13 +140,43 @@ function generateFlightContent(keyword: string): string {
     <h3>${keyword} Rezervasyon İpuçları</h3>
     <p>En uygun fiyatlı ${keyword} için erken rezervasyon yapın. Özellikle bayram ve yaz sezonu için en az 3 ay önceden rezervasyon yapmanızı öneriyoruz. Gurbetbiz fiyat alarmı özelliği ile ideal fiyatı yakalayın.</p>
 
-    <h3>${country}’dan Türkiye’ye Uçuş Seçenekleri</h3>
-    <p>Gurbetbiz’de ${country}’dan Türkiye’ye direkt ve aktarmalı uçuş seçenekleri bulabilirsiniz. İstanbul, Ankara, İzmir, Antalya ve diğer Türk şehirlerine uçuş seçenekleri mevcuttur.</p>
+    <h3>${country}'dan Türkiye'ye Uçuş Seçenekleri</h3>
+    <p>Gurbetbiz'de ${country}'dan Türkiye'ye direkt ve aktarmalı uçuş seçenekleri bulabilirsiniz. İstanbul, Ankara, İzmir, Antalya ve diğer Türk şehirlerine uçuş seçenekleri mevcuttur.</p>
 
     <div class="bg-green-50 border-l-4 border-green-500 p-6 my-8">
       <h3 class="text-lg font-semibold text-green-800 mb-2">Gurbetbiz Özel İpucu</h3>
       <p class="text-green-700">
         ${keyword} için en uygun fiyatları bulmak için esnek tarih araması yapın. Birkaç gün önce veya sonra uçuş yaparak %30'a varan tasarruf sağlayabilirsiniz!
+      </p>
+    </div>
+  `;
+}
+
+function generateInstallmentFlightContent(keyword: string): string {
+  return `
+    <h2>${keyword}: Esnek Ödeme ile Türkiye'ye Uçun</h2>
+    <p>Gurbetbiz'de şimdi al sonra öde ve taksitli ödeme seçenekleriyle Türkiye'ye uçmak artık çok daha kolay! Bütçenize uygun ödeme planlarıyla vatan yolculuğunuzu planlayın.</p>
+    
+    <h3>Taksitli Uçak Bileti Avantajları</h3>
+    <ul>
+      <li>Şimdi al sonra öde imkanı</li>
+      <li>3, 6, 9 veya 12 taksit seçenekleri</li>
+      <li>Faiz oranları rekabetçi</li>
+      <li>Kredi kartı veya banka transferi ile ödeme</li>
+      <li>Anında rezervasyon onayı</li>
+      <li>7/24 Türkçe müşteri desteği</li>
+    </ul>
+
+    <h3>Nasıl Çalışır?</h3>
+    <p>Gurbetbiz'de ${keyword} için rezervasyon yaparken ödeme adımında "Taksitli Ödeme" seçeneğini seçin. İstediğiniz taksit sayısını belirleyin ve güvenli ödeme ile rezervasyonunuzu tamamlayın. İlk taksit hemen alınır, kalan ödemeler belirlediğiniz tarihlerde otomatik olarak çekilir.</p>
+
+    <h3>Kimler Yararlanabilir?</h3>
+    <p>Avrupa'da yaşayan tüm gurbetçiler taksitli uçak bileti imkanından yararlanabilir. Kredi kartınız veya banka hesabınız olması yeterli.</p>
+
+    <div class="bg-green-50 border-l-4 border-green-500 p-6 my-8">
+      <h3 class="text-lg font-semibold text-green-800 mb-2">Gurbetbiz Özel Fırsat</h3>
+      <p class="text-green-700">
+        İlk rezervasyonunuzda 12 taksit seçeneği ile ilk 3 ay faizsiz ödeme imkanı! Şimdi kayıt olun ve özel fırsatlardan yararlanın.
       </p>
     </div>
   `;
