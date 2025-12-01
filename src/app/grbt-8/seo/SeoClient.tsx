@@ -1118,6 +1118,35 @@ export default function SeoClient() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Backlink Yönetimi</h3>
           <div className="flex gap-2">
+          {backlinks.length === 0 && (
+            <button
+              onClick={async () => {
+                if (!confirm('13 önceden tanımlı backlink\'i eklemek istediğinizden emin misiniz?')) return;
+                try {
+                  setLoading(true);
+                  const response = await fetch('/api/seo/backlinks/add-predefined', {
+                    method: 'POST',
+                  });
+                  const result = await response.json();
+                  if (response.ok) {
+                    alert(`✅ Başarılı! ${result.added} yeni backlink eklendi.`);
+                    loadData();
+                  } else {
+                    alert(`❌ Hata: ${result.error || 'Bilinmeyen hata'}\n${result.message || ''}`);
+                  }
+                } catch (error) {
+                  console.error('Add predefined backlinks error:', error);
+                  alert(`❌ Hata: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Ekleniyor...' : '✨ 13 Backlink\'i Ekle'}
+            </button>
+          )}
           <button
               onClick={() => setShowBulkAddBacklink(!showBulkAddBacklink)}
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"

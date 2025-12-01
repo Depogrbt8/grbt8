@@ -74,62 +74,70 @@ async function checkAndCreateTable() {
     }
 
     if (backlinkTableExists) {
-      // Mevcut backlink sayısını kontrol et
-      const existingCount = await prisma.$queryRaw`SELECT COUNT(*) as count FROM "Backlink";`;
-      const count = parseInt(existingCount[0]?.count || '0');
+      // Her backlink'i tek tek kontrol et ve eksik olanları ekle
+      console.log(`📝 ${predefinedBacklinks.length} backlink kontrol ediliyor...`);
+      let addedCount = 0;
+      let updatedCount = 0;
 
-      if (count < predefinedBacklinks.length) {
-        console.log(`📝 ${predefinedBacklinks.length} backlink ekleniyor...`);
-        let addedCount = 0;
-
-        for (const backlinkData of predefinedBacklinks) {
+      for (const backlinkData of predefinedBacklinks) {
+        try {
+          let extractedDomain = backlinkData.domain;
           try {
-            let extractedDomain = backlinkData.domain;
-            try {
-              const urlObj = new URL(backlinkData.url);
-              extractedDomain = urlObj.hostname.replace('www.', '');
-            } catch (e) {
-              // Domain zaten verilmişse kullan
-            }
-
-            const normalizedUrl = backlinkData.url.endsWith('/') && backlinkData.url !== 'https://' 
-              ? backlinkData.url.slice(0, -1) 
-              : backlinkData.url;
-
-            // Prisma Client ile upsert (daha güvenli)
-            try {
-              await prisma.backlink.upsert({
-                where: { url: normalizedUrl },
-                update: {
-                  domain: extractedDomain,
-                  anchorText: backlinkData.anchorText || null,
-                  type: backlinkData.type,
-                  status: backlinkData.status,
-                  qualityScore: backlinkData.qualityScore,
-                  lastChecked: new Date(),
-                  updatedAt: new Date(),
-                },
-                create: {
-                  url: normalizedUrl,
-                  domain: extractedDomain,
-                  anchorText: backlinkData.anchorText || null,
-                  type: backlinkData.type,
-                  status: backlinkData.status,
-                  qualityScore: backlinkData.qualityScore,
-                },
-              });
-              addedCount++;
-            } catch (upsertError) {
-              // Hata durumunda devam et
-              console.log(`⚠️  ${normalizedUrl} eklenirken hata:`, upsertError.message);
-            }
-          } catch (error) {
-            // Hata durumunda devam et
+            const urlObj = new URL(backlinkData.url);
+            extractedDomain = urlObj.hostname.replace('www.', '');
+          } catch (e) {
+            // Domain zaten verilmişse kullan
           }
+
+          const normalizedUrl = backlinkData.url.endsWith('/') && backlinkData.url !== 'https://' 
+            ? backlinkData.url.slice(0, -1) 
+            : backlinkData.url;
+
+          // Önce mevcut olup olmadığını kontrol et
+          const existing = await prisma.backlink.findUnique({
+            where: { url: normalizedUrl },
+          });
+
+          if (existing) {
+            // Mevcut ise güncelle
+            await prisma.backlink.update({
+              where: { url: normalizedUrl },
+              data: {
+                domain: extractedDomain,
+                anchorText: backlinkData.anchorText || null,
+                type: backlinkData.type,
+                status: backlinkData.status,
+                qualityScore: backlinkData.qualityScore,
+                lastChecked: new Date(),
+                updatedAt: new Date(),
+              },
+            });
+            updatedCount++;
+          } else {
+            // Yoksa oluştur
+            await prisma.backlink.create({
+              data: {
+                url: normalizedUrl,
+                domain: extractedDomain,
+                anchorText: backlinkData.anchorText || null,
+                type: backlinkData.type,
+                status: backlinkData.status,
+                qualityScore: backlinkData.qualityScore,
+              },
+            });
+            addedCount++;
+            console.log(`  ✅ Eklendi: ${normalizedUrl}`);
+          }
+        } catch (error) {
+          // Hata durumunda devam et
+          console.log(`⚠️  ${backlinkData.url} işlenirken hata:`, error.message);
         }
-        console.log(`✅ ${addedCount} backlink eklendi`);
+      }
+      
+      if (addedCount > 0 || updatedCount > 0) {
+        console.log(`✅ ${addedCount} yeni backlink eklendi, ${updatedCount} backlink güncellendi`);
       } else {
-        console.log(`✅ Backlink'ler zaten eklenmiş (${count} adet)`);
+        console.log(`✅ Tüm backlink'ler zaten mevcut (${predefinedBacklinks.length} adet)`);
       }
     }
   } catch (error) {
