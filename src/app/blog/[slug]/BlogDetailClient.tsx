@@ -4,9 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CalendarDays, Clock, User, ArrowLeft, Share2, Bookmark, Tag } from 'lucide-react';
-import { generateBlogContent, generateBlogTitle } from '@/lib/seo-content-generator';
-import type { KeywordCluster } from '@/lib/keyword-clustering';
+import { CalendarDays, Clock, User, ArrowLeft, Share2, Bookmark } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface BlogPost {
@@ -22,73 +20,29 @@ interface BlogPost {
 }
 
 interface BlogDetailClientProps {
-  cluster?: KeywordCluster;
-  blogPost?: BlogPost;
+  blogPost: BlogPost;
   slug: string;
 }
 
-export default function BlogDetailClient({ cluster, blogPost, slug }: BlogDetailClientProps) {
+export default function BlogDetailClient({ blogPost, slug }: BlogDetailClientProps) {
   const [readTime, setReadTime] = useState('10 dk');
 
   useEffect(() => {
-    if (blogPost) {
-      // Manuel blog için içerik uzunluğuna göre okuma süresi hesapla
-      const wordCount = blogPost.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-      const estimatedMinutes = Math.max(5, Math.ceil(wordCount / 200));
-      setReadTime(`${estimatedMinutes} dk`);
-    } else if (cluster) {
-      // Cluster'daki tüm keyword'ler için daha uzun içerik
-      const keywordCount = cluster.allKeywords.length;
-      const estimatedMinutes = Math.max(10, keywordCount * 3);
-      setReadTime(`${estimatedMinutes} dk`);
-    }
-  }, [cluster, blogPost]);
+    // İçerik uzunluğuna göre okuma süresi hesapla
+    const wordCount = blogPost.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const estimatedMinutes = Math.max(5, Math.ceil(wordCount / 200));
+    setReadTime(`${estimatedMinutes} dk`);
+  }, [blogPost]);
 
-  // Manuel blog veya cluster'dan verileri al
-  const title = blogPost ? blogPost.title : 
-                cluster ? (cluster.country 
-                  ? `${cluster.country} ${cluster.category} | Gurbetbiz`
-                  : generateBlogTitle(cluster.mainKeyword)) : '';
-  
-  const content = blogPost ? blogPost.content : 
-                  cluster ? generateClusteredContent(cluster) : '';
-  
-  const category = blogPost ? blogPost.category : 
-                   cluster ? (cluster.category || 'Seyahat Rehberi') : 'Blog';
-
-  const image = blogPost?.coverImage || 
-                (category === 'Uçak Bileti' ? '/images/blog/cheap-flights.jpg' :
-                 category === 'Otel' ? '/images/blog/turkey-hotels.jpg' :
-                 category === 'Villa' ? '/images/blog/car-rental.jpg' :
-                 category === 'Araç Kiralama' ? '/images/blog/car-rental.jpg' :
-                 '/images/blog/cheap-flights.jpg');
-
-  const author = blogPost?.author || 'Gurbetbiz Ekibi';
-  const date = blogPost?.publishedAt 
+  // Blog verilerini al
+  const title = blogPost.title;
+  const content = blogPost.content;
+  const category = blogPost.category;
+  const image = blogPost.coverImage || '/images/blog/cheap-flights.jpg';
+  const author = blogPost.author;
+  const date = blogPost.publishedAt 
     ? new Date(blogPost.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })
     : new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  function generateClusteredContent(cluster: KeywordCluster): string {
-    // Ana içerik
-    let content = generateBlogContent(cluster.mainKeyword);
-    
-    // İlgili keyword'ler için ek bölümler ekle
-    if (cluster.relatedKeywords.length > 0) {
-      content += `\n\n<h2>Kapsanan Konular</h2>\n<p>Bu rehberde aşağıdaki konuları detaylıca inceleyeceğiz:</p>\n<ul>`;
-      cluster.allKeywords.forEach(kw => {
-        content += `\n  <li>${kw}</li>`;
-      });
-      content += `\n</ul>`;
-      
-      // Her keyword için mini bölüm ekle
-      cluster.relatedKeywords.forEach((kw, index) => {
-        content += `\n\n<h3>${index + 1}. ${kw}</h3>`;
-        content += `\n<p>${kw} için Gurbetbiz'de en uygun fiyatlar ve seçenekler. Detaylı bilgi ve rezervasyon imkanları ile yanınızdayız.</p>`;
-      });
-    }
-    
-    return content;
-  }
 
   return (
     <>
@@ -166,31 +120,11 @@ export default function BlogDetailClient({ cluster, blogPost, slug }: BlogDetail
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
 
-                {/* Kapsanan Konular / Tags */}
-                {cluster && cluster.allKeywords.length > 1 && (
-                  <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center mb-3">
-                      <Tag className="w-5 h-5 mr-2 text-blue-600" />
-                      <h3 className="text-lg font-semibold text-gray-800">Bu Rehberde Kapsanan Konular ({cluster.allKeywords.length})</h3>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {cluster.allKeywords.map((kw, index) => (
-                        <span 
-                          key={index}
-                          className="px-3 py-1 bg-white border border-blue-300 text-blue-700 rounded-full text-sm"
-                        >
-                          {kw}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* CTA Section */}
                 <div className="mt-12 p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">Hemen Rezervasyon Yapın!</h3>
                   <p className="text-gray-700 mb-4">
-                    Gurbetbiz'de {cluster ? cluster.mainKeyword.toLowerCase() : 'seyahatiniz'} için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
+                    Gurbetbiz'de seyahatiniz için en uygun fiyatları bulun. Güvenli rezervasyon, anında onay, 7/24 müşteri desteği.
                   </p>
                   <Link
                     href="/flights/search"
