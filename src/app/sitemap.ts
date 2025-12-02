@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
-import { clusterKeywords, getClusterSlug } from '@/lib/keyword-clustering'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gurbetbiz.app'
@@ -87,11 +86,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Blog sayfalarını ekle
+  // Blog sayfalarını ekle - SADECE MANUEL BLOGLAR
   const blogPages: MetadataRoute.Sitemap = [];
   
   try {
-    // 1. Manuel blog yazılarını al
+    // Manuel blog yazılarını al (otomatik keyword cluster'ları KALDIRıLDI)
     const blogPosts = await prisma.blogPost.findMany({
       where: { status: 'published' },
       select: { 
@@ -109,25 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     });
 
-    // 2. Keyword cluster'lardan oluşan blog sayfalarını al
-    const keywords = await prisma.seoKeyword.findMany({
-      select: { keyword: true },
-    });
-
-    if (keywords.length > 0) {
-      const allKeywordStrings = keywords.map(kw => kw.keyword);
-      const clusters = clusterKeywords(allKeywordStrings);
-
-      clusters.forEach(cluster => {
-        const slug = getClusterSlug(cluster);
-        blogPages.push({
-          url: `${baseUrl}/blog/${slug}`,
-          lastModified: new Date(),
-          changeFrequency: 'weekly',
-          priority: 0.7,
-        });
-      });
-    }
+    console.log(`📊 Sitemap: ${staticPages.length} statik sayfa + ${blogPosts.length} blog yazısı = ${staticPages.length + blogPosts.length} toplam sayfa`);
   } catch (error) {
     console.log('Blog posts not available for sitemap:', error);
   }
