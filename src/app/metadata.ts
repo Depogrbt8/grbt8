@@ -5,6 +5,14 @@ export const metadata: Metadata = {
     default: 'Gurbetbiz ✈️ Almanya, Fransa, Hollanda\'dan Türkiye\'ye Ucuz Uçak Bileti',
     template: '%s | Gurbetbiz'
   },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.svg', type: 'image/svg+xml' },
+    ],
+  },
   description: '🇩🇪🇫🇷🇳🇱 Avrupa\'dan Türkiye\'ye 79€\'dan başlayan fiyatlarla uçak bileti! Berlin, Paris, Amsterdam\'dan İstanbul, Ankara, İzmir\'e ✈️ Hemen karşılaştır, anında rezervasyon yap. Türkçe destek 7/24.',
   keywords: [
     'uçak bileti',

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <!-- Yeşil arka plan -->
+  <rect width="180" height="180" fill="#4CAF50"/>
+  
+  <!-- "g" harfi - beyaz, italic -->
+  <text x="42" y="130" font-family="Arial, sans-serif" font-size="100" font-weight="bold" font-style="italic" fill="#FFFFFF">g</text>
+  
+  <!-- "b" harfi - siyah -->
+  <text x="92" y="130" font-family="Arial, sans-serif" font-size="100" font-weight="bold" fill="#000000">b</text>
+</svg>
+
