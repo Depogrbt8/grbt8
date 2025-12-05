@@ -51,14 +51,14 @@ export default async function RootLayout({
       <head>
         {/* Robots meta tag'ler metadata.ts'de yönetiliyor */}
         
-        {/* Hreflang Tags - Avrupa ülkeleri için */}
+        {/* Hreflang Tags - Avrupa ülkeleri için ülke bazlı landing page'lere yönlendirme */}
         <link rel="alternate" hrefLang="tr" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-DE" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-FR" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-NL" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-BE" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-AT" href="https://gurbetbiz.app" />
-        <link rel="alternate" hrefLang="tr-CH" href="https://gurbetbiz.app" />
+        <link rel="alternate" hrefLang="tr-DE" href="https://gurbetbiz.app/almanya-turkiye-ucak-bileti" />
+        <link rel="alternate" hrefLang="tr-FR" href="https://gurbetbiz.app/fransa-turkiye-ucak-bileti" />
+        <link rel="alternate" hrefLang="tr-NL" href="https://gurbetbiz.app/hollanda-turkiye-ucak-bileti" />
+        <link rel="alternate" hrefLang="tr-BE" href="https://gurbetbiz.app/belcika-turkiye-ucak-bileti" />
+        <link rel="alternate" hrefLang="tr-AT" href="https://gurbetbiz.app/avusturya-turkiye-ucak-bileti" />
+        <link rel="alternate" hrefLang="tr-CH" href="https://gurbetbiz.app/isvicre-turkiye-ucak-bileti" />
         <link rel="alternate" hrefLang="x-default" href="https://gurbetbiz.app" />
         
         {/* Google Search Console Verification */}

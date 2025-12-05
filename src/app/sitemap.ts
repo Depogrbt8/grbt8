@@ -24,6 +24,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    // Ülke bazlı landing page'ler - SEO için yüksek öncelikli
+    {
+      url: `${baseUrl}/almanya-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/fransa-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/hollanda-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/belcika-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/avusturya-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/isvicre-turkiye-ucak-bileti`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
     {
       url: `${baseUrl}/check-in`,
       lastModified: new Date(),

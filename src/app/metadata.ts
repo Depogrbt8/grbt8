@@ -2,10 +2,10 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Gurbetbiz - Almanya, Fransa, Hollanda, Belçika\'dan Türkiye\'ye Uçak Bileti',
+    default: 'Gurbetbiz ✈️ Almanya, Fransa, Hollanda\'dan Türkiye\'ye Ucuz Uçak Bileti',
     template: '%s | Gurbetbiz'
   },
-  description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. Almanya, Fransa, Hollanda, Belçika\'dan en uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 müşteri desteği.',
+  description: '🇩🇪🇫🇷🇳🇱 Avrupa\'dan Türkiye\'ye 79€\'dan başlayan fiyatlarla uçak bileti! Berlin, Paris, Amsterdam\'dan İstanbul, Ankara, İzmir\'e ✈️ Hemen karşılaştır, anında rezervasyon yap. Türkçe destek 7/24.',
   keywords: [
     'uçak bileti',
     'avrupa türkiye uçak bileti',
@@ -47,21 +47,21 @@ export const metadata: Metadata = {
     locale: 'tr_DE',
     url: 'https://gurbetbiz.app',
     siteName: 'Gurbetbiz',
-    title: 'Gurbetbiz - Almanya, Fransa, Hollanda, Belçika\'dan Türkiye\'ye Uçak Bileti',
-    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. Almanya, Fransa, Hollanda, Belçika\'dan en uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 destek.',
+    title: '✈️ Gurbetbiz - Avrupa\'dan Türkiye\'ye En Ucuz Uçak Bileti',
+    description: '🇩🇪🇫🇷🇳🇱 79€\'dan başlayan fiyatlarla Türkiye\'ye uç! Berlin, Paris, Amsterdam\'dan İstanbul, Ankara, İzmir\'e anında rezervasyon. Türkçe destek 7/24.',
     images: [
       {
         url: '/images/gurbetbiz-og.png',
         width: 1200,
         height: 630,
-        alt: 'Gurbetbiz - Almanya, Fransa, Hollanda, Belçika\'dan Türkiye\'ye Uçak Bileti',
+        alt: 'Gurbetbiz - Avrupa\'dan Türkiye\'ye Ucuz Uçak Bileti',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gurbetbiz - Almanya, Fransa, Hollanda, Belçika\'dan Türkiye\'ye Uçak Bileti',
-    description: 'Avrupa\'dan Türkiye\'ye uçak bileti, otel rezervasyonu ve araç kiralama. Almanya, Fransa, Hollanda, Belçika\'dan en uygun fiyatlar, anında rezervasyon, güvenli ödeme ve 7/24 destek.',
+    title: '✈️ Avrupa\'dan Türkiye\'ye Ucuz Uçak Bileti | Gurbetbiz',
+    description: '🇩🇪🇫🇷🇳🇱 79€\'dan başlayan fiyatlarla Türkiye\'ye uç! Hemen karşılaştır, anında rezervasyon yap.',
     images: ['/images/gurbetbiz-og.png'],
   },
   // ✅ INDEXLEME AÇILDI - Production'a geçildi

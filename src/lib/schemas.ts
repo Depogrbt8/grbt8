@@ -20,6 +20,16 @@ export const organizationSchema = {
     "contactType": "customer service",
     "availableLanguage": ["Turkish", "German", "French", "Dutch"]
   },
+  // Geo-targeting: Hedef ülkeler (Avrupa'daki gurbetçi nüfusu)
+  "areaServed": [
+    { "@type": "Country", "name": "Germany" },
+    { "@type": "Country", "name": "France" },
+    { "@type": "Country", "name": "Netherlands" },
+    { "@type": "Country", "name": "Belgium" },
+    { "@type": "Country", "name": "Austria" },
+    { "@type": "Country", "name": "Switzerland" },
+    { "@type": "Country", "name": "Turkey" }
+  ],
   "sameAs": [
     "https://www.facebook.com/gurbetbiz",
     "https://www.twitter.com/gurbetbiz",
