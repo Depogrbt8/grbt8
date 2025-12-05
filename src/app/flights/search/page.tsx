@@ -23,7 +23,7 @@ import { useFlightState, useFilterState, useModalState, useUIState, usePriceStat
 import CompactFlightCard from '@/components/CompactFlightCard';
 import { logger } from '@/lib/logger';
 import Script from 'next/script';
-import { breadcrumbSchema, productSchema } from '@/lib/schemas';
+import { breadcrumbSchema, flightServiceSchema } from '@/lib/schemas';
 
 // Demo fiyat verisi fonksiyonu (API'ye hazır)
 function getDemoPrices(baseDate: Date, currency: string = "EUR") {
@@ -697,7 +697,7 @@ export default function FlightSearchPage() {
       const flightDate = departureDate instanceof Date && !isNaN(departureDate.getTime()) 
         ? departureDate 
         : (departureDateStr ? parseISO(departureDateStr) : new Date());
-      return productSchema({
+      return flightServiceSchema({
         name: `${originObj.code} - ${destinationObj.code} Uçuş Bileti`,
         description: `${originObj.code} şehrinden ${destinationObj.code} şehrine uçak bileti. En uygun fiyatlar, anında rezervasyon.`,
         price: flight.price || 0,
@@ -722,7 +722,7 @@ export default function FlightSearchPage() {
       />
       {firstFlightProduct && (
         <Script
-          id="product-schema"
+          id="flight-service-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(firstFlightProduct)

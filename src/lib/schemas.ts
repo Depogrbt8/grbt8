@@ -64,7 +64,10 @@ export const faqSchema = (faqs: Array<{question: string, answer: string}>) => ({
   }))
 })
 
-export const productSchema = (flight: {
+// Flight Service Schema - Uçuş bileti için Service tipi kullanılıyor
+// Product yerine Service kullanıyoruz çünkü uçuş bileti fiziksel ürün değil, hizmettir
+// Bu sayede Google Merchant Listings (image, shippingDetails, returnPolicy) hataları oluşmaz
+export const flightServiceSchema = (flight: {
   name: string;
   description: string;
   price: number;
@@ -74,43 +77,44 @@ export const productSchema = (flight: {
   departureDate: string;
   arrivalDate?: string;
   airline?: string;
-  availability?: string;
 }) => ({
   "@context": "https://schema.org",
-  "@type": "Product",
+  "@type": "Service",
+  "serviceType": "Flight Booking",
   "name": flight.name,
   "description": flight.description,
+  "provider": {
+    "@type": "Organization",
+    "name": "Gurbetbiz",
+    "url": "https://gurbetbiz.app"
+  },
   "offers": {
     "@type": "Offer",
     "price": flight.price,
     "priceCurrency": flight.currency,
-    "availability": flight.availability || "https://schema.org/InStock",
-    "url": `https://gurbetbiz.app/flights/search?origin=${flight.origin}&destination=${flight.destination}&departureDate=${flight.departureDate}`
+    "availability": "https://schema.org/InStock",
+    "url": `https://gurbetbiz.app/flights/search?origin=${flight.origin}&destination=${flight.destination}&departureDate=${flight.departureDate}`,
+    "validFrom": flight.departureDate
   },
-  "brand": {
-    "@type": "Brand",
-    "name": flight.airline || "Gurbetbiz"
-  },
-  "additionalProperty": [
+  "areaServed": [
     {
-      "@type": "PropertyValue",
-      "name": "Origin",
-      "value": flight.origin
+      "@type": "Place",
+      "name": flight.origin
     },
     {
-      "@type": "PropertyValue",
-      "name": "Destination",
-      "value": flight.destination
-    },
-    {
-      "@type": "PropertyValue",
-      "name": "Departure Date",
-      "value": flight.departureDate
-    },
-    ...(flight.arrivalDate ? [{
-      "@type": "PropertyValue",
-      "name": "Arrival Date",
-      "value": flight.arrivalDate
-    }] : [])
-  ]
+      "@type": "Place", 
+      "name": flight.destination
+    }
+  ],
+  "category": "Air Travel",
+  ...(flight.airline && {
+    "broker": {
+      "@type": "Organization",
+      "name": flight.airline
+    }
+  })
 })
+
+// Geriye dönük uyumluluk için productSchema'yı flightServiceSchema'ya yönlendir
+// @deprecated - flightServiceSchema kullanın
+export const productSchema = flightServiceSchema
