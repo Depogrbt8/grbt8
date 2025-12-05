@@ -167,59 +167,55 @@ export default function SurveyPopup() {
       return () => clearTimeout(timer);
     }
   }, [selectedGender, selectedAgeRange, currentStep]);
-  // Popup'ı giriş yapan kullanıcılara göster
+  // Popup'ı SADECE giriş yapmış kullanıcılara göster
   useEffect(() => {
     const checkAndShowSurvey = async () => {
-      // Giriş yapmış kullanıcılar için
-      if (session?.user?.id) {
-        try {
-          // Kullanıcının daha önce anket doldurup doldurmadığını kontrol et
-          const response = await fetch(`/api/survey?userId=${session.user.id}`);
-          const data = await response.json();
+      // SADECE giriş yapmış kullanıcılar için popup göster
+      // Giriş yapmamış kullanıcılara popup gösterilmez
+      if (!session?.user?.id) {
+        logger.debug('Kullanıcı giriş yapmamış - anket popup gösterilmiyor');
+        return;
+      }
+
+      try {
+        // Kullanıcının daha önce anket doldurup doldurmadığını kontrol et
+        const response = await fetch(`/api/survey?userId=${session.user.id}`);
+        const data = await response.json();
+        
+        logger.debug('Anket kontrolü', {
+          userId: session.user.id,
+          apiResponse: data,
+          pathname: pathname,
+          isAccountPage: pathname === '/account' || pathname === '/hesabim'
+        });
+        
+        if (data.success && data.data.length === 0) {
+          // Anket doldurmamış
+          const hasCompleted = localStorage.getItem(`surveyCompleted_${session.user.id}`);
+          const sessionKey = `surveyShown_${session.user.id}_${new Date().toDateString()}`;
+          const hasShownToday = localStorage.getItem(sessionKey);
           
-          logger.debug('Anket kontrolü', {
-            userId: session.user.id,
-            apiResponse: data,
-            pathname: pathname,
-            isAccountPage: pathname === '/account' || pathname === '/hesabim'
+          logger.debug('LocalStorage kontrolü', {
+            hasCompleted,
+            hasShownToday,
+            sessionKey
           });
           
-          if (data.success && data.data.length === 0) {
-            // Anket doldurmamış
-            const hasCompleted = localStorage.getItem(`surveyCompleted_${session.user.id}`);
-            const sessionKey = `surveyShown_${session.user.id}_${new Date().toDateString()}`;
-            const hasShownToday = localStorage.getItem(sessionKey);
-            
-            logger.debug('LocalStorage kontrolü', {
-              hasCompleted,
-              hasShownToday,
-              sessionKey
-            });
-            
-            // Strateji: Ana sayfa ve hesabım sayfasında göster
-            const isAccountPage = pathname === '/account' || pathname === '/hesabim';
-            const isHomePage = pathname === '/';
-            
-            // Ana sayfa veya hesabım sayfasında ve bugün gösterilmemişse göster
-            if ((isHomePage || isAccountPage) && !hasCompleted && !hasShownToday) {
-              logger.debug('Anket popup gösteriliyor');
-              setIsOpen(true);
-              localStorage.setItem(sessionKey, 'true');
-            }
+          // Strateji: Ana sayfa ve hesabım sayfasında göster
+          const isAccountPage = pathname === '/account' || pathname === '/hesabim';
+          const isHomePage = pathname === '/';
+          
+          // Ana sayfa veya hesabım sayfasında ve bugün gösterilmemişse göster
+          if ((isHomePage || isAccountPage) && !hasCompleted && !hasShownToday) {
+            logger.debug('Anket popup gösteriliyor', { userId: session.user.id });
+            setIsOpen(true);
+            localStorage.setItem(sessionKey, 'true');
           }
-        } catch (error) {
-          logger.error('Anket durumu kontrol hatası', { error });
+        } else {
+          logger.debug('Kullanıcı anketi zaten doldurmuş', { userId: session.user.id });
         }
-      } else {
-        // Giriş yapmamış kullanıcılar için - yeni kullanıcılar
-        const isHomePage = pathname === '/';
-        const hasShownToGuest = localStorage.getItem('surveyShown_guest_today');
-        
-        if (isHomePage && !hasShownToGuest) {
-          logger.debug('Misafir kullanıcıya anket gösteriliyor');
-          setIsOpen(true);
-          localStorage.setItem('surveyShown_guest_today', 'true');
-        }
+      } catch (error) {
+        logger.error('Anket durumu kontrol hatası', { error });
       }
     };
 
@@ -372,13 +368,12 @@ export default function SurveyPopup() {
 
   const handleClose = () => {
     setIsOpen(false);
+    // Popup'ı kapatırken bugün için gösterilmiş olarak işaretle
+    // Not: Bu fonksiyon sadece giriş yapmış kullanıcılar için çalışır
     if (session?.user?.id) {
-      // Popup'ı kapatırken bugün için gösterilmiş olarak işaretle
       const sessionKey = `surveyShown_${session.user.id}_${new Date().toDateString()}`;
       localStorage.setItem(sessionKey, 'true');
-    } else {
-      // Giriş yapmamış kullanıcılar için
-      localStorage.setItem('surveyShown_guest_today', 'true');
+      logger.debug('Anket popup kapatıldı', { userId: session.user.id, sessionKey });
     }
   };
 
