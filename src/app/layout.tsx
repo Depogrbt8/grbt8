@@ -12,6 +12,7 @@ import { setupErrorTracking } from '@/lib/errorTracking'
 import '@/lib/monitoringClient'
 import { logger } from '@/lib/logger'
 import SurveyPopup from '@/components/SurveyPopup'
+import ComingSoonPopup from '@/components/ComingSoonPopup'
 import AnalyticsScripts from '@/components/Analytics'
 import CookieConsent from '@/components/CookieConsent'
 import { prisma } from '@/lib/prisma'
@@ -89,6 +90,7 @@ export default async function RootLayout({
           <SessionProviderWrapper>
             {children}
             <SurveyPopup />
+            <ComingSoonPopup />
             <CookieConsent />
           </SessionProviderWrapper>
         </ErrorBoundary>
