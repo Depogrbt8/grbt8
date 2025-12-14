@@ -374,5 +374,156 @@ curl -X GET https://gurbetbiz.app/api/passengers \
 
 ---
 
-*Son güncelleme: Aralık 2024 - Kontrol listesi eklendi*
+## 🎉 Endpoint'ler Hazır! (Güncelleme: Aralık 2024)
+
+### ✅ Oluşturulan Endpoint'ler
+
+1. **`/api/auth/mobile-login`** - Mobil uygulama için login
+   - ✅ JWT token döndürüyor
+   - ✅ Token payload'ında `id` claim'i mevcut
+   - ✅ Access token: **1 saat** geçerli
+   - ✅ Refresh token: **30 gün** geçerli
+   - ✅ Brute force koruması aktif
+   - ✅ Kullanıcı durumu kontrolü yapılıyor
+
+2. **`/api/auth/refresh`** - Token yenileme
+   - ✅ Refresh token doğrulama
+   - ✅ Yeni access ve refresh token döndürüyor
+   - ✅ Kullanıcı durumu kontrolü yapılıyor
+
+3. **`/api/passengers`** - JWT token desteği
+   - ✅ Hem JWT token hem NextAuth session destekliyor
+   - ✅ Fallback mekanizması çalışıyor
+
+### 📋 Endpoint Detayları
+
+#### `/api/auth/mobile-login` (POST)
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Response (Başarılı):**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "clx1234567890abcdef",
+    "email": "user@example.com",
+    "name": "Kullanıcı Adı",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "phone": "+905551234567",
+    "customerNo": "#ABC123"
+  }
+}
+```
+
+**Response (Hata):**
+```json
+{
+  "success": false,
+  "message": "Geçersiz e-posta veya şifre"
+}
+```
+
+#### `/api/auth/refresh` (POST)
+
+**Request:**
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response (Başarılı):**
+```json
+{
+  "success": true,
+  "accessToken": "yeni_access_token...",
+  "refreshToken": "yeni_refresh_token..."
+}
+```
+
+**Response (Hata):**
+```json
+{
+  "success": false,
+  "message": "Geçersiz veya süresi dolmuş refresh token"
+}
+```
+
+### 🔐 Güvenlik Özellikleri
+
+- ✅ **Brute Force Koruması:** 5 başarısız denemeden sonra 15 dakika kilitlenme
+- ✅ **Token Süreleri:** Access token kısa süreli (1 saat), refresh token uzun süreli (30 gün)
+- ✅ **Kullanıcı Durumu Kontrolü:** Sadece aktif kullanıcılar giriş yapabilir
+- ✅ **Token Doğrulama:** HS256 algoritması ile imzalı token'lar
+- ✅ **Secret Key:** `NEXTAUTH_SECRET` environment variable'ı kullanılıyor
+
+### ⚠️ Önemli Notlar
+
+1. **Token Süreleri:**
+   - Access token: **1 saat** - Kısa süreli güvenlik için
+   - Refresh token: **30 gün** - Uzun süreli oturum için
+   - Access token süresi dolduğunda refresh token ile yenileyin
+
+2. **Token Payload:**
+   - Access token payload: `{ id: "userId", email: "user@example.com" }`
+   - Refresh token payload: `{ id: "userId", email: "user@example.com", type: "refresh" }`
+   - **Önemli:** `id` claim'i mutlaka mevcut (userId için gerekli)
+
+3. **Hata Yönetimi:**
+   - 401: Geçersiz token veya kimlik bilgileri
+   - 403: Hesap aktif değil
+   - 429: Çok fazla giriş denemesi (brute force koruması)
+   - 500: Sunucu hatası
+
+4. **Mobil Uygulama URL Düzeltmesi:**
+   - Refresh endpoint çağrısında çift `/api` sorunu var
+   - `config.API_URL = 'https://gurbetbiz.app/api'` ise
+   - ❌ Yanlış: `${config.API_URL}/api/auth/refresh` → `https://gurbetbiz.app/api/api/auth/refresh`
+   - ✅ Doğru: `${config.API_URL}/auth/refresh` → `https://gurbetbiz.app/api/auth/refresh`
+
+### 🧪 Test Komutları
+
+```bash
+# 1. Login yap ve token al
+curl -X POST https://gurbetbiz.app/api/auth/mobile-login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+
+# 2. Token ile passengers endpoint'ini test et
+curl -X GET https://gurbetbiz.app/api/passengers \
+  -H "Authorization: Bearer <ALINAN_ACCESS_TOKEN>"
+
+# 3. Token yenile
+curl -X POST https://gurbetbiz.app/api/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refreshToken":"<REFRESH_TOKEN>"}'
+
+# 4. Yeni yolcu ekle
+curl -X POST https://gurbetbiz.app/api/passengers \
+  -H "Authorization: Bearer <ACCESS_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Ahmet",
+    "lastName": "Yılmaz",
+    "birthDay": "01",
+    "birthMonth": "01",
+    "birthYear": "1990",
+    "gender": "male",
+    "identityNumber": "12345678901"
+  }'
+```
+
+---
+
+*Son güncelleme: Aralık 2024 - Endpoint'ler oluşturuldu ve test edildi ✅*
 
