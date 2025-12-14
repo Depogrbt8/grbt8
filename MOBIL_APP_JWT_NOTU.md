@@ -247,5 +247,132 @@ Herhangi bir sorunuz varsa veya ek bilgiye ihtiyacınız varsa:
 
 ---
 
-*Son güncelleme: Aralık 2024*
+## 🔍 Mobil Uygulama Kontrol Listesi (Backend Geliştiricisi İçin)
+
+Mobil uygulama tarafında kod yapısı doğru görünüyor, ancak backend'de kontrol edilmesi gereken noktalar:
+
+### ✅ Mobil Uygulamada Doğru Olanlar:
+1. **Axios Interceptor:** Token'ı `Bearer ${token}` formatında otomatik ekliyor
+2. **Token Storage:** `expo-secure-store` ile güvenli saklanıyor
+3. **API URL:** `https://gurbetbiz.app/api` doğru yapılandırılmış
+4. **Service Layer:** `passengerService` `apiClient` kullanıyor (interceptor otomatik çalışıyor)
+
+### ⚠️ Backend'de Kontrol Edilmesi Gerekenler:
+
+#### 1. Login Endpoint'i (`/api/auth/mobile-login`)
+**Kontrol:** Endpoint JWT token döndürüyor mu?
+
+**Beklenen Response Formatı:**
+```json
+{
+  "success": true,
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "clx1234567890abcdef",
+    "email": "user@example.com",
+    "name": "Kullanıcı Adı"
+  }
+}
+```
+
+**Önemli:** `accessToken` mutlaka JWT formatında olmalı ve payload'ında `id` claim'i bulunmalı.
+
+#### 2. JWT Token Payload Kontrolü
+**Kontrol:** Token'ın payload'ında `id` (userId) claim'i var mı?
+
+**Beklenen Token Payload:**
+```json
+{
+  "id": "clx1234567890abcdef",  // ← Bu mutlaka olmalı!
+  "email": "user@example.com",
+  "iat": 1234567890,
+  "exp": 1234571490
+}
+```
+
+**Test:** Token'ı decode edip payload'ını kontrol et:
+- JWT.io veya `jose` kütüphanesi ile decode et
+- `id` claim'i var mı kontrol et
+- `id` değeri kullanıcının gerçek `userId`'si mi kontrol et
+
+#### 3. Refresh Token Endpoint (`/api/auth/refresh`)
+**Kontrol:** Endpoint mevcut mu ve doğru çalışıyor mu?
+
+**Beklenen Request:**
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Beklenen Response:**
+```json
+{
+  "success": true,
+  "accessToken": "yeni_access_token...",
+  "refreshToken": "yeni_refresh_token..."
+}
+```
+
+**Not:** Mobil uygulamada refresh endpoint'i şu şekilde çağrılıyor:
+```typescript
+`${config.API_URL}/api/auth/refresh`
+// config.API_URL = 'https://gurbetbiz.app/api'
+// Sonuç: 'https://gurbetbiz.app/api/api/auth/refresh' ❌
+```
+
+**Düzeltme Gerekiyor:** Mobil uygulamada `client.ts` dosyasında refresh endpoint çağrısı düzeltilmeli:
+```typescript
+// ❌ Yanlış:
+`${config.API_URL}/api/auth/refresh`
+
+// ✅ Doğru:
+`${config.API_URL}/auth/refresh`
+// veya
+`${config.API_URL.replace('/api', '')}/api/auth/refresh`
+```
+
+#### 4. Network Test
+**Kontrol:** Gerçek isteklerde token gönderiliyor mu?
+
+**Test Adımları:**
+1. Mobil uygulamada login yap
+2. Network tab'ında (React Native Debugger veya Flipper) `/passengers` isteğini kontrol et
+3. Request headers'da `Authorization: Bearer <token>` var mı kontrol et
+4. Token'ın geçerli olduğunu doğrula
+
+**Curl Test:**
+```bash
+# Login yap ve token al
+curl -X POST https://gurbetbiz.app/api/auth/mobile-login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+
+# Token'ı kullanarak passengers endpoint'ini test et
+curl -X GET https://gurbetbiz.app/api/passengers \
+  -H "Authorization: Bearer <ALINAN_TOKEN>"
+```
+
+### 🐛 Olası Hata Senaryoları:
+
+| Hata | Olası Neden | Çözüm |
+|------|-------------|-------|
+| 401 Unauthorized | Token payload'ında `id` yok | Login endpoint'inde token oluştururken `id` claim'ini ekle |
+| 401 Unauthorized | Token formatı yanlış | JWT token formatını kontrol et |
+| 401 Unauthorized | Token süresi dolmuş | Refresh token mekanizmasını kontrol et |
+| 404 Not Found | Endpoint yanlış | `/api/auth/mobile-login` endpoint'inin var olduğunu kontrol et |
+| Network Error | API URL yanlış | `config.API_URL` değerini kontrol et |
+
+### 📝 Yapılacaklar Özeti:
+
+1. ✅ `/api/auth/mobile-login` endpoint'inin JWT token döndürdüğünü doğrula
+2. ✅ JWT token payload'ında `id` claim'inin olduğunu doğrula
+3. ✅ `/api/auth/refresh` endpoint'inin çalıştığını doğrula
+4. ⚠️ Mobil uygulamada refresh endpoint URL'ini düzelt (çift `/api` sorunu)
+5. ✅ Network test yaparak gerçek istekleri kontrol et
+
+---
+
+*Son güncelleme: Aralık 2024 - Kontrol listesi eklendi*
 

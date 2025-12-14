@@ -1,5 +1,30 @@
-import { jwtVerify } from 'jose';
+import { jwtVerify, SignJWT } from 'jose';
 import { logger } from '@/lib/logger';
+
+/**
+ * JWT token oluşturur
+ * @param payload Token payload'ı (id, email, vb.)
+ * @param expiresIn Token geçerlilik süresi (örn: '1h', '7d', '30d')
+ * @returns JWT token string
+ */
+export async function createJWTToken(
+  payload: { id: string; email?: string; [key: string]: any },
+  expiresIn: string = '1h'
+): Promise<string> {
+  if (!process.env.NEXTAUTH_SECRET) {
+    throw new Error('NEXTAUTH_SECRET not configured');
+  }
+
+  const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
+  
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(expiresIn)
+    .sign(secret);
+
+  return token;
+}
 
 /**
  * JWT token'ı doğrular ve userId'yi döndürür
