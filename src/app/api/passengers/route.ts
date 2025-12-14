@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { logger } from '@/lib/logger';
+import { getUserIdFromRequest } from '@/lib/jwtAuth';
 
 // GET: Tüm yolcuları getir
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    // JWT token veya NextAuth session'dan userId'yi al
+    const userId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
@@ -18,7 +18,7 @@ export async function GET() {
 
     const passengers = await prisma.passenger.findMany({
       where: {
-        userId: session.user.id,
+        userId: userId,
         status: 'active'
       },
       orderBy: {
@@ -39,9 +39,10 @@ export async function GET() {
 // POST: Yeni yolcu ekle
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    // JWT token veya NextAuth session'dan userId'yi al
+    const userId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Oturum açmanız gerekiyor' },
         { status: 401 }
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
 
     // Yolcu verilerini hazırla
     const passengerData = {
-      userId: session.user.id,
+      userId: userId,
       firstName: data.firstName,
       lastName: data.lastName,
       identityNumber: data.identityNumber,
