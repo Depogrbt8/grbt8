@@ -18,8 +18,8 @@ export default function PersonalInfoSection({ formData, onFormDataChange }: Pers
 
   return (
     <div className="sm:space-y-8 space-y-4">
-      {/* 1. Satır: Ad, Soyad, TC Kimlik No */}
-      <div className="sm:grid sm:grid-cols-3 sm:gap-6 grid grid-cols-1 gap-2">
+      {/* 1. Satır: Ad, Soyad */}
+      <div className="sm:grid sm:grid-cols-2 sm:gap-6 grid grid-cols-1 gap-2">
         {/* Ad */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">Ad</label>
@@ -42,31 +42,9 @@ export default function PersonalInfoSection({ formData, onFormDataChange }: Pers
             required
           />
         </div>
-        {/* TC Kimlik */}
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">TC Kimlik No</label>
-          <input
-            type="text"
-            value={formData.identityNumber || ''}
-            onChange={(e) => handleChange('identityNumber', e.target.value)}
-            className="w-full sm:px-4 px-2 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 text-sm"
-            maxLength={11}
-          />
-          <div className="mt-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.isForeigner}
-                onChange={(e) => handleChange('isForeigner', e.target.checked)}
-                className="w-4 h-4 rounded text-green-500 focus:ring-green-500/20"
-              />
-              <span className="text-sm text-gray-600">TC Vatandaşı Değil</span>
-            </label>
-          </div>
-        </div>
       </div>
 
-      {/* 2. Satır: Doğum Tarihi, Ülke Kodu + Cep Telefonu, Cinsiyet */}
+      {/* 2. Satır: Doğum Tarihi, Ülke Kodu + Cep Telefonu, Cinsiyet + TC Kimlik */}
       <div className="sm:grid sm:grid-cols-3 sm:gap-8 grid grid-cols-1 gap-2">
         {/* Doğum Tarihi */}
         <DateSelector
@@ -115,30 +93,56 @@ export default function PersonalInfoSection({ formData, onFormDataChange }: Pers
           </div>
         </div>
         
-        {/* Cinsiyet */}
-        <div className="flex flex-col justify-end pb-2">
-          <label className="block text-sm text-gray-600 mb-2">Cinsiyet</label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                checked={formData.gender === 'male'}
-                onChange={() => handleChange('gender', 'male')}
-                className="w-4 h-4 text-green-500 focus:ring-green-500/20"
-                required
-              />
-              <span className="text-gray-600">Erkek</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                checked={formData.gender === 'female'}
-                onChange={() => handleChange('gender', 'female')}
-                className="w-4 h-4 text-green-500 focus:ring-green-500/20"
-                required
-              />
-              <span className="text-gray-600">Kadın</span>
-            </label>
+        {/* Cinsiyet + TC Kimlik (aynı kolonda) */}
+        <div className="flex flex-col">
+          {/* Cinsiyet */}
+          <div className="flex flex-col justify-end pb-2">
+            <label className="block text-sm text-gray-600 mb-2">Cinsiyet</label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={formData.gender === 'male'}
+                  onChange={() => handleChange('gender', 'male')}
+                  className="w-4 h-4 text-green-500 focus:ring-green-500/20"
+                  required
+                />
+                <span className="text-gray-600">Erkek</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={formData.gender === 'female'}
+                  onChange={() => handleChange('gender', 'female')}
+                  className="w-4 h-4 text-green-500 focus:ring-green-500/20"
+                  required
+                />
+                <span className="text-gray-600">Kadın</span>
+              </label>
+            </div>
+          </div>
+          
+          {/* TC Kimlik (cinsiyet altında) */}
+          <div className="mt-4">
+            <label className="block text-sm text-gray-600 mb-1">TC Kimlik No</label>
+            <input
+              type="text"
+              value={formData.identityNumber || ''}
+              onChange={(e) => handleChange('identityNumber', e.target.value)}
+              className="w-full sm:px-4 px-2 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 text-sm"
+              maxLength={11}
+            />
+            <div className="mt-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.isForeigner}
+                  onChange={(e) => handleChange('isForeigner', e.target.checked)}
+                  className="w-4 h-4 rounded text-green-500 focus:ring-green-500/20"
+                />
+                <span className="text-sm text-gray-600">TC Vatandaşı Değil</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
