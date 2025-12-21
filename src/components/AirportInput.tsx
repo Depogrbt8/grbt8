@@ -152,11 +152,17 @@ export default function AirportInput({
   }
 
   // Mobil versiyonu
+  // "Nereye" için uçak ikonunu aşağı bakacak şekilde rotasyon uygula
+  const isArrival = label === 'Nereye';
+  
   return (
     <div className="w-full relative">
       <div className="bg-white border border-gray-300 rounded-lg px-2.5 h-10 shadow-none hover:border-green-500 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex flex-col justify-center">
         <div className="flex items-center justify-start gap-1">
-          <Plane className="w-5 h-5 text-gray-600 flex-shrink-0" />
+          <Plane 
+            className="w-5 h-5 text-gray-600 flex-shrink-0" 
+            style={{ transform: isArrival ? 'rotate(180deg)' : 'rotate(-45deg)' }}
+          />
           <input
             ref={inputRef}
             type="text"
