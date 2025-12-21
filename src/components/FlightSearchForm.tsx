@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, User, ArrowRightLeft } from 'lucide-react';
+import { CalendarDays, User, ArrowRightLeft, ChevronDown } from 'lucide-react';
 import TripTypeSelector from './TripTypeSelector';
 import AirportInput from './AirportInput';
 import DateInput from './DateInput';
@@ -208,12 +208,12 @@ export default function FlightSearchForm({
             <button
               type="button"
               onClick={() => setShowPassengerModal(true)}
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-1"
             >
-              <User className="w-5 h-5 text-[#23272F]" />
-              <span className="text-[14px] font-normal text-[#23272F]">
-                {adultCount + childCount + infantCount}
+              <span className="text-[14px] font-normal text-[#23272F] underline">
+                {adultCount + childCount + infantCount} Yolcu
               </span>
+              <ChevronDown className="w-4 h-4 text-[#23272F]" />
             </button>
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
