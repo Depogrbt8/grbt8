@@ -26,6 +26,7 @@ interface BlogDetailClientProps {
 
 export default function BlogDetailClient({ blogPost, slug }: BlogDetailClientProps) {
   const [readTime, setReadTime] = useState('10 dk');
+  const [viewCounted, setViewCounted] = useState(false);
 
   useEffect(() => {
     // İçerik uzunluğuna göre okuma süresi hesapla
@@ -33,6 +34,25 @@ export default function BlogDetailClient({ blogPost, slug }: BlogDetailClientPro
     const estimatedMinutes = Math.max(5, Math.ceil(wordCount / 200));
     setReadTime(`${estimatedMinutes} dk`);
   }, [blogPost]);
+
+  // Sayfa yüklendiğinde view count'u artır
+  useEffect(() => {
+    if (!viewCounted) {
+      // View count'u artır
+      fetch(`/api/blog/posts/${slug}/view`, {
+        method: 'POST',
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            setViewCounted(true);
+          }
+        })
+        .catch(error => {
+          console.error('View count increment error:', error);
+        });
+    }
+  }, [slug, viewCounted]);
 
   // Blog verilerini al
   const title = blogPost.title;
