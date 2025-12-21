@@ -207,8 +207,8 @@ export default function FlightSearchForm({
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
           <div className="relative w-full mt-3">
-            <div className="flex items-stretch gap-2 w-full">
-              <div className="flex-1 min-w-0">
+            <div className="flex flex-col gap-2 w-full">
+              <div className="w-full">
                 <AirportInput
                   label="Nereden"
                   placeholder="Nereden"
@@ -219,7 +219,7 @@ export default function FlightSearchForm({
                   isMobile={true}
                 />
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="w-full">
                 <AirportInput
                   label="Nereye"
                   placeholder="Nereye"
@@ -231,11 +231,11 @@ export default function FlightSearchForm({
                 />
               </div>
             </div>
-            {/* Swap butonu - sağda */}
+            {/* Swap butonu - ortada */}
             <button
               type="button"
               onClick={onSwapAirports}
-              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md transition-all duration-200 z-10"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md transition-all duration-200 z-10"
               aria-label="Kalkış/Varış değiştir"
             >
               <ArrowRightLeft className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
