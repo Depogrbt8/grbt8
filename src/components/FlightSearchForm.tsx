@@ -196,7 +196,7 @@ export default function FlightSearchForm({
       <div className="block sm:hidden w-full px-4 mt-8">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
           {/* Tek yön / Gidiş-dönüş */}
-          <div className="flex items-center w-full gap-3 mb-5 justify-between">
+          <div className="flex items-center w-full gap-3 mb-3 justify-between">
             <TripTypeSelector
               tripType={tripType}
               onTripTypeChange={onTripTypeChange}
