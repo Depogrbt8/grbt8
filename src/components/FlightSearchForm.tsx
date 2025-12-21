@@ -193,8 +193,8 @@ export default function FlightSearchForm({
       </div>
 
       {/* Mobil için özel uçuş arama kutusu */}
-      <div className="block sm:hidden w-full px-3 mt-8">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 flex flex-col gap-2">
+      <div className="block sm:hidden w-full px-2 mt-8">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-2.5 flex flex-col gap-2">
           {/* Tek yön / Gidiş-dönüş */}
           <div className="flex items-center w-full gap-1 mb-0 mt-0">
             <TripTypeSelector
