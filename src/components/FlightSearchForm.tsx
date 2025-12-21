@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarDays, UserCircle2, ArrowRightLeft } from 'lucide-react';
+import { CalendarDays, User, ArrowRightLeft } from 'lucide-react';
 import TripTypeSelector from './TripTypeSelector';
 import AirportInput from './AirportInput';
 import DateInput from './DateInput';
@@ -156,7 +156,7 @@ export default function FlightSearchForm({
             <div className="flex flex-col relative md:col-span-1">
               <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Yolcu</label>
               <div className="relative w-full flex items-center">
-                <UserCircle2 className="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <button
                   type="button"
                   onClick={() => setShowPassengerModal(!showPassengerModal)}
@@ -210,7 +210,7 @@ export default function FlightSearchForm({
               onClick={() => setShowPassengerModal(true)}
               className="flex items-center gap-1.5"
             >
-              <UserCircle2 className="w-5 h-5 text-[#23272F]" />
+              <User className="w-5 h-5 text-[#23272F]" />
               <span className="text-[14px] font-normal text-[#23272F]">
                 {adultCount + childCount + infantCount}
               </span>
