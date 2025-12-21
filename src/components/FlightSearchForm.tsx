@@ -196,7 +196,7 @@ export default function FlightSearchForm({
       <div className="block sm:hidden w-full px-4 mt-8">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
           {/* Tek yön / Gidiş-dönüş */}
-          <div className="flex items-center w-full gap-3 mb-5">
+          <div className="flex items-center w-full gap-3 mb-5 justify-between">
             <TripTypeSelector
               tripType={tripType}
               onTripTypeChange={onTripTypeChange}
@@ -204,6 +204,17 @@ export default function FlightSearchForm({
               onDirectOnlyChange={onDirectOnlyChange}
               isMobile={true}
             />
+            {/* Yolcu seçimi - sağda */}
+            <button
+              type="button"
+              onClick={() => setShowPassengerModal(true)}
+              className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg hover:border-green-500 transition-all duration-200"
+            >
+              <UserCircle2 className="w-5 h-5 text-gray-700" />
+              <span className="text-sm font-medium text-black">
+                {adultCount + childCount + infantCount}
+              </span>
+            </button>
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
           <div className="relative w-full mb-3">
@@ -266,21 +277,6 @@ export default function FlightSearchForm({
                 />
               </div>
             </div>
-          </div>
-          {/* Yolcu seçimi */}
-          <div className="w-full mb-4">
-            <button
-              type="button"
-              onClick={() => setShowPassengerModal(true)}
-              className="w-full h-10 bg-white border border-gray-300 rounded-lg px-2.5 flex items-center justify-between hover:border-green-500 transition-all duration-200"
-            >
-              <span className="text-sm font-medium text-black">
-                {adultCount + childCount + infantCount} Yolcu
-              </span>
-              <span className="text-sm font-medium text-black">
-                + Yolcu Ekle
-              </span>
-            </button>
           </div>
           {/* Uçuş Ara Butonu */}
           <button
