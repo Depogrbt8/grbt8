@@ -176,7 +176,7 @@ export default function MobileFlightSearchBox({
       <div className="flex gap-2 w-full mb-3">
         <div className="flex-1">
           <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-            <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
+            <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
             <DateInput
               value={departureDate}
               onChange={setDepartureDate}
@@ -187,7 +187,7 @@ export default function MobileFlightSearchBox({
         </div>
         <div className="flex-1">
           <div className={`relative w-full h-10 border border-gray-300 rounded-lg ${tripType === 'oneWay' ? 'bg-gray-100' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200`}>
-            <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
+            <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
             <DateInput
               value={returnDate}
               onChange={setReturnDate}
