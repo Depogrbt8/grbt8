@@ -244,23 +244,23 @@ export default function FlightSearchForm({
           {/* Tarih kutuları */}
           <div className="flex gap-2 w-full mb-3">
             <div className="flex-1">
-              <div className="relative w-full h-12 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
                 <DateInput
                   value={departureDate}
                   onChange={onDepartureDateChange}
-                  className="w-full h-full h-12 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  className="w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
                   placeholder="Gidiş Tarihi"
                 />
               </div>
             </div>
             <div className="flex-1">
-              <div className={`relative w-full h-12 border border-gray-300 rounded-lg ${tripType === 'oneWay' ? 'bg-gray-100' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200`}>
+              <div className={`relative w-full h-10 border border-gray-300 rounded-lg ${tripType === 'oneWay' ? 'bg-gray-100' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200`}>
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
                 <DateInput
                   value={returnDate}
                   onChange={onReturnDateChange}
-                  className={`w-full h-full h-12 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Dönüş Tarihi"
                   disabled={tripType === 'oneWay'}
                 />
@@ -272,7 +272,7 @@ export default function FlightSearchForm({
             <button
               type="button"
               onClick={() => setShowPassengerModal(true)}
-              className="w-full h-12 bg-white border border-gray-300 rounded-lg px-2.5 flex items-center justify-between hover:border-green-500 transition-all duration-200"
+              className="w-full h-10 bg-white border border-gray-300 rounded-lg px-2.5 flex items-center justify-between hover:border-green-500 transition-all duration-200"
             >
               <span className="text-sm font-medium text-black">
                 {adultCount + childCount + infantCount} Yolcu
