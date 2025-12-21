@@ -208,10 +208,10 @@ export default function FlightSearchForm({
             <button
               type="button"
               onClick={() => setShowPassengerModal(true)}
-              className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg hover:border-green-500 transition-all duration-200"
+              className="flex items-center gap-1.5"
             >
-              <UserCircle2 className="w-5 h-5 text-gray-700" />
-              <span className="text-sm font-medium text-black">
+              <UserCircle2 className="w-5 h-5 text-[#23272F]" />
+              <span className="text-[14px] font-normal text-[#23272F]">
                 {adultCount + childCount + infantCount}
               </span>
             </button>
