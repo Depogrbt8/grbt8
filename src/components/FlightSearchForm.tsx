@@ -208,12 +208,12 @@ export default function FlightSearchForm({
             <button
               type="button"
               onClick={() => setShowPassengerModal(true)}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 whitespace-nowrap"
             >
-              <span className="text-[14px] font-normal text-[#23272F] underline">
+              <span className="text-[14px] font-normal text-[#23272F] underline whitespace-nowrap">
                 {adultCount + childCount + infantCount} Yolcu
               </span>
-              <ChevronDown className="w-4 h-4 text-[#23272F]" />
+              <ChevronDown className="w-4 h-4 text-[#23272F] flex-shrink-0" />
             </button>
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
