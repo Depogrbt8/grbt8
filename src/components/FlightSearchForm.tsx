@@ -217,7 +217,7 @@ export default function FlightSearchForm({
             </button>
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
-          <div className="relative w-full mb-3">
+          <div className="relative w-full mb-2">
             <div className="flex flex-col gap-2 w-full">
               <div className="w-full">
                 <AirportInput
