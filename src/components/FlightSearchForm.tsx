@@ -193,10 +193,10 @@ export default function FlightSearchForm({
       </div>
 
       {/* Mobil için özel uçuş arama kutusu */}
-      <div className="block sm:hidden w-full px-2 mt-8">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-2.5 flex flex-col gap-2">
+      <div className="block sm:hidden w-full px-4 mt-8">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
           {/* Tek yön / Gidiş-dönüş */}
-          <div className="flex items-center w-full gap-1 mb-0 mt-0">
+          <div className="flex items-center w-full gap-3 mb-5">
             <TripTypeSelector
               tripType={tripType}
               onTripTypeChange={onTripTypeChange}
@@ -206,7 +206,7 @@ export default function FlightSearchForm({
             />
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
-          <div className="relative w-full mt-3">
+          <div className="relative w-full mb-3">
             <div className="flex flex-col gap-2 w-full">
               <div className="w-full">
                 <AirportInput
@@ -238,11 +238,11 @@ export default function FlightSearchForm({
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 bg-white border border-gray-300 rounded-full shadow-sm hover:shadow-md transition-all duration-200 z-10"
               aria-label="Kalkış/Varış değiştir"
             >
-              <ArrowRightLeft className="w-5 h-5 text-gray-700" strokeWidth={1.5} />
+              <ArrowRightLeft className="w-5 h-5 text-green-600" strokeWidth={1.5} />
             </button>
           </div>
           {/* Tarih kutuları */}
-          <div className="flex gap-2 w-full mt-2">
+          <div className="flex gap-2 w-full mb-3">
             <div className="flex-1">
               <div className="relative w-full h-12 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500 pointer-events-none" />
@@ -268,7 +268,7 @@ export default function FlightSearchForm({
             </div>
           </div>
           {/* Yolcu seçimi */}
-          <div className="w-full mt-2">
+          <div className="w-full mb-4">
             <button
               type="button"
               onClick={() => setShowPassengerModal(true)}
@@ -285,7 +285,7 @@ export default function FlightSearchForm({
           {/* Uçuş Ara Butonu */}
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold text-lg shadow-sm hover:bg-green-600 transition-all mt-2"
+            className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold text-lg shadow-sm hover:bg-green-600 transition-all"
             onClick={onSearch}
             disabled={isLoading}
           >
