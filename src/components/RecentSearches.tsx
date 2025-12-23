@@ -70,19 +70,19 @@ export default function RecentSearches({ onSearchSelect }: RecentSearchesProps) 
           <div
             key={search.id}
             onClick={() => onSearchSelect(search)}
-            className="bg-white rounded-lg border border-gray-200 shadow-sm p-3 cursor-pointer active:bg-gray-50 transition-colors relative"
+            className="bg-white rounded-lg border border-gray-200 shadow-md p-2 cursor-pointer active:bg-gray-50 transition-colors relative"
           >
             {/* Silme butonu */}
             <button
               onClick={(e) => handleDelete(search.id, e)}
-              className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
               aria-label="Aramayı sil"
             >
               <X className="w-4 h-4 text-gray-600" />
             </button>
 
             {/* Kalkış - Varış */}
-            <div className="flex items-center gap-1 mb-2 pr-6">
+            <div className="flex items-center gap-1 mb-1 pr-6">
               <Plane className="w-4 h-4 text-gray-800 flex-shrink-0" />
               <span className="text-xs font-normal text-gray-600 truncate">
                 {search.fromAirport.city || search.fromAirport.name}
