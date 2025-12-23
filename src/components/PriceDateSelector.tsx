@@ -242,20 +242,20 @@ export default function PriceDateSelector({
             <div className="flex-1 border-t border-gray-200"></div>
           </div>
 
-        {/* Mobil: Ay etiketinin altında Alarm/Favori/Filtre/Sırala butonları */}
+        {/* Mobil: Ay etiketinin altında Favori/Alarm/Filtre/Sırala butonları */}
         {(onOpenPriceAlert || onOpenFavorite || onOpenMobileFilter || onOpenSort) && (
           <div className="flex items-center justify-between w-full gap-2 mt-1 mb-2">
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
-              onClick={onOpenPriceAlert}
-            >
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
-            </button>
             <button
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
               onClick={onOpenFavorite}
             >
               <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Favori</span>
+            </button>
+            <button
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+              onClick={onOpenPriceAlert}
+            >
+              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
             </button>
             <button
               className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"

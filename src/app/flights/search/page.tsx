@@ -733,9 +733,9 @@ export default function FlightSearchPage() {
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sol filtre paneli */}
         <aside className="w-full md:w-64 bg-white border-r border-gray-100 p-4 hidden md:block md:ml-6">
-          {/* Fiyat Alarmı ve Favoriler */}
-          <PriceAlertBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} />
+          {/* Favoriler ve Fiyat Alarmı */}
           <SearchFavoriteBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} />
+          <PriceAlertBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} />
           <div className="flex items-center gap-2 mb-4 text-gray-700 font-semibold">
             <Filter className="w-5 h-5" /> Filtreler
           </div>
