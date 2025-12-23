@@ -10,6 +10,7 @@ import ServiceButtons from '@/components/ServiceButtons';
 // import AppBanner from '@/components/AppBanner';
 import FlightSearchForm from '@/components/FlightSearchForm';
 import HeroSection from '@/components/HeroSection';
+import { addToRecentSearches } from '@/components/RecentSearches';
 import { tr } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Image from 'next/image';
@@ -89,6 +90,20 @@ export default function Home() {
         tripType: tripType,
         directOnly: directOnly
       };
+
+      // Arama geçmişine ekle
+      if (fromAirports.length && toAirports.length && departureDate) {
+        addToRecentSearches({
+          fromAirport: fromAirports[0],
+          toAirport: toAirports[0],
+          departureDate: format(departureDate, 'yyyy-MM-dd'),
+          returnDate: tripType === 'roundTrip' && returnDate 
+            ? format(returnDate, 'yyyy-MM-dd') 
+            : undefined,
+          tripType: tripType as 'oneWay' | 'roundTrip',
+          passengers: adultCount + childCount + infantCount,
+        });
+      }
 
       logger.debug('Uçuş arama parametreleri', { searchParams });
 
