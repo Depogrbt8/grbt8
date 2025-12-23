@@ -90,20 +90,6 @@ export default function Home() {
         directOnly: directOnly
       };
 
-      // Arama geçmişine ekle
-      if (fromAirports.length && toAirports.length && departureDate) {
-        addToRecentSearches({
-          fromAirport: fromAirports[0],
-          toAirport: toAirports[0],
-          departureDate: format(departureDate, 'yyyy-MM-dd'),
-          returnDate: tripType === 'roundTrip' && returnDate 
-            ? format(returnDate, 'yyyy-MM-dd') 
-            : undefined,
-          tripType: tripType as 'oneWay' | 'roundTrip',
-          passengers: adultCount + childCount + infantCount,
-        });
-      }
-
       logger.debug('Uçuş arama parametreleri', { searchParams });
 
       // Şimdilik demo - gerçek API entegrasyonu yapılacak
