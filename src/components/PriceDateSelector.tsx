@@ -31,6 +31,9 @@ interface PriceDateSelectorProps {
   onOpenFavorite?: () => void;
   onOpenMobileFilter?: () => void;
   onOpenSort?: () => void;
+  // Aktarmasız toggle için
+  onToggleDirectOnly?: () => void;
+  isDirectOnlyActive?: boolean;
 }
 
 export default function PriceDateSelector({
@@ -49,7 +52,9 @@ export default function PriceDateSelector({
   onOpenPriceAlert,
   onOpenFavorite,
   onOpenMobileFilter,
-  onOpenSort
+  onOpenSort,
+  onToggleDirectOnly,
+  isDirectOnlyActive = false
 }: PriceDateSelectorProps) {
   
   // Desktop için merkez tarih state'i
@@ -242,33 +247,45 @@ export default function PriceDateSelector({
             <div className="flex-1 border-t border-gray-200"></div>
           </div>
 
-        {/* Mobil: Ay etiketinin altında Favori/Alarm/Filtre/Sırala butonları */}
-        {(onOpenPriceAlert || onOpenFavorite || onOpenMobileFilter || onOpenSort) && (
+        {/* Mobil: Ay etiketinin altında Aktarmasız/Alarm/Filtre/Sırala butonları */}
+        {(onToggleDirectOnly || onOpenPriceAlert || onOpenMobileFilter || onOpenSort) && (
           <div className="flex items-center justify-between w-full gap-2 mt-1 mb-2">
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
-              onClick={onOpenFavorite}
-            >
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Favori</span>
-            </button>
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
-              onClick={onOpenPriceAlert}
-            >
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
-            </button>
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
-              onClick={onOpenMobileFilter}
-            >
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Filtreler</span>
-            </button>
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
-              onClick={onOpenSort}
-            >
-              <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Sırala</span>
-            </button>
+            {onToggleDirectOnly && (
+              <button
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg border shadow-sm flex-1 min-w-0 transition-colors ${
+                  isDirectOnlyActive 
+                    ? 'bg-green-500 border-green-600 text-white active:bg-green-600' 
+                    : 'bg-white border-gray-200 text-gray-800 active:bg-green-100'
+                }`}
+                onClick={onToggleDirectOnly}
+              >
+                <span className="text-[15px] font-semibold whitespace-nowrap">Aktarmasız</span>
+              </button>
+            )}
+            {onOpenPriceAlert && (
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                onClick={onOpenPriceAlert}
+              >
+                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
+              </button>
+            )}
+            {onOpenMobileFilter && (
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                onClick={onOpenMobileFilter}
+              >
+                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Filtreler</span>
+              </button>
+            )}
+            {onOpenSort && (
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                onClick={onOpenSort}
+              >
+                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Sırala</span>
+              </button>
+            )}
           </div>
         )}
         </div>

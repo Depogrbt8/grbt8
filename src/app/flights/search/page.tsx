@@ -684,6 +684,15 @@ export default function FlightSearchPage() {
 
   // Mobil fiyat-tarih barı pencere başlangıcı için state artık usePriceState hook'unda yönetiliyor
 
+  // Aktarmasız toggle fonksiyonu
+  const handleToggleDirectOnly = () => {
+    if (maxStops === 0) {
+      setMaxStops(2); // Aktarmasız kapalıysa, tüm uçuşları göster
+    } else {
+      setMaxStops(0); // Aktarmasız açılsın
+    }
+  };
+
   // Breadcrumb items
   const breadcrumbItems = useMemo(() => [
     { name: 'Ana Sayfa', url: 'https://gurbetbiz.app' },
@@ -733,8 +742,8 @@ export default function FlightSearchPage() {
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sol filtre paneli */}
         <aside className="w-full md:w-64 bg-white border-r border-gray-100 p-4 hidden md:block md:ml-6">
-          {/* Favoriler ve Fiyat Alarmı */}
-          <SearchFavoriteBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} />
+          {/* Favoriler kutusu gizlendi - sadece Fiyat Alarmı */}
+          {/* <SearchFavoriteBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} /> */}
           <PriceAlertBox origin={originObj.code} destination={destinationObj.code} departureDate={departureDate} />
           <div className="flex items-center gap-2 mb-4 text-gray-700 font-semibold">
             <Filter className="w-5 h-5" /> Filtreler
@@ -850,7 +859,8 @@ export default function FlightSearchPage() {
             onStepChange={setStep}
             hideTitles={true}
             onOpenPriceAlert={openPriceAlert}
-            onOpenFavorite={openFavorite}
+            onToggleDirectOnly={handleToggleDirectOnly}
+            isDirectOnlyActive={maxStops === 0}
             onOpenMobileFilter={openMobileFilter}
             onOpenSort={openSort}
           />
