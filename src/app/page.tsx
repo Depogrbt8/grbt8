@@ -10,7 +10,6 @@ import ServiceButtons from '@/components/ServiceButtons';
 // import AppBanner from '@/components/AppBanner';
 import FlightSearchForm from '@/components/FlightSearchForm';
 import HeroSection from '@/components/HeroSection';
-import { addToRecentSearches } from '@/components/RecentSearches';
 import { tr } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Image from 'next/image';
