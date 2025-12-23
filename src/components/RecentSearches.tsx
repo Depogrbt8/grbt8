@@ -84,31 +84,31 @@ export default function RecentSearches({ onSearchSelect }: RecentSearchesProps) 
             {/* Kalkış - Varış */}
             <div className="flex items-center gap-1 mb-2 pr-6">
               <Plane className="w-4 h-4 text-gray-800 flex-shrink-0" />
-              <span className="text-sm font-semibold text-gray-800 truncate">
+              <span className="text-xs font-normal text-gray-600 truncate">
                 {search.fromAirport.city || search.fromAirport.name}
               </span>
-              <ArrowRightLeft className="w-3 h-3 text-gray-800 flex-shrink-0" />
-              <span className="text-sm font-semibold text-gray-800 truncate">
+              <ArrowRightLeft className="w-3 h-3 text-gray-600 flex-shrink-0" />
+              <span className="text-xs font-normal text-gray-600 truncate">
                 {search.toAirport.city || search.toAirport.name}
               </span>
             </div>
 
-            {/* Tarihler */}
-            <div className="text-xs text-gray-600 mb-1">
-              {search.tripType === 'oneWay' ? (
-                format(new Date(search.departureDate + 'T00:00:00'), 'd MMM', { locale: tr })
-              ) : (
-                <>
-                  {format(new Date(search.departureDate + 'T00:00:00'), 'd MMM', { locale: tr })} -{' '}
-                  {search.returnDate && format(new Date(search.returnDate + 'T00:00:00'), 'd MMM', { locale: tr })}
-                </>
-              )}
-            </div>
-
-            {/* Yolcu sayısı */}
-            <div className="flex items-center gap-1">
-              <User className="w-3 h-3 text-gray-600" />
-              <span className="text-xs text-gray-600">{search.passengers}</span>
+            {/* Tarihler ve Yolcu sayısı */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-600">
+                {search.tripType === 'oneWay' ? (
+                  format(new Date(search.departureDate + 'T00:00:00'), 'd MMM', { locale: tr })
+                ) : (
+                  <>
+                    {format(new Date(search.departureDate + 'T00:00:00'), 'd MMM', { locale: tr })} -{' '}
+                    {search.returnDate && format(new Date(search.returnDate + 'T00:00:00'), 'd MMM', { locale: tr })}
+                  </>
+                )}
+              </span>
+              <div className="flex items-center gap-1">
+                <User className="w-3 h-3 text-gray-600" />
+                <span className="text-xs text-gray-600">{search.passengers}</span>
+              </div>
             </div>
           </div>
         ))}
