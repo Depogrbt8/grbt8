@@ -504,12 +504,11 @@ export default function BookingPage() {
                 <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Forms */}
                     <div className="lg:col-span-2 space-y-6">
-                        {departureFlight && <FlightDetailsCard flight={departureFlight} />}
-                        {returnFlight && (
-                            <div className="mt-4">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-2">Dönüş Uçuşu</h3>
-                                <FlightDetailsCard flight={returnFlight} />
-                            </div>
+                        {departureFlight && (
+                            <FlightDetailsCard 
+                                flight={departureFlight} 
+                                returnFlight={returnFlight || undefined}
+                            />
                         )}
                         
                         <div className="bg-white rounded-lg shadow-md p-6">
