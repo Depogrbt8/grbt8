@@ -20,7 +20,7 @@ export default function FlightDetailsCard({ flight, returnFlight }: FlightDetail
     const renderSingleFlight = (f: any, label?: string) => (
         <>
             {label && (
-                <h3 className={`text-lg font-semibold text-gray-800 mb-3 ${isMobile ? 'mb-2 text-base' : ''}`}>
+                <h3 className={`text-sm font-semibold text-gray-800 mb-2 text-center ${isMobile ? 'text-xs mb-1.5' : ''}`}>
                     {label}
                 </h3>
             )}
