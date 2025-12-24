@@ -45,6 +45,7 @@ export default function FlightDetailsCard({ flight, returnFlight }: FlightDetail
                 <div className="flex flex-col items-center flex-1 min-w-0">
                     <span className={`font-semibold ${isMobile ? 'text-xs' : 'text-sm'}`}>{f.duration}</span>
                     <span className={`text-green-600 font-semibold ${isMobile ? 'text-xs mt-[-2px]' : 'text-sm'}`}>{f.direct ? 'Direkt' : 'Aktarmalı'}</span>
+                    <span className={`text-gray-600 ${isMobile ? 'text-xs mt-1' : 'text-sm mt-1'}`}>{f.airlineName}</span>
                 </div>
                 <div className="flex flex-col items-center flex-1">
                     <span className="font-bold text-base sm:text-lg">{f.destination}</span>
@@ -63,9 +64,6 @@ export default function FlightDetailsCard({ flight, returnFlight }: FlightDetail
                       </span>
                     )}
                 </div>
-            </div>
-            <div className={`flex items-center gap-2 ${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 ${isRoundTrip ? 'mb-0' : ''}`}>
-                {f.airlineName} - {f.flightNumber}
             </div>
         </>
     );
