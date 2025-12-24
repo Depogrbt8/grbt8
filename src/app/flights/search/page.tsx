@@ -896,9 +896,11 @@ export default function FlightSearchPage() {
           />
           {/* --- Fiyat-tarih barının altındaki başlık ve rota: gizlendi --- */}
           <div className="hidden md:hidden"></div>
-          {/* MOBİL: Tek kolon - Sadece Gidiş */}
+          {/* MOBİL: Tek kolon - Gidiş/Dönüş */}
           <div className="md:hidden">
-            <h3 className="hidden">Gidiş Uçuşları</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3 px-2">
+              {step === 'return' && tripType === 'roundTrip' ? 'Dönüş Uçuşu Seç' : 'Gidiş Uçuşu Seç'}
+            </h3>
             <div className="space-y-3 pb-20">
               {loadingDeparture ? (
                 <div className="flex flex-col items-center py-8 text-gray-400"><Loader2 className="w-8 h-8 animate-spin mb-2" /> Yükleniyor...</div>
@@ -922,6 +924,9 @@ export default function FlightSearchPage() {
 
           {/* DESKTOP: Mevcut layout */}
           <div className="hidden md:block space-y-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              {step === 'return' && tripType === 'roundTrip' ? 'Dönüş Uçuşu Seç' : 'Gidiş Uçuşu Seç'}
+            </h3>
             {loadingDeparture ? (
               <div className="flex flex-col items-center py-8 text-gray-400"><Loader2 className="w-8 h-8 animate-spin mb-2" /> Yükleniyor...</div>
             ) : errorDeparture ? (
