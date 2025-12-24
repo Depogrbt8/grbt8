@@ -519,25 +519,6 @@ export default function FlightSearchPage() {
 
   const allFlights = useMemo(() => [...departureFlights, ...returnFlights], [departureFlights, returnFlights]);
 
-  // Step'e göre gösterilecek uçuşları filtrele
-  const displayFlights = useMemo(() => {
-    if (step === 'return' && tripType === 'roundTrip') {
-      // Dönüş uçuşlarını göster
-      return filteredFlights.filter(flight => 
-        returnFlights.some(rf => rf.id === flight.id)
-      );
-    } else {
-      // Gidiş uçuşlarını göster
-      return filteredFlights.filter(flight => 
-        departureFlights.some(df => df.id === flight.id)
-      );
-    }
-  }, [filteredFlights, step, tripType, departureFlights, returnFlights]);
-
-  // Loading ve error state'lerini step'e göre ayarla
-  const isLoading = step === 'return' ? loadingReturn : loadingDeparture;
-  const error = step === 'return' ? errorReturn : errorDeparture;
-
   // Filter state'lerini hook ile yönet
   const {
     selectedAirlines,
@@ -565,6 +546,25 @@ export default function FlightSearchPage() {
     allFlights,
     airlinesList
   });
+
+  // Step'e göre gösterilecek uçuşları filtrele
+  const displayFlights = useMemo(() => {
+    if (step === 'return' && tripType === 'roundTrip') {
+      // Dönüş uçuşlarını göster
+      return filteredFlights.filter(flight => 
+        returnFlights.some(rf => rf.id === flight.id)
+      );
+    } else {
+      // Gidiş uçuşlarını göster
+      return filteredFlights.filter(flight => 
+        departureFlights.some(df => df.id === flight.id)
+      );
+    }
+  }, [filteredFlights, step, tripType, departureFlights, returnFlights]);
+
+  // Loading ve error state'lerini step'e göre ayarla
+  const isLoading = step === 'return' ? loadingReturn : loadingDeparture;
+  const error = step === 'return' ? errorReturn : errorDeparture;
 
   // Demo: Yolcu listesi (3 yolcu)
   const passengers = [
