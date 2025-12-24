@@ -797,7 +797,15 @@ export default function FlightSearchPage() {
             <div className="block md:hidden sticky top-0 z-30 bg-white border-b border-gray-200" ref={summaryRef}>
               <div className="flex items-center justify-between px-4 py-3">
                 <div>
-                  <div className="font-bold text-lg text-gray-900 tracking-tight">{origin} - {destination}</div>
+                  <div className="font-bold text-lg text-gray-900 tracking-tight">
+                    {(() => {
+                      const originAirport = airportFromCode(origin);
+                      const destAirport = airportFromCode(destination);
+                      const originDisplay = originAirport.city ? `${originAirport.city} - ${originAirport.code}` : origin;
+                      const destDisplay = destAirport.city ? `${destAirport.city} - ${destAirport.code}` : destination;
+                      return `${originDisplay} - ${destDisplay}`;
+                    })()}
+                  </div>
                   <div className="text-gray-500 text-sm mt-0.5 flex items-center gap-2">
                     {formatShortDate(departureDateStr)}
                     {tripType === 'roundTrip' && returnDateStr && (
