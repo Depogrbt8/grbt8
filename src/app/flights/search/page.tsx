@@ -678,7 +678,29 @@ export default function FlightSearchPage() {
   // Yardımcı: airport kodunu Airport objesine çevir
   function airportFromCode(code: string): { code: string; name: string; city: string } {
     if (!code) return { code: '', name: '', city: '' };
-    // Demo için sadece kodu doldur
+    
+    // Demo havaalanı listesi
+    const demoAirports: { code: string; name: string; city: string }[] = [
+      { code: 'IST', name: 'İstanbul Havalimanı', city: 'İstanbul' },
+      { code: 'SAW', name: 'Sabiha Gökçen', city: 'İstanbul' },
+      { code: 'AYT', name: 'Antalya Havalimanı', city: 'Antalya' },
+      { code: 'ADB', name: 'Adnan Menderes', city: 'İzmir' },
+      { code: 'ESB', name: 'Esenboğa', city: 'Ankara' },
+      { code: 'BRU', name: 'Brussels Airport', city: 'Brüksel' },
+      { code: 'AMS', name: 'Schiphol', city: 'Amsterdam' },
+      { code: 'CDG', name: 'Charles de Gaulle', city: 'Paris' },
+      { code: 'LHR', name: 'Heathrow', city: 'Londra' },
+      { code: 'FRA', name: 'Frankfurt Airport', city: 'Frankfurt' },
+      { code: 'ZRH', name: 'Zürich Airport', city: 'Zürih' },
+      { code: 'VIE', name: 'Vienna International', city: 'Viyana' },
+    ];
+    
+    const airport = demoAirports.find(a => a.code === code);
+    if (airport) {
+      return airport;
+    }
+    
+    // Bulunamazsa sadece kodu döndür
     return { code, name: code, city: '' };
   }
 
