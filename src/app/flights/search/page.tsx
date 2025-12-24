@@ -801,8 +801,8 @@ export default function FlightSearchPage() {
                     {(() => {
                       const originAirport = airportFromCode(origin);
                       const destAirport = airportFromCode(destination);
-                      const originDisplay = originAirport.city ? `${originAirport.city} - ${originAirport.code}` : origin;
-                      const destDisplay = destAirport.city ? `${destAirport.city} - ${destAirport.code}` : destination;
+                      const originDisplay = originAirport.city ? `${originAirport.city} ${originAirport.code}` : origin;
+                      const destDisplay = destAirport.city ? `${destAirport.city} ${destAirport.code}` : destination;
                       return `${originDisplay} - ${destDisplay}`;
                     })()}
                   </div>

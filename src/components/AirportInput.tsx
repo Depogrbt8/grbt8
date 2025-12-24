@@ -108,7 +108,7 @@ export default function AirportInput({
   const handleAirportSelect = (airport: Airport) => {
     // Mobil görünümde şehir ismi + kod formatında göster
     if (isMobile) {
-      onChange(airport.city ? `${airport.city} - ${airport.code}` : `${airport.code} - ${airport.name}`);
+      onChange(airport.city ? `${airport.city} ${airport.code}` : `${airport.code} - ${airport.name}`);
     } else {
       onChange(`${airport.code} - ${airport.name}`);
     }

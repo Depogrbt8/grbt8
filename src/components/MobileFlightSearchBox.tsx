@@ -82,25 +82,25 @@ export default function MobileFlightSearchBox({
   useEffect(() => {
     if (fromAirports.length > 0) {
       const airport = fromAirports[0];
-      setFromInputValue(airport.city ? `${airport.city} - ${airport.code}` : `${airport.code} - ${airport.name}`);
+      setFromInputValue(airport.city ? `${airport.city} ${airport.code}` : `${airport.code} - ${airport.name}`);
     }
   }, [fromAirports]);
 
   useEffect(() => {
     if (toAirports.length > 0) {
       const airport = toAirports[0];
-      setToInputValue(airport.city ? `${airport.city} - ${airport.code}` : `${airport.code} - ${airport.name}`);
+      setToInputValue(airport.city ? `${airport.city} ${airport.code}` : `${airport.code} - ${airport.name}`);
     }
   }, [toAirports]);
 
   const handleFromAirportSelect = (airport: Airport) => {
     setFromAirports([airport]);
-    setFromInputValue(airport.city ? `${airport.city} - ${airport.code}` : `${airport.code} - ${airport.name}`);
+    setFromInputValue(airport.city ? `${airport.city} ${airport.code}` : `${airport.code} - ${airport.name}`);
   };
 
   const handleToAirportSelect = (airport: Airport) => {
     setToAirports([airport]);
-    setToInputValue(airport.city ? `${airport.city} - ${airport.code}` : `${airport.code} - ${airport.name}`);
+    setToInputValue(airport.city ? `${airport.city} ${airport.code}` : `${airport.code} - ${airport.name}`);
   };
 
   const handleSwapAirports = () => {
