@@ -519,6 +519,25 @@ export default function FlightSearchPage() {
 
   const allFlights = useMemo(() => [...departureFlights, ...returnFlights], [departureFlights, returnFlights]);
 
+  // Step'e göre gösterilecek uçuşları filtrele
+  const displayFlights = useMemo(() => {
+    if (step === 'return' && tripType === 'roundTrip') {
+      // Dönüş uçuşlarını göster
+      return filteredFlights.filter(flight => 
+        returnFlights.some(rf => rf.id === flight.id)
+      );
+    } else {
+      // Gidiş uçuşlarını göster
+      return filteredFlights.filter(flight => 
+        departureFlights.some(df => df.id === flight.id)
+      );
+    }
+  }, [filteredFlights, step, tripType, departureFlights, returnFlights]);
+
+  // Loading ve error state'lerini step'e göre ayarla
+  const isLoading = step === 'return' ? loadingReturn : loadingDeparture;
+  const error = step === 'return' ? errorReturn : errorDeparture;
+
   // Filter state'lerini hook ile yönet
   const {
     selectedAirlines,
@@ -561,16 +580,45 @@ export default function FlightSearchPage() {
   ];
   const [baggageSelections, setBaggageSelections] = useState<string[]>(passengers.map(() => '0 kg'));
   const [selectedDepartureFlight, setSelectedDepartureFlight] = useState<any>(null);
+  const [selectedReturnFlight, setSelectedReturnFlight] = useState<any>(null);
   const [showMobileBrandModal, setShowMobileBrandModal] = useState(false);
+  const [showReturnBrandModal, setShowReturnBrandModal] = useState(false);
 
-  const handleBrandSelect = (flight: any, brand: any) => {
-    // Seçilen brand ile rezervasyon akışına devam et
-    // Örnek: booking sayfasına flight ve brand bilgisini gönder
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      closeFlight();
+  const handleBrandSelect = (flight: any, brand: any, isReturn: boolean = false) => {
+    if (isReturn) {
+      // Dönüş uçuşu paketi seçildi
+      const returnFlightWithBrand = { ...flight, selectedBrand: brand };
+      setSelectedReturnFlight(returnFlightWithBrand);
+      setShowReturnBrandModal(false);
+      
+      // Her iki uçuş da seçildi, ödeme sayfasına git
+      if (selectedDepartureFlight) {
+        const bookingData = {
+          departure: selectedDepartureFlight,
+          return: returnFlightWithBrand,
+          tripType: 'roundTrip'
+        };
+        const flightData = encodeURIComponent(JSON.stringify(bookingData));
+        window.location.href = `/flights/booking?flight=${flightData}`;
+      }
+    } else {
+      // Gidiş uçuşu paketi seçildi
+      const departureFlightWithBrand = { ...flight, selectedBrand: brand };
+      setSelectedDepartureFlight(departureFlightWithBrand);
+      setShowMobileBrandModal(false);
+      
+      if (tripType === 'roundTrip') {
+        // Gidiş-dönüş - dönüş adımına geç
+        setStep('return');
+      } else {
+        // Tek yön - direkt ödeme
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+          closeFlight();
+        }
+        const flightData = encodeURIComponent(JSON.stringify(departureFlightWithBrand));
+        window.location.href = `/flights/booking?flight=${flightData}`;
+      }
     }
-    const flightData = encodeURIComponent(JSON.stringify({ ...flight, selectedBrand: brand }));
-    window.location.href = `/flights/booking?flight=${flightData}`;
   };
 
   // Tarih formatı (örn: 12 Tem Cts)
@@ -902,20 +950,40 @@ export default function FlightSearchPage() {
               {step === 'return' && tripType === 'roundTrip' ? 'Dönüş Uçuşu Seç' : 'Gidiş Uçuşu Seç'}
             </h3>
             <div className="space-y-3 pb-20">
-              {loadingDeparture ? (
+              {isLoading ? (
                 <div className="flex flex-col items-center py-8 text-gray-400"><Loader2 className="w-8 h-8 animate-spin mb-2" /> Yükleniyor...</div>
-              ) : errorDeparture ? (
-                <div className="text-red-500 py-8">{errorDeparture}</div>
-              ) : filteredFlights.length === 0 ? (
-                <div className="text-gray-400 text-sm italic">Uygun gidiş uçuşu bulunamadı.</div>
+              ) : error ? (
+                <div className="text-red-500 py-8">{error}</div>
+              ) : displayFlights.length === 0 ? (
+                <div className="text-gray-400 text-sm italic">
+                  {step === 'return' ? 'Uygun dönüş uçuşu bulunamadı.' : 'Uygun gidiş uçuşu bulunamadı.'}
+                </div>
               ) : (
-                filteredFlights.map((flight, index) => (
+                displayFlights.map((flight, index) => (
                   <CompactFlightCard
                     key={flight.id || index}
                     flight={flight}
                     airlinesList={airlinesList}
-                    isSelected={selectedDepartureFlight?.id === flight.id}
-                    onSelect={() => { setSelectedDepartureFlight(flight); setShowMobileBrandModal(true); }}
+                    isSelected={
+                      step === 'return' 
+                        ? selectedReturnFlight?.id === flight.id 
+                        : selectedDepartureFlight?.id === flight.id
+                    }
+                    onSelect={() => {
+                      if (step === 'return') {
+                        setSelectedReturnFlight(flight);
+                        setShowReturnBrandModal(true);
+                      } else {
+                        setSelectedDepartureFlight(flight);
+                        if (tripType === 'roundTrip') {
+                          setShowMobileBrandModal(true);
+                        } else {
+                          // Tek yön - direkt ödeme
+                          const flightData = encodeURIComponent(JSON.stringify(flight));
+                          window.location.href = `/flights/booking?flight=${flightData}`;
+                        }
+                      }
+                    }}
                   />
                 ))
               )}
@@ -927,20 +995,42 @@ export default function FlightSearchPage() {
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               {step === 'return' && tripType === 'roundTrip' ? 'Dönüş Uçuşu Seç' : 'Gidiş Uçuşu Seç'}
             </h3>
-            {loadingDeparture ? (
+            {isLoading ? (
               <div className="flex flex-col items-center py-8 text-gray-400"><Loader2 className="w-8 h-8 animate-spin mb-2" /> Yükleniyor...</div>
-            ) : errorDeparture ? (
-              <div className="text-red-500 py-8">{errorDeparture}</div>
-            ) : filteredFlights.length === 0 ? (
-              <div className="text-gray-400 text-sm italic">Uygun gidiş uçuşu bulunamadı.</div>
+            ) : error ? (
+              <div className="text-red-500 py-8">{error}</div>
+            ) : displayFlights.length === 0 ? (
+              <div className="text-gray-400 text-sm italic">
+                {step === 'return' ? 'Uygun dönüş uçuşu bulunamadı.' : 'Uygun gidiş uçuşu bulunamadı.'}
+              </div>
             ) : (
-              filteredFlights.map(flight => (
+              displayFlights.map(flight => (
                 <div key={flight.id}>
-                  <FlightCard flight={flight} onSelect={() => openFlightId === flight.id ? closeFlight() : openFlight(flight.id)} airlinesList={airlinesList} />
+                  <FlightCard 
+                    flight={flight} 
+                    onSelect={() => {
+                      if (step === 'return') {
+                        // Dönüş uçuşu seçildi
+                        if (openFlightId === flight.id) {
+                          closeFlight();
+                        } else {
+                          openFlight(flight.id);
+                        }
+                      } else {
+                        // Gidiş uçuşu seçildi
+                        if (openFlightId === flight.id) {
+                          closeFlight();
+                        } else {
+                          openFlight(flight.id);
+                        }
+                      }
+                    }} 
+                    airlinesList={airlinesList} 
+                  />
                   {openFlightId === flight.id && (
                     <FlightBrandOptions
                       flight={flight}
-                      onSelectBrand={brand => handleBrandSelect(flight, brand)}
+                      onSelectBrand={brand => handleBrandSelect(flight, brand, step === 'return')}
                     />
                   )}
                 </div>
@@ -955,35 +1045,61 @@ export default function FlightSearchPage() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
-            {selectedDepartureFlight ? (
-              <div>
-                <div className="text-sm text-gray-600">Seçilen Uçuş</div>
-                <div className="font-semibold text-gray-900">
-                  {selectedDepartureFlight.origin} → {selectedDepartureFlight.destination}
+            {step === 'return' ? (
+              selectedReturnFlight ? (
+                <div>
+                  <div className="text-sm text-gray-600">Seçilen Dönüş Uçuşu</div>
+                  <div className="font-semibold text-gray-900">
+                    {selectedReturnFlight.origin} → {selectedReturnFlight.destination}
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">
+                    {selectedReturnFlight.price}.00 €
+                  </div>
                 </div>
-                <div className="text-lg font-bold text-blue-600">
-                  {selectedDepartureFlight.price}.00 €
-                </div>
-              </div>
+              ) : (
+                <div className="text-gray-500">Dönüş uçuşu seçin</div>
+              )
             ) : (
-              <div className="text-gray-500">Uçuş seçin</div>
+              selectedDepartureFlight ? (
+                <div>
+                  <div className="text-sm text-gray-600">Seçilen Gidiş Uçuşu</div>
+                  <div className="font-semibold text-gray-900">
+                    {selectedDepartureFlight.origin} → {selectedDepartureFlight.destination}
+                  </div>
+                  <div className="text-lg font-bold text-blue-600">
+                    {selectedDepartureFlight.price}.00 €
+                  </div>
+                </div>
+              ) : (
+                <div className="text-gray-500">Uçuş seçin</div>
+              )
             )}
           </div>
           <button
             className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              selectedDepartureFlight
+              (step === 'return' && selectedReturnFlight) || (step === 'departure' && selectedDepartureFlight && tripType === 'oneWay')
                 ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
-            disabled={!selectedDepartureFlight}
+            disabled={step === 'return' ? !selectedReturnFlight : (tripType === 'oneWay' ? !selectedDepartureFlight : true)}
             onClick={() => {
-              if (selectedDepartureFlight) {
+              if (step === 'return' && selectedReturnFlight && selectedDepartureFlight) {
+                // Her iki uçuş da seçildi, ödeme sayfasına git
+                const bookingData = {
+                  departure: selectedDepartureFlight,
+                  return: selectedReturnFlight,
+                  tripType: 'roundTrip'
+                };
+                const flightData = encodeURIComponent(JSON.stringify(bookingData));
+                window.location.href = `/flights/booking?flight=${flightData}`;
+              } else if (step === 'departure' && selectedDepartureFlight && tripType === 'oneWay') {
+                // Tek yön - direkt ödeme
                 const flightData = encodeURIComponent(JSON.stringify(selectedDepartureFlight));
                 window.location.href = `/flights/booking?flight=${flightData}`;
               }
             }}
           >
-            Rezervasyon Yap
+            {step === 'return' ? 'Rezervasyon Yap' : tripType === 'oneWay' ? 'Rezervasyon Yap' : 'Paket Seç'}
           </button>
         </div>
       </div>
@@ -999,7 +1115,24 @@ export default function FlightSearchPage() {
             </div>
             <FlightBrandOptions
               flight={selectedDepartureFlight}
-              onSelectBrand={(brand) => handleBrandSelect(selectedDepartureFlight, brand)}
+              onSelectBrand={(brand) => handleBrandSelect(selectedDepartureFlight, brand, false)}
+            />
+          </div>
+        </div>
+      )}
+      
+      {/* MOBİL: Dönüş uçuşu paket seçenekleri bottom sheet */}
+      {isClient && isMobile && showReturnBrandModal && selectedReturnFlight && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowReturnBrandModal(false)} />
+          <div className="absolute left-0 right-0 bottom-0 bg-white rounded-t-2xl shadow-2xl max-h-[75vh] overflow-y-auto p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="font-semibold text-gray-800">Dönüş Uçuşu - Paket Seçenekleri</div>
+              <button className="text-gray-500 text-xl" onClick={() => setShowReturnBrandModal(false)}>×</button>
+            </div>
+            <FlightBrandOptions
+              flight={selectedReturnFlight}
+              onSelectBrand={(brand) => handleBrandSelect(selectedReturnFlight, brand, true)}
             />
           </div>
         </div>
