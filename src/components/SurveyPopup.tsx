@@ -207,9 +207,13 @@ export default function SurveyPopup() {
           
           // Ana sayfa veya hesabım sayfasında ve bugün gösterilmemişse göster
           if ((isHomePage || isAccountPage) && !hasCompleted && !hasShownToday) {
-            logger.debug('Anket popup gösteriliyor', { userId: session.user.id });
-            setIsOpen(true);
-            localStorage.setItem(sessionKey, 'true');
+            logger.debug('Anket popup gösteriliyor (3 saniye gecikme ile)', { userId: session.user.id });
+            // Yeni kullanıcı giriş yaptığında sayfa yüklenmesi tamamlandıktan sonra popup açılsın
+            // 3 saniye gecikme ile popup'ı göster
+            setTimeout(() => {
+              setIsOpen(true);
+              localStorage.setItem(sessionKey, 'true');
+            }, 3000);
           }
         } else {
           logger.debug('Kullanıcı anketi zaten doldurmuş', { userId: session.user.id });
