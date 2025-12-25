@@ -38,6 +38,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(''); // Önceki hataları temizle
     setLoading(true);
 
     try {
@@ -48,7 +49,9 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       });
 
       if (result?.error) {
-        toast.error('Geçersiz e-posta veya şifre!');
+        const errorMessage = 'Geçersiz e-posta veya şifre!';
+        setError(errorMessage); // Error state'ini set et
+        toast.error(errorMessage);
         // Monitoring: Başarısız giriş
         monitoringClient.trackLoginAttempt(false);
       } else {
@@ -65,7 +68,9 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         }, 500);
       }
     } catch (err) {
-      toast.error('Giriş yapılırken bir hata oluştu');
+      const errorMessage = 'Giriş yapılırken bir hata oluştu';
+      setError(errorMessage); // Error state'ini set et
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
