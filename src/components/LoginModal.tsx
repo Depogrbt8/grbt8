@@ -48,13 +48,15 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         redirect: false,
       });
 
-      if (result?.error) {
+      // NextAuth başarısız olduğunda result.error veya result.ok === false olabilir
+      if (result?.error || result?.ok === false) {
         const errorMessage = 'Geçersiz e-posta veya şifre!';
         setError(errorMessage); // Error state'ini set et
         toast.error(errorMessage);
         // Monitoring: Başarısız giriş
         monitoringClient.trackLoginAttempt(false);
-      } else {
+        console.log('Login error:', result); // Debug için
+      } else if (result?.ok) {
         toast.success('Başarıyla giriş yapıldı!');
         // Monitoring: Başarılı giriş
         monitoringClient.trackLoginAttempt(true);
@@ -66,11 +68,18 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         setTimeout(() => {
           window.location.href = '/hesabim';
         }, 500);
+      } else {
+        // Beklenmeyen durum
+        const errorMessage = 'Giriş yapılırken bir hata oluştu';
+        setError(errorMessage);
+        toast.error(errorMessage);
+        console.log('Unexpected login result:', result); // Debug için
       }
     } catch (err) {
       const errorMessage = 'Giriş yapılırken bir hata oluştu';
       setError(errorMessage); // Error state'ini set et
       toast.error(errorMessage);
+      console.error('Login exception:', err); // Debug için
     } finally {
       setLoading(false);
     }
