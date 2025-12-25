@@ -170,7 +170,21 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       }, 1000);
     } else {
       const data = await res.json();
-      setError(data.error || 'Bir hata oluştu.');
+      // API error response formatını kontrol et
+      if (data.error && typeof data.error === 'object' && data.error.message) {
+        // Standart error formatı: { error: { code, message, statusCode } }
+        setError(data.error.message);
+        toast.error(data.error.message);
+      } else if (typeof data.error === 'string') {
+        // String format error
+        setError(data.error);
+        toast.error(data.error);
+      } else {
+        // Beklenmeyen format
+        const errorMessage = 'Bir hata oluştu.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      }
     }
   };
 

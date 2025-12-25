@@ -40,7 +40,10 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return ApiError.alreadyExists('Email adresi');
+      return errorResponse({ 
+        code: ErrorCode.ALREADY_EXISTS, 
+        message: 'Bu e-posta adresi daha önce kayıt edilmiş!' 
+      });
     }
 
     // Şifreyi hashle
