@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { logger } from '@/utils/error';
-import { ApiError, successResponse, ErrorCode } from '@/utils/errorResponse';
+import { ApiError, successResponse, ErrorCode, errorResponse } from '@/utils/errorResponse';
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
