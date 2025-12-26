@@ -174,28 +174,15 @@ export default function HesabimPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-Posta</label>
                   <input
-                    type="text"
-                    name="identityNumber"
-                    value={userData.identityNumber || ''}
+                    type="email"
+                    name="email"
+                    value={userData.email || ''}
                     onChange={handleChange}
                     className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    maxLength={11}
-                    disabled={!!userData.isForeigner}
+                    disabled
                   />
-                  <div className="mt-2">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        name="isForeigner"
-                        checked={!!userData.isForeigner}
-                        onChange={handleChange}
-                        className="rounded text-green-500 focus:ring-green-500"
-                      />
-                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
-                    </label>
-                  </div>
                 </div>
               </div>
               <div className="sm:grid sm:grid-cols-3 sm:gap-8 grid grid-cols-1 gap-2">
@@ -299,15 +286,28 @@ export default function HesabimPage() {
               </div>
               <div className="flex gap-4 flex-col sm:flex-row">
                 <div className="w-full sm:w-1/2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-Posta</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
                   <input
-                    type="email"
-                    name="email"
-                    value={userData.email || ''}
+                    type="text"
+                    name="identityNumber"
+                    value={userData.identityNumber || ''}
                     onChange={handleChange}
                     className="w-full px-2 py-2 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-green-500 text-sm"
-                    disabled
+                    maxLength={11}
+                    disabled={!!userData.isForeigner}
                   />
+                  <div className="mt-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        name="isForeigner"
+                        checked={!!userData.isForeigner}
+                        onChange={handleChange}
+                        className="rounded text-green-500 focus:ring-green-500"
+                      />
+                      <span className="text-sm text-gray-700">TC Vatandaşı Değil</span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row justify-between items-center pt-4 border-t gap-2">
