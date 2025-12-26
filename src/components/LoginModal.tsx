@@ -376,7 +376,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
                   <button
-                    onClick={() => signIn('google')}
+                    onClick={() => signIn('google', { callbackUrl: '/hesabim' })}
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     <svg className="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -390,7 +390,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 </div>
                 <div>
                   <button
-                    onClick={() => signIn('facebook')}
+                    onClick={() => signIn('facebook', { callbackUrl: '/hesabim' })}
                     className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-[#1877F2] text-sm font-medium text-white hover:bg-[#166fe5]"
                   >
                     <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
