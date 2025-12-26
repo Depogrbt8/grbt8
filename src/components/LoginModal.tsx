@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import ValidationPopup from './ValidationPopup';
 import { validatePasswordStrength } from '@/lib/authSecurity';
 import CountryDropdown from './CountryDropdown';
@@ -35,6 +35,76 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(defaultCountry);
+
+  // Popup callback handler
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      // Güvenlik: Aynı origin'den gelen mesajları dinle
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data === 'oauth-success') {
+        // Popup'dan başarılı mesaj geldi, session'ı kontrol et
+        const session = await getSession();
+        if (session) {
+          toast.success('Başarıyla giriş yapıldı!');
+          monitoringClient.trackLoginAttempt(true);
+          onClose();
+          router.push('/hesabim');
+        }
+      } else if (event.data === 'oauth-error') {
+        toast.error('Giriş işlemi başarısız oldu');
+        monitoringClient.trackLoginAttempt(false);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [router, onClose]);
+
+  // Popup ile OAuth girişi
+  const handleOAuthSignIn = async (provider: 'google' | 'facebook') => {
+    try {
+      // Popup aç - NextAuth signin sayfasını aç
+      const width = 500;
+      const height = 600;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
+      const callbackUrl = `${window.location.origin}/oauth-callback`;
+      const signInUrl = `/api/auth/signin/${provider}?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+
+      const popup = window.open(
+        signInUrl,
+        'oauth-popup',
+        `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,directories=no,status=no`
+      );
+
+      if (!popup) {
+        toast.error('Popup engellendi. Lütfen popup\'ları etkinleştirin.');
+        return;
+      }
+
+      // Popup kapanana kadar bekle ve kontrol et (fallback)
+      const checkClosed = setInterval(async () => {
+        if (popup.closed) {
+          clearInterval(checkClosed);
+          // Popup kapandı, session'ı kontrol et (fallback)
+          setTimeout(async () => {
+            const session = await getSession();
+            if (session) {
+              toast.success('Başarıyla giriş yapıldı!');
+              monitoringClient.trackLoginAttempt(true);
+              onClose();
+              router.push('/hesabim');
+            }
+          }, 1000);
+        }
+      }, 500);
+    } catch (error) {
+      toast.error('Giriş işlemi sırasında bir hata oluştu');
+      monitoringClient.trackLoginAttempt(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -376,7 +446,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
                   <button
-                    onClick={() => signIn('google', { callbackUrl: '/hesabim' })}
+                    onClick={() => handleOAuthSignIn('google')}
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     <svg className="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -390,7 +460,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 </div>
                 <div>
                   <button
-                    onClick={() => signIn('facebook', { callbackUrl: '/hesabim' })}
+                    onClick={() => handleOAuthSignIn('facebook')}
                     className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm bg-[#1877F2] text-sm font-medium text-white hover:bg-[#166fe5]"
                   >
                     <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
