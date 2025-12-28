@@ -975,13 +975,8 @@ export default function FlightSearchPage() {
                         setShowReturnBrandModal(true);
                       } else {
                         setSelectedDepartureFlight(flight);
-                        if (tripType === 'roundTrip') {
-                          setShowMobileBrandModal(true);
-                        } else {
-                          // Tek yön - direkt ödeme
-                          const flightData = encodeURIComponent(JSON.stringify(flight));
-                          window.location.href = `/flights/booking?flight=${flightData}`;
-                        }
+                        // Hem tek yön hem gidiş-dönüş için paket seçim popup'ı göster
+                        setShowMobileBrandModal(true);
                       }
                     }}
                   />
