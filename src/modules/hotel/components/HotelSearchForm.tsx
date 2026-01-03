@@ -347,7 +347,7 @@ export default function HotelSearchForm({
         <div className="grid grid-cols-5 gap-4 items-end">
           {/* Konum */}
           <div className="col-span-1">
-            <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Konum</label>
+            <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Deneme Konum</label>
             <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200" ref={locationContainerRef}>
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
               <input
