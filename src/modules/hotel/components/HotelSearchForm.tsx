@@ -537,6 +537,7 @@ export default function HotelSearchForm({
           </div>
         </div>
       </div>
+      </div>
     </>
   );
 }
