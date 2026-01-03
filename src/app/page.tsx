@@ -1,24 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AirportInput from '@/components/AirportInput';
-import TripTypeSelector from '@/components/TripTypeSelector';
-import PassengerSelector from '@/components/PassengerSelector';
 import ServiceButtons from '@/components/ServiceButtons';
-// import AppBanner from '@/components/AppBanner';
-import FlightSearchForm from '@/components/FlightSearchForm';
 import HeroSection, { ServiceType } from '@/components/HeroSection';
-import { HotelSearchForm } from '@/modules/hotel/components';
-import { tr } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Image from 'next/image';
-
 import CampaignsSection from '@/components/CampaignsSection';
 import { logger } from '@/lib/logger';
 import Script from 'next/script';
 import { breadcrumbSchema } from '@/lib/schemas';
+
+// Dynamic imports - sadece gerektiğinde yüklensin
+const FlightSearchForm = dynamic(
+  () => import('@/components/FlightSearchForm'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full px-4 md:px-8">
+        <div className="bg-white rounded-[32px] shadow-lg p-8 animate-pulse">
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+);
+
+const HotelSearchForm = dynamic(
+  () => import('@/modules/hotel/components/HotelSearchForm'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full px-4 md:px-8">
+        <div className="bg-white rounded-[32px] shadow-lg p-8 animate-pulse">
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+);
 
 // Type tanımları
 interface Airport {
