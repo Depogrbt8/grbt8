@@ -30,9 +30,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 2847,
     priceRange: { min: 250, max: 800, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-      'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
-      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800'
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Room Service', 'Parking'],
     availability: true,
@@ -54,8 +52,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 3156,
     priceRange: { min: 280, max: 750, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
-      'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Room Service', 'Parking', 'Conference Room'],
     availability: true,
@@ -77,8 +74,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 1523,
     priceRange: { min: 120, max: 350, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800',
-      'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800'
+      'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800'
     ],
     amenities: ['WiFi', 'Gym', 'Restaurant', 'Bar', 'Room Service', 'Parking', 'Conference Room'],
     availability: true,
@@ -100,8 +96,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 4521,
     priceRange: { min: 180, max: 550, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
-      'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800'
+      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Room Service', 'Parking', 'Beach Access', 'Kids Club'],
     availability: true,
@@ -123,8 +118,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 1876,
     priceRange: { min: 100, max: 280, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800',
-      'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800'
+      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Gym', 'Restaurant', 'Bar', 'Parking', 'Sea View'],
     availability: true,
@@ -146,8 +140,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 2134,
     priceRange: { min: 150, max: 420, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',
-      'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800'
+      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Beach Access', 'Water Sports'],
     availability: true,
@@ -169,8 +162,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 987,
     priceRange: { min: 90, max: 220, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=800',
-      'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800'
+      'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=800'
     ],
     amenities: ['WiFi', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Parking', 'Thermal Pool'],
     availability: true,
@@ -192,8 +184,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 654,
     priceRange: { min: 85, max: 200, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1587213811864-46e59f6873b1?w=800',
-      'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800'
+      'https://images.unsplash.com/photo-1587213811864-46e59f6873b1?w=800'
     ],
     amenities: ['WiFi', 'Gym', 'Restaurant', 'Bar', 'Room Service', 'Parking', 'City View'],
     availability: true,
@@ -215,8 +206,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 432,
     priceRange: { min: 75, max: 180, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?w=800',
-      'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=800'
+      'https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?w=800'
     ],
     amenities: ['WiFi', 'Restaurant', 'Bar', 'Room Service', 'Parking', 'Conference Room'],
     availability: true,
@@ -238,8 +228,7 @@ const DEMO_HOTELS: Hotel[] = [
     reviewCount: 1876,
     priceRange: { min: 220, max: 650, currency: 'EUR' },
     images: [
-      'https://images.unsplash.com/photo-1549294413-26f195200c16?w=800',
-      'https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=800'
+      'https://images.unsplash.com/photo-1549294413-26f195200c16?w=800'
     ],
     amenities: ['WiFi', 'Pool', 'Spa', 'Gym', 'Restaurant', 'Bar', 'Beach Access', 'Water Sports', 'Marina'],
     availability: true,
@@ -570,4 +559,5 @@ function generateDemoReviews(count: number): import('../../types').Review[] {
     verified: Math.random() > 0.3
   }));
 }
+
 
