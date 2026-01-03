@@ -3,11 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { MapPin, CalendarDays, Users, ChevronDown, X, Minus, Plus } from 'lucide-react';
-import { format, addDays } from 'date-fns';
+import { format, addDays, isAfter, isBefore } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { searchLocations } from '../services';
 import { buildSearchUrl } from '../utils';
 import type { LocationSuggestion } from '../types';
+import DateInput from '@/components/DateInput';
 
 interface HotelSearchFormProps {
   initialLocation?: string;
@@ -47,8 +48,12 @@ export default function HotelSearchForm({
   const [location, setLocation] = useState(initialLocation);
   const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
-  const [checkIn, setCheckIn] = useState(initialCheckIn || format(addDays(new Date(), 7), 'yyyy-MM-dd'));
-  const [checkOut, setCheckOut] = useState(initialCheckOut || format(addDays(new Date(), 9), 'yyyy-MM-dd'));
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>(
+    initialCheckIn ? new Date(initialCheckIn) : addDays(new Date(), 7)
+  );
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(
+    initialCheckOut ? new Date(initialCheckOut) : addDays(new Date(), 9)
+  );
   const [adults, setAdults] = useState(initialAdults);
   const [children, setChildren] = useState(initialChildren);
   const [rooms, setRooms] = useState(initialRooms);
@@ -108,8 +113,8 @@ export default function HotelSearchForm({
 
     const params: SearchParams = {
       location,
-      checkIn,
-      checkOut,
+      checkIn: checkInDate ? format(checkInDate, 'yyyy-MM-dd') : '',
+      checkOut: checkOutDate ? format(checkOutDate, 'yyyy-MM-dd') : '',
       adults,
       children,
       rooms
@@ -190,24 +195,32 @@ export default function HotelSearchForm({
             <div className="flex-1">
               <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
-                <input
-                  type="date"
-                  value={checkIn}
-                  onChange={(e) => setCheckIn(e.target.value)}
-                  min={format(new Date(), 'yyyy-MM-dd')}
+                <DateInput
+                  value={checkInDate}
+                  onChange={(date) => {
+                    if (date && checkOutDate && isAfter(date, checkOutDate)) {
+                      setCheckOutDate(addDays(date, 2));
+                    }
+                    setCheckInDate(date || undefined);
+                  }}
                   className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  placeholder="Giriş tarihi"
                 />
               </div>
             </div>
             <div className="flex-1">
               <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
-                <input
-                  type="date"
-                  value={checkOut}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  min={checkIn || format(new Date(), 'yyyy-MM-dd')}
+                <DateInput
+                  value={checkOutDate}
+                  onChange={(date) => {
+                    if (date && checkInDate && isBefore(date, checkInDate)) {
+                      setCheckInDate(addDays(date, -2));
+                    }
+                    setCheckOutDate(date || undefined);
+                  }}
                   className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  placeholder="Çıkış tarihi"
                 />
               </div>
             </div>
@@ -399,12 +412,16 @@ export default function HotelSearchForm({
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Giriş Tarihi</label>
             <div className="relative w-full flex items-center">
               <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
-              <input
-                type="date"
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-                min={format(new Date(), 'yyyy-MM-dd')}
+              <DateInput
+                value={checkInDate}
+                onChange={(date) => {
+                  if (date && checkOutDate && isAfter(date, checkOutDate)) {
+                    setCheckOutDate(addDays(date, 2));
+                  }
+                  setCheckInDate(date || undefined);
+                }}
                 className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                placeholder="Giriş tarihi"
               />
             </div>
           </div>
@@ -414,12 +431,16 @@ export default function HotelSearchForm({
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Çıkış Tarihi</label>
             <div className="relative w-full flex items-center">
               <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
-              <input
-                type="date"
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-                min={checkIn || format(new Date(), 'yyyy-MM-dd')}
+              <DateInput
+                value={checkOutDate}
+                onChange={(date) => {
+                  if (date && checkInDate && isBefore(date, checkInDate)) {
+                    setCheckInDate(addDays(date, -2));
+                  }
+                  setCheckOutDate(date || undefined);
+                }}
                 className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                placeholder="Çıkış tarihi"
               />
             </div>
           </div>
