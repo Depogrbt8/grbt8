@@ -578,14 +578,39 @@ export default function HotelSearchForm({
                       </button>
                     </div>
                   </div>
+                {children > 0 && (
+                  <div className="space-y-3 border-t pt-4 mt-2">
+                    {Array.from({ length: children }).map((_, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <span className="text-gray-700">Çocuk {idx + 1} Yaşı</span>
+                        <select
+                          className="border border-gray-300 rounded-lg px-3 py-1 text-gray-800"
+                          value={childAges[idx] ?? 7}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            setChildAges((prev) => {
+                              const next = [...prev];
+                              next[idx] = Number.isNaN(val) ? 7 : val;
+                              return next;
+                            });
+                          }}
+                        >
+                          {Array.from({ length: 18 }).map((_, age) => (
+                            <option key={age} value={age}>{age}</option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                  <button
-                    type="button"
-                    onClick={() => setShowGuestSelector(false)}
-                    className="w-full mt-4 py-2 bg-green-500 text-white rounded-lg font-semibold"
-                  >
-                    Tamam
-                  </button>
+                <button
+                  type="button"
+                  onClick={() => setShowGuestSelector(false)}
+                  className="w-full mt-4 py-2 bg-green-500 text-white rounded-lg font-semibold"
+                >
+                  Tamam
+                </button>
                 </div>
               )}
             </div>
