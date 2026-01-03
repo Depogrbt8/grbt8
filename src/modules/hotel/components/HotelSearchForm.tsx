@@ -29,6 +29,7 @@ interface SearchParams {
   adults: number;
   children: number;
   rooms: number;
+  childAges: number[];
 }
 
 export default function HotelSearchForm({
@@ -56,6 +57,9 @@ export default function HotelSearchForm({
   );
   const [adults, setAdults] = useState(initialAdults);
   const [children, setChildren] = useState(initialChildren);
+  const [childAges, setChildAges] = useState<number[]>(
+    Array.from({ length: initialChildren }, () => 7)
+  );
   const [rooms, setRooms] = useState(initialRooms);
   const [showGuestSelector, setShowGuestSelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -117,7 +121,8 @@ export default function HotelSearchForm({
       checkOut: checkOutDate ? format(checkOutDate, 'yyyy-MM-dd') : '',
       adults,
       children,
-      rooms
+      rooms,
+      childAges: childAges.slice(0, children)
     };
 
     if (onSearch) {
@@ -316,7 +321,10 @@ export default function HotelSearchForm({
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      onClick={() => setChildren(Math.max(0, children - 1))}
+                  onClick={() => {
+                    setChildren(Math.max(0, children - 1));
+                    setChildAges((prev) => prev.slice(0, Math.max(0, children - 1)));
+                  }}
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
                       disabled={children <= 0}
                     >
@@ -325,13 +333,41 @@ export default function HotelSearchForm({
                     <span className="w-8 text-center font-semibold">{children}</span>
                     <button
                       type="button"
-                      onClick={() => setChildren(children + 1)}
+                      onClick={() => {
+                        setChildren(children + 1);
+                        setChildAges((prev) => [...prev, 7]);
+                      }}
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
+                {children > 0 && (
+                  <div className="space-y-3">
+                    {Array.from({ length: children }).map((_, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <span className="text-gray-700">Çocuk {idx + 1} Yaşı</span>
+                        <select
+                          className="border border-gray-300 rounded-lg px-3 py-1 text-gray-800"
+                          value={childAges[idx] ?? 7}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            setChildAges((prev) => {
+                              const next = [...prev];
+                              next[idx] = Number.isNaN(val) ? 7 : val;
+                              return next;
+                            });
+                          }}
+                        >
+                          {Array.from({ length: 18 }).map((_, age) => (
+                            <option key={age} value={age}>{age}</option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -471,7 +507,7 @@ export default function HotelSearchForm({
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => setRooms(Math.max(1, rooms - 1))}
+                      onClick={() => setRooms(Math.max(1, rooms - 1))}
                         className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
                         disabled={rooms <= 1}
                       >
@@ -520,7 +556,10 @@ export default function HotelSearchForm({
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => setChildren(Math.max(0, children - 1))}
+                      onClick={() => {
+                        setChildren(Math.max(0, children - 1));
+                        setChildAges((prev) => prev.slice(0, Math.max(0, children - 1)));
+                      }}
                         className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
                         disabled={children <= 0}
                       >
@@ -529,7 +568,10 @@ export default function HotelSearchForm({
                       <span className="w-6 text-center font-semibold">{children}</span>
                       <button
                         type="button"
-                        onClick={() => setChildren(children + 1)}
+                      onClick={() => {
+                        setChildren(children + 1);
+                        setChildAges((prev) => [...prev, 7]);
+                      }}
                         className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       >
                         <Plus className="w-4 h-4" />

@@ -175,14 +175,21 @@ export function parseSearchParams(searchParams: { get: (key: string) => string |
   adults: number;
   children: number;
   rooms: number;
+  childAges: number[];
 } {
+  const childAgesParam = searchParams.get('childAges');
+  const childAges = childAgesParam
+    ? childAgesParam.split(',').map((age) => parseInt(age, 10)).filter((n) => !Number.isNaN(n))
+    : [];
+
   return {
     location: searchParams.get('location') || '',
     checkIn: searchParams.get('checkIn') || '',
     checkOut: searchParams.get('checkOut') || '',
     adults: parseInt(searchParams.get('adults') || '2', 10),
     children: parseInt(searchParams.get('children') || '0', 10),
-    rooms: parseInt(searchParams.get('rooms') || '1', 10)
+    rooms: parseInt(searchParams.get('rooms') || '1', 10),
+    childAges
   };
 }
 
@@ -196,6 +203,7 @@ export function buildSearchUrl(params: {
   adults: number;
   children: number;
   rooms: number;
+  childAges?: number[];
   filters?: HotelFilters;
 }): string {
   const query = new URLSearchParams();
@@ -205,6 +213,9 @@ export function buildSearchUrl(params: {
   query.set('adults', params.adults.toString());
   query.set('children', params.children.toString());
   query.set('rooms', params.rooms.toString());
+  if (params.childAges && params.childAges.length > 0) {
+    query.set('childAges', params.childAges.join(','));
+  }
 
   if (params.filters?.sortBy) {
     query.set('sortBy', params.filters.sortBy);
