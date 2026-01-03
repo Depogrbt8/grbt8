@@ -17,14 +17,21 @@ export async function GET(request: NextRequest) {
     // Filtre oluştur
     const where: Record<string, unknown> = {};
     
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Veritabanından admin kontrolü
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true }
+    });
+
     // Normal kullanıcılar sadece kendi rezervasyonlarını görebilir
-    if (session?.user?.role !== 'admin') {
-      if (!session?.user?.id) {
-        return NextResponse.json(
-          { success: false, error: 'Unauthorized' },
-          { status: 401 }
-        );
-      }
+    if (currentUser?.role !== 'admin') {
       where.userId = session.user.id;
     } else if (userId) {
       // Admin belirli bir kullanıcının rezervasyonlarını filtreleyebilir

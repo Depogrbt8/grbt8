@@ -8,8 +8,20 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    // Admin kontrolü
-    if (session?.user?.role !== 'admin') {
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Veritabanından admin kontrolü
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true }
+    });
+
+    if (user?.role !== 'admin') {
       return NextResponse.json(
         { success: false, error: 'Unauthorized - Admin only' },
         { status: 403 }
