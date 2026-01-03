@@ -1,6 +1,39 @@
 import { PlaneTakeoff, Building, Car, Wifi } from 'lucide-react';
 
-export default function HeroSection() {
+export type ServiceType = 'flight' | 'hotel' | 'car' | 'esim';
+
+interface HeroSectionProps {
+  activeService?: ServiceType;
+  onServiceChange?: (service: ServiceType) => void;
+}
+
+export default function HeroSection({ activeService = 'flight', onServiceChange }: HeroSectionProps) {
+  const handleServiceClick = (service: ServiceType) => {
+    if (onServiceChange) {
+      onServiceChange(service);
+    }
+  };
+
+  const getIconClasses = (service: ServiceType) => {
+    const isActive = activeService === service;
+    return `rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer pointer-events-auto ${
+      isActive 
+        ? 'bg-white border-green-500' 
+        : 'bg-gradient-to-br from-green-400 to-green-600 border-white'
+    }`;
+  };
+
+  const getIconColor = (service: ServiceType) => {
+    return activeService === service ? 'text-green-600' : 'text-white';
+  };
+
+  const getLabelClasses = (service: ServiceType) => {
+    const isActive = activeService === service;
+    return `text-xs sm:text-sm pointer-events-auto font-bold ${
+      isActive ? 'text-green-700' : 'text-green-600'
+    }`;
+  };
+
   return (
     <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
       <div className="container mx-auto px-4">
@@ -17,31 +50,31 @@ export default function HeroSection() {
         <h1 className="sr-only">Avrupa'dan Türkiye'ye Yol Arkadaşınız</h1>
       </div>
       {/* Service Icons - overlap border */}
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full pointer-events-none">
+      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
         <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 border-white transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer">
-              <PlaneTakeoff className="w-7 h-7 text-white" strokeWidth={2} />
+          <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
+            <div className={getIconClasses('flight')}>
+              <PlaneTakeoff className={`w-7 h-7 ${getIconColor('flight')}`} strokeWidth={2} />
             </div>
-            <span className="text-green-600 text-xs sm:text-sm pointer-events-auto font-bold">UÇAK</span>
+            <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 border-white transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer">
-              <Building className="w-7 h-7 text-white" strokeWidth={2} />
+          <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
+            <div className={getIconClasses('hotel')}>
+              <Building className={`w-7 h-7 ${getIconColor('hotel')}`} strokeWidth={2} />
             </div>
-            <span className="text-green-600 text-xs sm:text-sm pointer-events-auto font-bold">OTEL</span>
+            <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 border-white transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer">
-              <Car className="w-8 h-8 text-white" strokeWidth={2} />
+          <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
+            <div className={getIconClasses('car')}>
+              <Car className={`w-8 h-8 ${getIconColor('car')}`} strokeWidth={2} />
             </div>
-            <span className="text-green-600 text-xs sm:text-sm pointer-events-auto font-bold">ARAÇ</span>
+            <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 border-white transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer">
-              <Wifi className="w-7 h-7 text-white" strokeWidth={2} />
+          <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
+            <div className={getIconClasses('esim')}>
+              <Wifi className={`w-7 h-7 ${getIconColor('esim')}`} strokeWidth={2} />
             </div>
-            <span className="text-green-600 text-xs sm:text-sm pointer-events-auto font-bold">E SIM</span>
+            <span className={getLabelClasses('esim')}>E SIM</span>
           </div>
         </div>
       </div>

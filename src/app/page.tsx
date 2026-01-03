@@ -9,7 +9,8 @@ import PassengerSelector from '@/components/PassengerSelector';
 import ServiceButtons from '@/components/ServiceButtons';
 // import AppBanner from '@/components/AppBanner';
 import FlightSearchForm from '@/components/FlightSearchForm';
-import HeroSection from '@/components/HeroSection';
+import HeroSection, { ServiceType } from '@/components/HeroSection';
+import { HotelSearchForm } from '@/modules/hotel/components';
 import { tr } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Image from 'next/image';
@@ -27,6 +28,9 @@ interface Airport {
 }
 
 export default function Home() {
+  // Aktif servis state'i (uçuş, otel, araç, esim)
+  const [activeService, setActiveService] = useState<ServiceType>('flight');
+  
   // Form state'leri
   const [tripType, setTripType] = useState('oneWay');
   const [directOnly, setDirectOnly] = useState(false);
@@ -138,38 +142,63 @@ export default function Home() {
       <Header />
       <div className="relative overflow-x-hidden max-w-full">
         {/* Hero Section - Yeşil alan ve Service Icons */}
-        <HeroSection />
+        <HeroSection 
+          activeService={activeService}
+          onServiceChange={setActiveService}
+        />
         {/* Beyaz alan ve içerik */}
         <div className="bg-white min-h-screen pt-6">
-          {/* Uçuş Arama Formu - Hem Mobil Hem Masaüstü */}
-          <FlightSearchForm
-            tripType={tripType}
-            onTripTypeChange={setTripType}
-            directOnly={directOnly}
-            onDirectOnlyChange={setDirectOnly}
-            fromAirports={fromAirports}
-            toAirports={toAirports}
-            fromInput={fromInput}
-            toInput={toInput}
-            onFromInputChange={setFromInput}
-            onToInputChange={setToInput}
-            onFromAirportSelect={(airport) => setFromAirports([airport])}
-            onToAirportSelect={(airport) => setToAirports([airport])}
-            departureDate={departureDate}
-            returnDate={returnDate}
-            onDepartureDateChange={handleDepartureChange}
-            onReturnDateChange={setReturnDate}
-            adultCount={adultCount}
-            childCount={childCount}
-            infantCount={infantCount}
-            onPassengerModalOpen={() => setShowPassengerModal(true)}
-            onAdultCountChange={setAdultCount}
-            onChildCountChange={setChildCount}
-            onInfantCountChange={setInfantCount}
-            isLoading={isLoading}
-            onSearch={searchFlights}
-            onSwapAirports={swapAirports}
-          />
+          {/* Arama Formları - Aktif servise göre */}
+          {activeService === 'flight' && (
+            <FlightSearchForm
+              tripType={tripType}
+              onTripTypeChange={setTripType}
+              directOnly={directOnly}
+              onDirectOnlyChange={setDirectOnly}
+              fromAirports={fromAirports}
+              toAirports={toAirports}
+              fromInput={fromInput}
+              toInput={toInput}
+              onFromInputChange={setFromInput}
+              onToInputChange={setToInput}
+              onFromAirportSelect={(airport) => setFromAirports([airport])}
+              onToAirportSelect={(airport) => setToAirports([airport])}
+              departureDate={departureDate}
+              returnDate={returnDate}
+              onDepartureDateChange={handleDepartureChange}
+              onReturnDateChange={setReturnDate}
+              adultCount={adultCount}
+              childCount={childCount}
+              infantCount={infantCount}
+              onPassengerModalOpen={() => setShowPassengerModal(true)}
+              onAdultCountChange={setAdultCount}
+              onChildCountChange={setChildCount}
+              onInfantCountChange={setInfantCount}
+              isLoading={isLoading}
+              onSearch={searchFlights}
+              onSwapAirports={swapAirports}
+            />
+          )}
+          
+          {activeService === 'hotel' && (
+            <HotelSearchForm />
+          )}
+          
+          {activeService === 'car' && (
+            <div className="w-full px-4 mt-8">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center">
+                <p className="text-gray-500">Araç kiralama hizmeti yakında aktif olacak!</p>
+              </div>
+            </div>
+          )}
+          
+          {activeService === 'esim' && (
+            <div className="w-full px-4 mt-8">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center">
+                <p className="text-gray-500">E-SIM hizmeti yakında aktif olacak!</p>
+              </div>
+            </div>
+          )}
 
           {/* İşlem Butonları */}
           <ServiceButtons />
