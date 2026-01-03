@@ -131,6 +131,11 @@ export default function HotelSearchForm({
     return `${rooms} Oda, ${totalGuests} Misafir`;
   };
 
+  // Mobil için misafir özeti (resimdeki gibi)
+  const guestSummaryMobile = () => {
+    return `${adults} Yetişkin, ${rooms} Oda`;
+  };
+
   // Mobil görünüm - Uçuş formuna benzer
   const isMobileView = isMobile || (typeof window !== 'undefined' && window.innerWidth < 768);
   
@@ -138,20 +143,6 @@ export default function HotelSearchForm({
     return (
       <div className={`block sm:hidden w-full px-4 mt-8 ${className}`}>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
-          {/* Misafir seçimi - üstte, uçuş formundaki yolcu seçimi gibi */}
-          <div className="flex items-center w-full gap-3 mb-3 justify-end">
-            <button
-              type="button"
-              onClick={() => setShowGuestSelector(true)}
-              className="flex items-center gap-1 whitespace-nowrap"
-            >
-              <span className="text-[14px] font-normal text-[#23272F] underline whitespace-nowrap">
-                {guestSummary()}
-              </span>
-              <ChevronDown className="w-4 h-4 text-[#23272F] flex-shrink-0" />
-            </button>
-          </div>
-
           {/* Konum */}
           <div className="relative w-full mb-2" ref={locationContainerRef}>
             <div className="bg-white border border-gray-300 rounded-lg px-2.5 h-10 shadow-none hover:border-green-500 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex flex-col justify-center">
@@ -197,7 +188,7 @@ export default function HotelSearchForm({
           </div>
 
           {/* Tarih kutuları */}
-          <div className="flex gap-2 w-full mb-3">
+          <div className="flex gap-2 w-full mb-2">
             <div className="flex-1">
               <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
@@ -222,6 +213,21 @@ export default function HotelSearchForm({
                 />
               </div>
             </div>
+          </div>
+
+          {/* Misafir seçimi - Tarihlerin altında, resimdeki gibi */}
+          <div className="flex items-center justify-between w-full mb-3 px-1">
+            <span className="text-[15px] font-medium text-gray-800">
+              {guestSummaryMobile()}
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowGuestSelector(true)}
+              className="flex items-center gap-1.5 text-[15px] font-medium text-gray-800 hover:text-gray-900"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Konuk Ekle</span>
+            </button>
           </div>
 
           {/* Misafir seçimi modal */}
