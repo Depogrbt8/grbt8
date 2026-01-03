@@ -141,7 +141,7 @@ export default function HotelSearchForm({
   
   if (isMobileView) {
     return (
-      <div className={`block sm:hidden w-full px-4 mt-8 ${className}`}>
+      <div className={`block md:hidden w-full px-4 mt-8 ${className}`}>
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
           {/* Konum */}
           <div className="relative w-full mb-2" ref={locationContainerRef}>
@@ -347,7 +347,7 @@ export default function HotelSearchForm({
 
   // Desktop görünüm - Uçuş formuna benzer
   return (
-    <div className={`hidden sm:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24 ${className}`}>
+    <div className={`hidden md:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24 ${className}`}>
       <div className="bg-white rounded-[32px] shadow-lg p-8 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Konum */}
