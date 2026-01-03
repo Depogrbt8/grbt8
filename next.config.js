@@ -14,6 +14,7 @@ const nextConfig = {
       'anasite.grbt8.store',
       'lh3.googleusercontent.com', // Google OAuth avatars
       'platform-lookaside.fbsbx.com', // Facebook OAuth avatars
+      'images.unsplash.com', // Demo hotel görselleri
     ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
