@@ -73,8 +73,8 @@ function HotelSearchContent() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      {/* Arama formu - Mobil */}
-      <div className="md:hidden bg-white border-b border-gray-200 p-4">
+      {/* Arama formu - Component kendi responsive'ini yönetiyor */}
+      <div className="bg-white border-b border-gray-200">
         <HotelSearchForm
           initialLocation={urlParams.location}
           initialCheckIn={urlParams.checkIn}
@@ -82,22 +82,7 @@ function HotelSearchContent() {
           initialAdults={urlParams.adults}
           initialChildren={urlParams.children}
           initialRooms={urlParams.rooms}
-          isMobile={true}
         />
-      </div>
-
-      {/* Desktop arama formu */}
-      <div className="hidden md:block bg-white border-b border-gray-200 py-6">
-        <div className="container mx-auto px-4">
-          <HotelSearchForm
-            initialLocation={urlParams.location}
-            initialCheckIn={urlParams.checkIn}
-            initialCheckOut={urlParams.checkOut}
-            initialAdults={urlParams.adults}
-            initialChildren={urlParams.children}
-            initialRooms={urlParams.rooms}
-          />
-        </div>
       </div>
 
       <main className="container mx-auto px-4 py-6">
