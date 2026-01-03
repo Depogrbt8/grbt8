@@ -205,6 +205,7 @@ export default function HotelSearchForm({
                   }}
                   className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
                   placeholder="Giriş tarihi"
+                  showPrices={false}
                 />
               </div>
             </div>
@@ -221,6 +222,7 @@ export default function HotelSearchForm({
                   }}
                   className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
                   placeholder="Çıkış tarihi"
+                  showPrices={false}
                 />
               </div>
             </div>
@@ -422,6 +424,7 @@ export default function HotelSearchForm({
                 }}
                 className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
                 placeholder="Giriş tarihi"
+                showPrices={false}
               />
             </div>
           </div>
@@ -441,6 +444,7 @@ export default function HotelSearchForm({
                 }}
                 className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
                 placeholder="Çıkış tarihi"
+                showPrices={false}
               />
             </div>
           </div>

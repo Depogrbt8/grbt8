@@ -12,23 +12,10 @@ interface DateInputProps {
   className?: string;
   placeholder?: string;
   label?: string;
+  showPrices?: boolean;
 }
 
-// Demo fiyat verisi (gerçek kullanımda API'den alınabilir)
-const demoPrices: Record<string, number> = {
-  '2024-06-16': 120,
-  '2024-06-17': 145,
-  '2024-06-18': 132,
-  '2024-06-19': 210,
-  '2024-06-20': 158,
-  '2024-07-03': 145,
-  '2024-07-04': 120,
-  '2024-07-05': 120,
-  '2024-07-06': 145,
-  '2024-07-07': 132,
-};
-
-function CustomDayContent(props: any) {
+function PriceDayContent(props: any) {
   const date = props.date;
   if (!(date instanceof Date) || isNaN(date.getTime())) return null;
   const price = Math.floor(100 + (date.getDate() * 7) % 100);
@@ -40,7 +27,17 @@ function CustomDayContent(props: any) {
   );
 }
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, className, placeholder, label }) => {
+function DefaultDayContent(props: any) {
+  const date = props.date;
+  if (!(date instanceof Date) || isNaN(date.getTime())) return null;
+  return (
+    <div className="flex items-center justify-center min-h-[36px] min-w-[32px] px-0.5 py-0.5 text-sm font-semibold text-gray-800">
+      {date.getDate()}
+    </div>
+  );
+}
+
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, className, placeholder, label, showPrices = true }) => {
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<Date | undefined>(value);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -148,11 +145,11 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
             className="mb-4 flex flex-row text-sm font-normal"
             showOutsideDays
             components={{
-              DayContent: CustomDayContent
+              DayContent: showPrices ? PriceDayContent : DefaultDayContent
             }}
             classNames={{
               day_selected: "bg-gray-200 border border-gray-500 text-gray-900",
-              day: "rounded-lg text-sm font-normal"
+              day: `rounded-lg text-sm ${showPrices ? 'font-normal' : 'font-semibold'}`
             }}
           />
           <div className="flex justify-end gap-2 mt-2">
@@ -183,12 +180,12 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
                     numberOfMonths={1}
                     showOutsideDays
                     components={{
-                      DayContent: CustomDayContent
+                      DayContent: showPrices ? PriceDayContent : DefaultDayContent
                     }}
                     className="mb-2 text-base font-normal"
                     classNames={{
                       day_selected: "bg-green-100 border border-green-500 text-green-900",
-                      day: "rounded-lg text-base font-semibold min-w-[44px] min-h-[44px] flex flex-col items-center justify-center",
+                      day: `rounded-lg text-base ${showPrices ? 'font-semibold' : 'font-bold'} min-w-[40px] min-h-[40px] flex items-center justify-center`,
                       caption: "text-center text-base font-semibold mb-2",
                       table: "w-full border-collapse",
                       head_row: "",
