@@ -342,11 +342,11 @@ export default function HotelSearchForm({
       </div>
 
       {/* Desktop görünüm */}
-      <div className={`hidden md:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24 ${className}`}>
+      <div className={`hidden md:block w-full container mx-auto px-4 mt-24 ${className}`}>
       <div className="bg-white rounded-[32px] shadow-lg p-8 border border-gray-200">
-        <div className="grid grid-cols-5 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Konum */}
-          <div className="col-span-1">
+          <div className="md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Konum</label>
             <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200" ref={locationContainerRef}>
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
@@ -395,7 +395,7 @@ export default function HotelSearchForm({
           </div>
 
           {/* Giriş Tarihi */}
-          <div className="flex flex-col col-span-1">
+          <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Giriş Tarihi</label>
             <div className="relative w-full flex items-center">
               <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
@@ -410,7 +410,7 @@ export default function HotelSearchForm({
           </div>
 
           {/* Çıkış Tarihi */}
-          <div className="flex flex-col col-span-1">
+          <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Çıkış Tarihi</label>
             <div className="relative w-full flex items-center">
               <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
@@ -425,7 +425,7 @@ export default function HotelSearchForm({
           </div>
 
           {/* Misafirler */}
-          <div className="flex flex-col relative col-span-1" ref={guestSelectorRef}>
+          <div className="flex flex-col relative md:col-span-1" ref={guestSelectorRef}>
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Misafirler</label>
             <div className="relative w-full flex items-center">
               <Users className="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -525,7 +525,7 @@ export default function HotelSearchForm({
           </div>
 
           {/* Otel Ara Butonu */}
-          <div className="flex flex-col justify-end col-span-1">
+          <div className="flex flex-col justify-end md:col-span-1">
             <button
               type="button"
               onClick={handleSearch}
