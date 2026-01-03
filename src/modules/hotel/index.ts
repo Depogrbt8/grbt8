@@ -1,14 +1,14 @@
 // Otel Modülü - Ana Export Dosyası
 // Tüm otel modülü bileşenleri buradan export edilir
 
-// Types - HotelDetails interface'i HotelDetailsType olarak export
+// Types - Çakışan isimler için alias kullanıyoruz
 export type {
   Hotel,
   HotelLocation,
   HotelDetails as HotelDetailsType,
   HotelSearchParams,
   HotelSearchResult,
-  HotelFilters,
+  HotelFilters as HotelFiltersType,
   HotelPolicies,
   RoomType,
   Rate,
@@ -35,7 +35,7 @@ export * from './hooks';
 // Utils
 export * from './utils';
 
-// Components - HotelDetails component normal export
+// Components
 export {
   HotelSearchForm,
   HotelCard,
