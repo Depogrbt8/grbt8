@@ -166,8 +166,9 @@ export function groupAmenities(amenities: string[]): Record<string, string[]> {
 
 /**
  * URL query string'inden search params oluştur
+ * ReadonlyURLSearchParams ve URLSearchParams ile uyumlu
  */
-export function parseSearchParams(searchParams: URLSearchParams): {
+export function parseSearchParams(searchParams: { get: (key: string) => string | null }): {
   location: string;
   checkIn: string;
   checkOut: string;
