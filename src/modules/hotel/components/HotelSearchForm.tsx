@@ -215,19 +215,23 @@ export default function HotelSearchForm({
             </div>
           </div>
 
-          {/* Misafir seçimi - Tarihlerin altında, resimdeki gibi */}
-          <div className="flex items-center justify-between w-full mb-3 px-1">
-            <span className="text-[15px] font-medium text-gray-800">
-              {guestSummaryMobile()}
-            </span>
-            <button
-              type="button"
-              onClick={() => setShowGuestSelector(true)}
-              className="flex items-center gap-1.5 text-[15px] font-medium text-gray-800 hover:text-gray-900"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Konuk Ekle</span>
-            </button>
+          {/* Misafir seçimi - Tarihlerin altında, çerçeve içinde */}
+          <div className="relative w-full mb-3">
+            <div className="bg-white border border-gray-300 rounded-lg px-2.5 h-10 shadow-none hover:border-green-500 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex flex-col justify-center">
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[15px] font-medium text-gray-800">
+                  {guestSummaryMobile()}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowGuestSelector(true)}
+                  className="flex items-center gap-1.5 text-[15px] font-medium text-gray-800 hover:text-gray-900"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>Konuk Ekle</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Misafir seçimi modal */}
