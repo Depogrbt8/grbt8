@@ -46,6 +46,7 @@ model User {
   campaigns        Campaign[]
   emailTemplates   EmailTemplate[]
   billingInfos     BillingInfo[]
+  hotelBookings    HotelBooking[]
 
   @@index([status])
   @@index([createdAt])
@@ -496,4 +497,43 @@ model BlogPost {
   @@index([status])
   @@index([publishedAt])
   @@index([category])
+}
+
+// Otel Rezervasyonları
+model HotelBooking {
+  id                  String    @id @default(cuid())
+  userId              String
+  hotelId             String
+  hotelName           String
+  hotelLocation       String
+  roomType            String
+  roomName            String
+  checkIn             DateTime
+  checkOut            DateTime
+  nights              Int
+  guests              String    // JSON: { adults: number, children: number, rooms: number }
+  guestInfo           String    // JSON: { firstName, lastName, email, phone }
+  totalPrice          Float
+  currency            String    @default("EUR")
+  status              String    @default("pending") // pending, confirmed, cancelled, completed
+  confirmationNumber  String?   @unique
+  bookingReference    String?   // External API booking reference
+  cancellationPolicy  String?
+  specialRequests     String?
+  provider            String?   // demo, amadeus, expedia, booking.com
+  providerBookingId   String?   // External provider booking ID
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  cancelledAt         DateTime?
+  cancellationReason  String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([checkIn])
+  @@index([checkOut])
+  @@index([confirmationNumber])
+  @@index([providerBookingId])
+  @@index([createdAt])
 }
