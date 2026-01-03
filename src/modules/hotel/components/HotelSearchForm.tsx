@@ -354,28 +354,32 @@ export default function HotelSearchForm({
           <div className="md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Konum</label>
             <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200" ref={locationContainerRef}>
-              <div className="flex items-center h-full px-3">
-                <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <input
-                  ref={locationInputRef}
-                  type="text"
-                  placeholder="Şehir veya otel"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="flex-1 ml-2 bg-transparent border-none outline-none text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-0"
-                />
-                {location && (
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLocation('');
-                    }} 
-                    className="p-1 ml-1"
-                  >
-                    <X className="w-4 h-4 text-gray-400" />
-                  </button>
-                )}
-              </div>
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              <input
+                ref={locationInputRef}
+                type="text"
+                placeholder="Şehir veya otel"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                onFocus={() => {
+                  if (location.length >= 2) {
+                    setShowLocationSuggestions(true);
+                  }
+                }}
+                className="w-full pl-10 pr-10 h-12 text-base text-gray-700 placeholder-gray-400 focus:ring-0 outline-none bg-transparent border-none"
+                style={{ outline: 'none !important' }}
+              />
+              {location && (
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLocation('');
+                  }} 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded"
+                >
+                  <X className="w-4 h-4 text-gray-400" />
+                </button>
+              )}
               
               {/* Konum önerileri */}
               {showLocationSuggestions && locationSuggestions.length > 0 && (
