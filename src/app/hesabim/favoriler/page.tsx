@@ -190,7 +190,7 @@ export default function FavorilerPage() {
                       </div>
                     ) : (
                       <div className="sm:space-y-4 space-y-2">
-                        {hotelFavorites.map((favorite) => (
+                        {hotelFavorites.map((favorite: any) => (
                           <div 
                             key={favorite.id}
                             className="border rounded-lg sm:p-4 p-2 hover:bg-gray-50 transition-colors"
@@ -199,11 +199,11 @@ export default function FavorilerPage() {
                               <div className="flex-1">
                                 <div className="flex items-start justify-between gap-4">
                                   <div className="flex-1">
-                                    <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                                      Otel ID: {favorite.hotelId}
+                                    <h3 className="font-medium text-sm text-gray-900 mb-1">
+                                      {favorite.hotelName || `Otel ID: ${favorite.hotelId}`}
                                     </h3>
-                                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                                      <Calendar className="w-4 h-4" />
+                                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                                      <Calendar className="w-3 h-3" />
                                       <span>
                                         {new Date(favorite.createdAt).toLocaleDateString("tr-TR")}
                                       </span>

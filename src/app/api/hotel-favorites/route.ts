@@ -100,19 +100,21 @@ export async function GET(req: NextRequest) {
     });
 
     // Otel bilgilerini çek (demo API'den)
-    // Not: Gerçek API entegrasyonunda burada otel bilgileri çekilecek
+    const { getHotelById } = await import('@/modules/hotel/services');
     const favoritesWithHotelInfo = await Promise.all(
       favorites.map(async (favorite) => {
         try {
           // Demo API'den otel bilgilerini çek
-          // Gerçek implementasyonda burada otel servisi çağrılacak
+          const hotel = await getHotelById(favorite.hotelId);
           return {
             ...favorite,
-            hotelInfo: null // Şimdilik null, ileride otel bilgileri eklenecek
+            hotelName: hotel?.name || null,
+            hotelInfo: hotel || null
           };
         } catch (error) {
           return {
             ...favorite,
+            hotelName: null,
             hotelInfo: null
           };
         }
