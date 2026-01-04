@@ -10,11 +10,11 @@ interface GuestFormProps {
 }
 
 export default function GuestForm({ guestInfo, onChange, errors = {} }: GuestFormProps) {
-  const handleChange = (field: keyof GuestInfo, value: string) => {
+  const handleChange = (field: keyof GuestInfo, value: string | boolean) => {
     onChange({
       ...guestInfo,
       [field]: value
-    });
+    } as GuestInfo);
   };
 
   return (
