@@ -149,6 +149,12 @@ export interface GuestInfo {
   address?: string;
   city?: string;
   country?: string;
+  gender?: string; // 'male' | 'female'
+  birthDay?: string;
+  birthMonth?: string;
+  birthYear?: string;
+  identityNumber?: string;
+  isForeigner?: boolean;
 }
 
 // Rezervasyon Yanıtı
@@ -210,4 +216,6 @@ export const CANCELLATION_LABELS: Record<string, string> = {
   non_refundable: 'İade Yok',
   partial: 'Kısmi İade'
 };
+
+
 

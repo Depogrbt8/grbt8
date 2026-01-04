@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import LoginModal from '@/components/LoginModal';
 import ValidationPopup from '@/components/ValidationPopup';
 import { HotelBookingForm } from '@/modules/hotel/components';
+import { HotelPriceSummary } from '@/modules/hotel/components/booking';
 import { getHotelDetails } from '@/modules/hotel/services';
 import { getNights, formatPrice, formatDate } from '@/modules/hotel/utils';
 import { logger } from '@/lib/logger';
@@ -40,6 +41,7 @@ function HotelBookingContent() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   // Verileri yükle
   useEffect(() => {
@@ -332,61 +334,89 @@ function HotelBookingContent() {
   const totalPrice = selectedRate.price * nights * rooms;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Header />
 
-      {/* Geri butonu */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-3">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Otele Dön</span>
-          </button>
-        </div>
-      </div>
+      <main className="min-h-screen bg-gray-100 py-8">
+        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Forms */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Giriş yapmamışsa uyarı */}
+            {status === 'unauthenticated' && (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  Rezervasyon yapmak için{' '}
+                  <button 
+                    onClick={() => setShowLoginModal(true)} 
+                    className="text-green-600 font-semibold underline hover:text-green-700"
+                  >
+                    giriş yapmanız
+                  </button>
+                  {' '}gerekmektedir.
+                </p>
+              </div>
+            )}
 
-      <main className="container mx-auto px-4 py-6">
-        {/* Giriş yapmamışsa uyarı */}
-        {status === 'unauthenticated' && (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              Rezervasyon yapmak için{' '}
-              <button 
-                onClick={() => setShowLoginModal(true)} 
-                className="text-green-600 font-semibold underline hover:text-green-700"
+            <HotelBookingForm
+              ref={formRef}
+              hotelName={hotel.name}
+              roomName={selectedRoom.name}
+              rateName={selectedRate.name}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              nights={nights}
+              guests={{ adults, children, rooms }}
+              totalPrice={totalPrice}
+              currency={selectedRate.currency}
+              onSubmit={handleSubmit}
+              isLoading={submitting}
+              session={session}
+              onLoginClick={() => setShowLoginModal(true)}
+            />
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Price Summary */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-4">
+              <HotelPriceSummary
+                hotelName={hotel.name}
+                roomName={selectedRoom.name}
+                rateName={selectedRate.name}
+                checkIn={checkIn}
+                checkOut={checkOut}
+                nights={nights}
+                guests={{ adults, children, rooms }}
+                totalPrice={totalPrice}
+                currency={selectedRate.currency}
+              />
+
+              {/* Rezervasyon butonu */}
+              <button
+                type="button"
+                onClick={() => {
+                  // Form submit'i tetikle
+                  if (formRef.current) {
+                    formRef.current.requestSubmit();
+                  }
+                }}
+                disabled={submitting}
+                className="w-full mt-4 bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
-                giriş yapmanız
+                {submitting ? 'İşleniyor...' : 'Rezervasyonu Tamamla'}
               </button>
-              {' '}gerekmektedir.
-            </p>
+
+              <p className="text-xs text-gray-500 text-center mt-3">
+                Ödeme güvenli bağlantı üzerinden yapılacaktır
+              </p>
+            </div>
           </div>
-        )}
-
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Rezervasyon</h1>
-
-        <HotelBookingForm
-          hotelName={hotel.name}
-          roomName={selectedRoom.name}
-          rateName={selectedRate.name}
-          checkIn={checkIn}
-          checkOut={checkOut}
-          nights={nights}
-          guests={{ adults, children, rooms }}
-          totalPrice={totalPrice}
-          currency={selectedRate.currency}
-          onSubmit={handleSubmit}
-          isLoading={submitting}
-          session={session}
-        />
-
-        {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">{error}</p>
-          </div>
-        )}
+        </div>
       </main>
 
       <Footer />

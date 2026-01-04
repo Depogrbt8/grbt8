@@ -6,6 +6,8 @@ interface ContactFormProps {
     onEmailChange: (value: string) => void;
     onPhoneChange: (value: string) => void;
     onCountryCodeChange: (value: string) => void;
+    marketingConsent?: boolean;
+    onMarketingConsentChange?: (value: boolean) => void;
 }
 
 export default function ContactForm({ 
@@ -13,7 +15,9 @@ export default function ContactForm({
     userPhone,
     onEmailChange,
     onPhoneChange,
-    onCountryCodeChange
+    onCountryCodeChange,
+    marketingConsent = false,
+    onMarketingConsentChange
 }: ContactFormProps) {
     return (
         <div className="space-y-4">
@@ -57,13 +61,19 @@ export default function ContactForm({
                 </div>
             </div>
             <p className="text-sm text-gray-500 pt-2 border-t mt-4 pt-4">
-                Uçuş ve bilet bilgilerinizi e-posta ve ücretsiz SMS yoluyla ileteceğiz.
+                Rezervasyon bilgilerinizi e-posta ve ücretsiz SMS yoluyla ileteceğiz.
             </p>
             <div className="border-t pt-4 mt-2">
                 <div className="flex items-start gap-3">
-                    <input type="checkbox" id="marketing-consent" className="h-5 w-5 rounded text-green-600 focus:ring-green-500 border-gray-300 mt-1 flex-shrink-0" />
-                    <label htmlFor="marketing-consent" className="text-sm text-gray-700">
-                        Uçuş bilgilendirmeleri, fırsat ve kampanyalardan <a href="#" className="font-bold text-gray-800 hover:underline">Rıza Metni</a> kapsamında haberdar olmak istiyorum.
+                    <input 
+                        type="checkbox" 
+                        id="marketing-consent" 
+                        checked={marketingConsent}
+                        onChange={(e) => onMarketingConsentChange?.(e.target.checked)}
+                        className="h-5 w-5 rounded text-green-600 focus:ring-green-500 border-gray-300 mt-1 flex-shrink-0" 
+                    />
+                    <label htmlFor="marketing-consent" className="text-sm text-gray-700 cursor-pointer">
+                        Rezervasyon bilgilendirmeleri, fırsat ve kampanyalardan <a href="#" className="font-bold text-gray-800 hover:underline">Rıza Metni</a> kapsamında haberdar olmak istiyorum.
                     </label>
                 </div>
                 {/* Ücretsiz SMS etiketi kaldırıldı */}

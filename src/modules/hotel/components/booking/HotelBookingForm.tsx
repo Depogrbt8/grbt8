@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Mail } from 'lucide-react';
 import type { GuestInfo } from '../../types';
 import GuestForm from './GuestForm';
-import HotelPriceSummary from './HotelPriceSummary';
+import ContactForm from '@/components/booking/ContactForm';
 import type { Session } from 'next-auth';
 
 interface HotelBookingFormProps {
@@ -19,9 +20,10 @@ interface HotelBookingFormProps {
   onSubmit: (guestInfo: GuestInfo, specialRequests?: string) => void;
   isLoading?: boolean;
   session?: Session | null;
+  onLoginClick?: () => void;
 }
 
-export default function HotelBookingForm({
+const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps>(({
   hotelName,
   roomName,
   rateName,
@@ -33,14 +35,19 @@ export default function HotelBookingForm({
   currency,
   onSubmit,
   isLoading = false,
-  session
-}: HotelBookingFormProps) {
+  session,
+  onLoginClick
+}, ref) => {
   const [guestInfo, setGuestInfo] = useState<GuestInfo>({
     firstName: '',
     lastName: '',
     email: '',
     phone: ''
   });
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+90');
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [specialRequests, setSpecialRequests] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -48,32 +55,64 @@ export default function HotelBookingForm({
   // Session'dan kullanıcı bilgilerini otomatik doldur
   useEffect(() => {
     if (session?.user) {
+      const userEmail = session.user?.email || '';
+      const userPhone = (session.user as any)?.phone || '';
+      
+      setContactEmail(userEmail);
+      setContactPhone(userPhone);
+      
       setGuestInfo(prev => ({
         ...prev,
-        email: session.user?.email || prev.email,
-        phone: (session.user as any)?.phone || prev.phone,
+        email: userEmail,
+        phone: userPhone,
         firstName: (session.user as any)?.firstName || prev.firstName,
         lastName: (session.user as any)?.lastName || prev.lastName,
       }));
     }
   }, [session]);
 
+  // ContactForm değişikliklerini guestInfo'ya senkronize et
+  useEffect(() => {
+    setGuestInfo(prev => ({
+      ...prev,
+      email: contactEmail,
+      phone: contactPhone
+    }));
+  }, [contactEmail, contactPhone]);
+
   // Form validasyonu
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!guestInfo.firstName || guestInfo.firstName.length < 2) {
-      newErrors.firstName = 'Ad en az 2 karakter olmalıdır';
-    }
-    if (!guestInfo.lastName || guestInfo.lastName.length < 2) {
-      newErrors.lastName = 'Soyad en az 2 karakter olmalıdır';
-    }
-    if (!guestInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
+    // İletişim bilgileri
+    if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       newErrors.email = 'Geçerli bir e-posta adresi giriniz';
     }
-    if (!guestInfo.phone || guestInfo.phone.length < 10) {
+    if (!contactPhone || contactPhone.trim().length < 10) {
       newErrors.phone = 'Geçerli bir telefon numarası giriniz';
     }
+
+    // Misafir bilgileri
+    if (!guestInfo.firstName || guestInfo.firstName.trim().length < 2) {
+      newErrors.firstName = 'Ad en az 2 karakter olmalıdır';
+    }
+    if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
+      newErrors.lastName = 'Soyad en az 2 karakter olmalıdır';
+    }
+    if (!guestInfo.gender) {
+      newErrors.gender = 'Cinsiyet seçiniz';
+    }
+    if (!guestInfo.birthDay || !guestInfo.birthMonth || !guestInfo.birthYear) {
+      newErrors.birthDay = 'Doğum tarihi gereklidir';
+    }
+    
+    // TC Kimlik No validasyonu (sadece T.C. vatandaşları için)
+    if (!guestInfo.isForeigner) {
+      if (!guestInfo.identityNumber || guestInfo.identityNumber.length !== 11) {
+        newErrors.identityNumber = 'TC Kimlik numarası 11 haneli olmalıdır';
+      }
+    }
+
     if (!agreedToTerms) {
       newErrors.terms = 'Şartları kabul etmelisiniz';
     }
@@ -92,10 +131,39 @@ export default function HotelBookingForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sol taraf - Form */}
-        <div className="lg:col-span-2 space-y-6">
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
+      {/* Sol taraf - Form */}
+      <div className="space-y-6">
+          {/* İletişim Bilgileri */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-3">
+                <Mail className="w-5 h-5" /> İletişim Bilgileri
+              </h2>
+              {!session && onLoginClick && (
+                <p className="text-sm text-gray-600">
+                  Hızlı rezervasyon için{' '}
+                  <button 
+                    type="button"
+                    onClick={onLoginClick} 
+                    className="text-green-600 font-semibold underline hover:text-green-700 transition"
+                  >
+                    giriş yap
+                  </button>
+                </p>
+              )}
+            </div>
+            <ContactForm 
+              userEmail={contactEmail}
+              userPhone={contactPhone}
+              onEmailChange={setContactEmail}
+              onPhoneChange={setContactPhone}
+              onCountryCodeChange={setCountryCode}
+              marketingConsent={marketingConsent}
+              onMarketingConsentChange={setMarketingConsent}
+            />
+          </div>
+
           {/* Misafir bilgileri */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Misafir Bilgileri</h2>
@@ -138,40 +206,13 @@ export default function HotelBookingForm({
             )}
           </div>
         </div>
-
-        {/* Sağ taraf - Özet */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4">
-            <HotelPriceSummary
-              hotelName={hotelName}
-              roomName={roomName}
-              rateName={rateName}
-              checkIn={checkIn}
-              checkOut={checkOut}
-              nights={nights}
-              guests={guests}
-              totalPrice={totalPrice}
-              currency={currency}
-            />
-
-            {/* Rezervasyon butonu */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-4 bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              {isLoading ? 'İşleniyor...' : 'Rezervasyonu Tamamla'}
-            </button>
-
-            <p className="text-xs text-gray-500 text-center mt-3">
-              Ödeme güvenli bağlantı üzerinden yapılacaktır
-            </p>
-          </div>
-        </div>
-      </div>
     </form>
   );
-}
+});
+
+HotelBookingForm.displayName = 'HotelBookingForm';
+
+export default HotelBookingForm;
 
 
 
