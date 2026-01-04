@@ -179,3 +179,5 @@ export function calculateTotalPrice(
   return pricePerNight * nights * rooms;
 }
 
+
+

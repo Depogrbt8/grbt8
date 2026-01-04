@@ -146,3 +146,5 @@ export function validateMaxStay(checkIn: string, checkOut: string, maxNights: nu
   return nights <= maxNights;
 }
 
+
+
