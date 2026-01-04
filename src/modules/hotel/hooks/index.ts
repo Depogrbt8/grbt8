@@ -2,4 +2,7 @@
 export { useHotelState } from './useHotelState';
 export { useHotelFilters } from './useHotelFilters';
 export { useHotelBooking } from './useHotelBooking';
+export { useHotelFavorite } from './useHotelFavorite';
+
+
 

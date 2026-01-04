@@ -47,6 +47,7 @@ model User {
   emailTemplates   EmailTemplate[]
   billingInfos     BillingInfo[]
   hotelBookings    HotelBooking[]
+  hotelFavorites  HotelFavorite[]
 
   @@index([status])
   @@index([createdAt])
@@ -194,6 +195,18 @@ model SearchFavorite {
 
   @@index([userId, createdAt])
   @@index([departureDate])
+}
+
+model HotelFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  hotelId   String
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, hotelId])
+  @@index([userId, createdAt])
+  @@index([hotelId])
 }
 
 model SurveyResponse {

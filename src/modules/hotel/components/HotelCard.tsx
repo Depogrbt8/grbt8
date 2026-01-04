@@ -1,10 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, MapPin, Wifi, Car, Coffee, Dumbbell } from 'lucide-react';
+import { Star, MapPin, Wifi, Car, Coffee, Dumbbell, Heart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import LoginModal from '@/components/LoginModal';
 import type { Hotel } from '../types';
 import { formatPrice, getScoreColor, getScoreText, formatDistance } from '../utils';
+import { useHotelFavorite } from '../hooks/useHotelFavorite';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -22,29 +26,60 @@ const amenityIcons: Record<string, React.ReactNode> = {
 };
 
 export default function HotelCard({ hotel, checkIn, checkOut, guests }: HotelCardProps) {
+  const { data: session, status } = useSession();
+  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(hotel.id);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   // Detay sayfası URL'i
   const detailUrl = `/hotels/${hotel.id}${checkIn ? `?checkIn=${checkIn}&checkOut=${checkOut}&adults=${guests?.adults || 2}&children=${guests?.children || 0}&rooms=${guests?.rooms || 1}` : ''}`;
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (status !== 'authenticated') {
+      setShowLoginModal(true);
+      return;
+    }
+    
+    toggleFavorite();
+  };
+
   return (
-    <Link href={detailUrl} className="block">
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-        <div className="flex flex-col md:flex-row">
-          {/* Otel Görseli */}
-          <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0">
-            <Image
-              src={hotel.images[0] || '/images/hotel-placeholder.jpg'}
-              alt={hotel.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 256px"
-            />
-            {/* Yıldız rating */}
-            <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
-              {Array.from({ length: hotel.rating }).map((_, i) => (
-                <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              ))}
+    <>
+      <Link href={detailUrl} className="block">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer relative">
+          <div className="flex flex-col md:flex-row">
+            {/* Otel Görseli */}
+            <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0">
+              <Image
+                src={hotel.images[0] || '/images/hotel-placeholder.jpg'}
+                alt={hotel.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 256px"
+              />
+              {/* Yıldız rating */}
+              <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
+                {Array.from({ length: hotel.rating }).map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              
+              {/* Favori butonu */}
+              <button
+                onClick={handleFavoriteClick}
+                disabled={isLoading}
+                className={`absolute top-2 right-2 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                  isFavorite
+                    ? 'bg-green-500 text-white'
+                    : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-white'
+                } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                title={isFavorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+              >
+                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+              </button>
             </div>
-          </div>
 
           {/* Otel Bilgileri */}
           <div className="flex-1 p-4 flex flex-col justify-between">
@@ -121,7 +156,17 @@ export default function HotelCard({ hotel, checkIn, checkOut, guests }: HotelCar
           </div>
         </div>
       </div>
-    </Link>
+      </Link>
+      
+      {showLoginModal && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
+    </>
   );
 }
+
+
 

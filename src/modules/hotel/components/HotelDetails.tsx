@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Star, MapPin, ChevronLeft, ChevronRight, Wifi, Car, Coffee, Dumbbell, Users, Bed, Maximize } from 'lucide-react';
+import { Star, MapPin, ChevronLeft, ChevronRight, Wifi, Car, Coffee, Dumbbell, Users, Bed, Maximize, Heart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import LoginModal from '@/components/LoginModal';
 import type { HotelDetails as HotelDetailsType } from '../types';
 import { 
   formatPrice,
@@ -12,6 +14,7 @@ import {
   AMENITY_LABELS 
 } from '../utils';
 import RoomSelector from './RoomSelector';
+import { useHotelFavorite } from '../hooks/useHotelFavorite';
 
 // Amenity ikonları
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -36,8 +39,20 @@ export default function HotelDetails({
   guests,
   onRoomSelect
 }: HotelDetailsProps) {
+  const { data: session, status } = useSession();
+  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(hotel.id);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
+
+  const handleFavoriteClick = () => {
+    if (status !== 'authenticated') {
+      setShowLoginModal(true);
+      return;
+    }
+    
+    toggleFavorite();
+  };
 
   // Görsel navigasyonu
   const nextImage = () => {
@@ -85,6 +100,20 @@ export default function HotelDetails({
               </button>
             </>
           )}
+
+          {/* Favori butonu - Sağ üst köşe */}
+          <button
+            onClick={handleFavoriteClick}
+            disabled={isLoading}
+            className={`absolute top-4 right-4 w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all z-10 ${
+              isFavorite
+                ? 'bg-green-500 text-white hover:bg-green-600'
+                : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-white'
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            title={isFavorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+          >
+            <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
+          </button>
 
           {/* Görsel sayacı */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
@@ -258,6 +287,13 @@ export default function HotelDetails({
             </div>
           </div>
         </div>
+      )}
+      
+      {showLoginModal && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
     </div>
   );

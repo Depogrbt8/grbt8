@@ -1,0 +1,184 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { logger } from '@/lib/logger';
+
+// POST: Otel favorilere ekle
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { hotelId } = await req.json();
+    if (!hotelId) {
+      return NextResponse.json({ error: 'Hotel ID gerekli' }, { status: 400 });
+    }
+
+    // Zaten favori mi kontrol et
+    const existing = await prisma.hotelFavorite.findUnique({
+      where: {
+        userId_hotelId: {
+          userId: session.user.id,
+          hotelId: hotelId
+        }
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json({ 
+        success: true, 
+        favorite: existing,
+        message: 'Otel zaten favorilerinizde' 
+      });
+    }
+
+    const favorite = await prisma.hotelFavorite.create({
+      data: {
+        userId: session.user.id,
+        hotelId: hotelId,
+      },
+    });
+
+    logger.info('Hotel favori eklendi', { userId: session.user.id, hotelId });
+    return NextResponse.json({ success: true, favorite });
+  } catch (error: any) {
+    logger.error('Hotel favori ekleme hatası', { error });
+    
+    // Unique constraint hatası (zaten favori)
+    if (error.code === 'P2002') {
+      return NextResponse.json({ 
+        success: true,
+        message: 'Otel zaten favorilerinizde' 
+      });
+    }
+    
+    return NextResponse.json({ 
+      error: error?.message || 'Bilinmeyen hata' 
+    }, { status: 500 });
+  }
+}
+
+// GET: Kullanıcının favori otellerini getir
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const hotelId = searchParams.get('hotelId');
+
+    // Belirli bir otel favori mi kontrol et
+    if (hotelId) {
+      const favorite = await prisma.hotelFavorite.findUnique({
+        where: {
+          userId_hotelId: {
+            userId: session.user.id,
+            hotelId: hotelId
+          }
+        }
+      });
+      return NextResponse.json({ 
+        isFavorite: !!favorite,
+        favorite: favorite || null
+      });
+    }
+
+    // Tüm favori otelleri getir
+    const favorites = await prisma.hotelFavorite.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        hotelId: true,
+        createdAt: true
+      }
+    });
+
+    // Otel bilgilerini çek (demo API'den)
+    // Not: Gerçek API entegrasyonunda burada otel bilgileri çekilecek
+    const favoritesWithHotelInfo = await Promise.all(
+      favorites.map(async (favorite) => {
+        try {
+          // Demo API'den otel bilgilerini çek
+          // Gerçek implementasyonda burada otel servisi çağrılacak
+          return {
+            ...favorite,
+            hotelInfo: null // Şimdilik null, ileride otel bilgileri eklenecek
+          };
+        } catch (error) {
+          return {
+            ...favorite,
+            hotelInfo: null
+          };
+        }
+      })
+    );
+
+    return NextResponse.json({ 
+      favorites: favoritesWithHotelInfo,
+      hotelIds: favorites.map(f => f.hotelId)
+    });
+  } catch (error: any) {
+    logger.error('Hotel favori listesi hatası', { error });
+    return NextResponse.json({ 
+      error: error?.message || 'Bilinmeyen hata' 
+    }, { status: 500 });
+  }
+}
+
+// DELETE: Otel favorilerden çıkar
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const hotelId = searchParams.get('hotelId');
+    
+    if (!hotelId) {
+      return NextResponse.json({ error: 'Hotel ID gerekli' }, { status: 400 });
+    }
+
+    const favorite = await prisma.hotelFavorite.findUnique({ 
+      where: {
+        userId_hotelId: {
+          userId: session.user.id,
+          hotelId: hotelId
+        }
+      }
+    });
+    
+    if (!favorite) {
+      return NextResponse.json({ 
+        success: true,
+        message: 'Otel favorilerinizde değil' 
+      });
+    }
+
+    if (favorite.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Yetkiniz yok' }, { status: 403 });
+    }
+
+    await prisma.hotelFavorite.delete({ 
+      where: { 
+        id: favorite.id 
+      } 
+    });
+    
+    logger.info('Hotel favori silindi', { userId: session.user.id, hotelId });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    logger.error('Hotel favori silme hatası', { error });
+    return NextResponse.json({ 
+      error: error?.message || 'Bilinmeyen hata' 
+    }, { status: 500 });
+  }
+}
+
