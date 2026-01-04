@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { logger } from '@/lib/logger';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 // POST: Otel favorilere ekle
 export async function POST(req: NextRequest) {
@@ -64,20 +65,38 @@ export async function POST(req: NextRequest) {
 // GET: Kullanıcının favori otellerini getir
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const hotelId = searchParams.get('hotelId');
+    const userId = searchParams.get('userId'); // Admin panel için
+
+    // Admin panel authentication kontrolü
+    const adminPanelToken = req.headers.get('x-admin-panel-token');
+    const adminPanelSecret = process.env.ADMIN_PANEL_SECRET;
+    const isAdminPanel = adminPanelToken === adminPanelSecret;
+
+    let targetUserId: string | null = null;
+
+    if (isAdminPanel) {
+      // Admin panel'den gelen istek - userId parametresi zorunlu
+      if (!userId) {
+        return NextResponse.json({ error: 'userId parametresi gerekli' }, { status: 400 });
+      }
+      targetUserId = userId;
+    } else {
+      // Normal kullanıcı isteği - session kontrolü
+      const session = await getServerSession(authOptions);
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      targetUserId = session.user.id;
+    }
 
     // Belirli bir otel favori mi kontrol et
     if (hotelId) {
       const favorite = await prisma.hotelFavorite.findUnique({
         where: {
           userId_hotelId: {
-            userId: session.user.id,
+            userId: targetUserId,
             hotelId: hotelId
           }
         }
@@ -90,7 +109,7 @@ export async function GET(req: NextRequest) {
 
     // Tüm favori otelleri getir
     const favorites = await prisma.hotelFavorite.findMany({
-      where: { userId: session.user.id },
+      where: { userId: targetUserId },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
