@@ -85,14 +85,20 @@ export default function HotelSearchForm({
     return () => clearTimeout(searchTimeout);
   }, [location]);
 
-  // Dışarı tıklama
+  // Dışarı tıklama - Sadece desktop dropdown için (mobil modal için değil)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (locationContainerRef.current && !locationContainerRef.current.contains(event.target as Node)) {
         setShowLocationSuggestions(false);
       }
+      // Desktop dropdown için dışarı tıklama kontrolü
+      // Mobil modal için kontrol etme (modal kendi backdrop onClick'i ile yönetiliyor)
       if (guestSelectorRef.current && !guestSelectorRef.current.contains(event.target as Node)) {
-        setShowGuestSelector(false);
+        // Sadece desktop görünümde dropdown varsa kapat
+        const target = event.target as HTMLElement;
+        if (target.closest('.hidden.sm\\:block')) {
+          setShowGuestSelector(false);
+        }
       }
     };
 
@@ -254,8 +260,14 @@ export default function HotelSearchForm({
 
           {/* Misafir seçimi modal */}
           {showGuestSelector && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center">
-              <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:w-96 max-h-[80vh] overflow-y-auto p-6">
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center"
+              onClick={() => setShowGuestSelector(false)}
+            >
+              <div 
+                className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:w-96 max-h-[80vh] overflow-y-auto p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold">Misafir ve Oda</h3>
                   <button
