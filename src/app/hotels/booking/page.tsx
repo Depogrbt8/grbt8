@@ -341,22 +341,6 @@ function HotelBookingContent() {
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Forms */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Giriş yapmamışsa uyarı */}
-            {status === 'unauthenticated' && (
-              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  Rezervasyon yapmak için{' '}
-                  <button 
-                    onClick={() => setShowLoginModal(true)} 
-                    className="text-green-600 font-semibold underline hover:text-green-700"
-                  >
-                    giriş yapmanız
-                  </button>
-                  {' '}gerekmektedir.
-                </p>
-              </div>
-            )}
-
             <HotelBookingForm
               ref={formRef}
               hotelName={hotel.name}
