@@ -16,7 +16,8 @@ export function encrypt(text: string): string {
     const cipher = crypto.createCipheriv(
       ALGORITHM,
       Buffer.from(ENCRYPTION_KEY, 'hex'),
-      iv
+      iv,
+      {}
     );
     
     let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -48,7 +49,8 @@ export function decrypt(encryptedText: string): string {
     const decipher = crypto.createDecipheriv(
       ALGORITHM,
       Buffer.from(ENCRYPTION_KEY, 'hex'),
-      iv
+      iv,
+      {}
     );
     
     let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
