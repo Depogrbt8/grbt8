@@ -107,7 +107,7 @@ function HotelDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
       {/* Geri butonu */}
@@ -123,8 +123,8 @@ function HotelDetailContent() {
         </div>
       </div>
 
-      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-12 max-w-6xl">
+        <div className="bg-white">
           <HotelDetails
             hotel={hotel}
             checkIn={urlParams.checkIn}
