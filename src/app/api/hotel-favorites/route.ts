@@ -100,12 +100,12 @@ export async function GET(req: NextRequest) {
     });
 
     // Otel bilgilerini çek (demo API'den)
-    const { getHotelById } = await import('@/modules/hotel/services');
+    const { getHotelDetails } = await import('@/modules/hotel/services');
     const favoritesWithHotelInfo = await Promise.all(
       favorites.map(async (favorite) => {
         try {
           // Demo API'den otel bilgilerini çek
-          const hotel = await getHotelById(favorite.hotelId);
+          const hotel = await getHotelDetails(favorite.hotelId);
           return {
             ...favorite,
             hotelName: hotel?.name || null,
