@@ -134,9 +134,41 @@ async function checkAndCreateTable() {
     if (!hotelFavoriteTableExists) {
       console.log('📦 HotelFavorite tablosu yok, oluşturuluyor...');
       try {
-        const hotelFavoriteMigrationPath = join(process.cwd(), 'prisma/migrations/20241201120000_add_hotel_favorites/migration.sql');
-        const hotelFavoriteMigrationSQL = readFileSync(hotelFavoriteMigrationPath, 'utf-8');
-        await prisma.$executeRawUnsafe(hotelFavoriteMigrationSQL);
+        // SQL komutlarını tek tek çalıştır
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS "HotelFavorite" (
+            "id" TEXT NOT NULL,
+            "userId" TEXT NOT NULL,
+            "hotelId" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "HotelFavorite_pkey" PRIMARY KEY ("id")
+          )
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE UNIQUE INDEX IF NOT EXISTS "HotelFavorite_userId_hotelId_key" 
+          ON "HotelFavorite"("userId", "hotelId")
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS "HotelFavorite_userId_createdAt_idx" 
+          ON "HotelFavorite"("userId", "createdAt")
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS "HotelFavorite_hotelId_idx" 
+          ON "HotelFavorite"("hotelId")
+        `);
+        
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE "HotelFavorite" 
+          ADD CONSTRAINT "HotelFavorite_userId_fkey" 
+          FOREIGN KEY ("userId") REFERENCES "User"("id") 
+          ON DELETE RESTRICT ON UPDATE CASCADE
+        `).catch(() => {
+          // Constraint zaten varsa devam et
+        });
+        
         console.log('✅ HotelFavorite tablosu oluşturuldu');
       } catch (error) {
         console.log('⚠️  HotelFavorite tablosu oluşturma hatası, devam ediliyor:', error.message);
