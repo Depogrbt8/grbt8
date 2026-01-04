@@ -112,18 +112,18 @@ function HotelDetailContent() {
       
       {/* Geri butonu */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-3">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            className="flex items-center gap-1.5 sm:gap-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>Aramaya Dön</span>
           </button>
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <HotelDetails
             hotel={hotel}
@@ -158,4 +158,6 @@ export default function HotelDetailPage() {
     </Suspense>
   );
 }
+
+
 
