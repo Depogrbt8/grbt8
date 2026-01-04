@@ -121,6 +121,30 @@ async function checkAndCreateTable() {
       console.log('✅ BlogPost tablosu zaten mevcut');
     }
 
+    // HotelFavorite tablosunu kontrol et ve oluştur
+    const hotelFavoriteTableCheck = await prisma.$queryRaw`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'HotelFavorite'
+      );
+    `;
+    const hotelFavoriteTableExists = (hotelFavoriteTableCheck[0]?.exists || false);
+
+    if (!hotelFavoriteTableExists) {
+      console.log('📦 HotelFavorite tablosu yok, oluşturuluyor...');
+      try {
+        const hotelFavoriteMigrationPath = join(process.cwd(), 'prisma/migrations/20241201120000_add_hotel_favorites/migration.sql');
+        const hotelFavoriteMigrationSQL = readFileSync(hotelFavoriteMigrationPath, 'utf-8');
+        await prisma.$executeRawUnsafe(hotelFavoriteMigrationSQL);
+        console.log('✅ HotelFavorite tablosu oluşturuldu');
+      } catch (error) {
+        console.log('⚠️  HotelFavorite tablosu oluşturma hatası, devam ediliyor:', error.message);
+      }
+    } else {
+      console.log('✅ HotelFavorite tablosu zaten mevcut');
+    }
+
     if (backlinkTableExists) {
       // Her backlink'i tek tek kontrol et ve eksik olanları ekle
       console.log(`📝 ${predefinedBacklinks.length} backlink kontrol ediliyor...`);
