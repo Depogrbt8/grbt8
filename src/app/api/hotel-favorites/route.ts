@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { logger } from '@/lib/logger';
-import { checkAdminAccess } from '@/lib/adminAuth';
 
 // POST: Otel favorilere ekle
 export async function POST(req: NextRequest) {
