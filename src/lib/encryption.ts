@@ -5,6 +5,11 @@ const ENCRYPTION_KEY = process.env.API_ENCRYPTION_KEY || '0123456789abcdef012345
 const ALGORITHM = 'aes-256-cbc';
 const IV_LENGTH = 16;
 
+// Encryption key'i Buffer'a çevir
+const getKeyBuffer = (): Buffer => {
+  return Buffer.from(ENCRYPTION_KEY, 'hex');
+};
+
 /**
  * Metni şifreler
  * @param text Şifrelenecek metin
@@ -13,12 +18,8 @@ const IV_LENGTH = 16;
 export function encrypt(text: string): string {
   try {
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv(
-      ALGORITHM,
-      Buffer.from(ENCRYPTION_KEY, 'hex'),
-      iv,
-      {}
-    );
+    const key = getKeyBuffer();
+    const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
     
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
@@ -45,13 +46,9 @@ export function decrypt(encryptedText: string): string {
     
     const iv = Buffer.from(parts[0], 'hex');
     const encryptedData = parts[1];
+    const key = getKeyBuffer();
     
-    const decipher = crypto.createDecipheriv(
-      ALGORITHM,
-      Buffer.from(ENCRYPTION_KEY, 'hex'),
-      iv,
-      {}
-    );
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
     
     let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
