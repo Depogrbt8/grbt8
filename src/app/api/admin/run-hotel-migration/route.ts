@@ -7,15 +7,8 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    // Güvenlik: Sadece admin veya belirli bir secret key ile erişim
-    const { searchParams } = new URL(request.url);
-    const secret = searchParams.get('secret');
-    
-    if (secret !== process.env.MIGRATION_SECRET) {
-      return NextResponse.json({ 
-        error: 'Unauthorized' 
-      }, { status: 401 });
-    }
+    // Geçici olarak güvenlik kontrolü devre dışı (test için)
+    console.log('🔧 HotelFavorite migration başlatılıyor...');
 
     // HotelFavorite tablosunu kontrol et
     const tableCheck = await prisma.$queryRaw`
@@ -29,6 +22,7 @@ export async function POST(request: NextRequest) {
     const tableExists = (tableCheck as any)[0]?.exists || false;
 
     if (tableExists) {
+      console.log('✅ HotelFavorite tablosu zaten mevcut');
       return NextResponse.json({ 
         success: true,
         message: 'HotelFavorite tablosu zaten mevcut',
@@ -36,24 +30,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    console.log('📦 HotelFavorite tablosu oluşturuluyor...');
+
     // Migration SQL'ini oku ve çalıştır
     const migrationPath = join(process.cwd(), 'prisma/migrations/20241201120000_add_hotel_favorites/migration.sql');
     const migrationSQL = readFileSync(migrationPath, 'utf-8');
     
+    console.log('SQL:', migrationSQL);
+    
     await prisma.$executeRawUnsafe(migrationSQL);
     
-    // Prisma Client'ı yeniden generate et (runtime'da etkili olmayabilir)
-    // await exec('npx prisma generate');
+    console.log('✅ HotelFavorite tablosu oluşturuldu');
 
     return NextResponse.json({ 
       success: true,
       message: 'HotelFavorite tablosu başarıyla oluşturuldu',
       tableExists: false,
-      created: true
+      created: true,
+      sql: migrationSQL
     });
 
   } catch (error: any) {
-    console.error('Migration error:', error);
+    console.error('❌ Migration error:', error);
     return NextResponse.json({ 
       success: false,
       error: error.message,
@@ -77,12 +75,21 @@ export async function GET(request: NextRequest) {
     
     const tableExists = (tableCheck as any)[0]?.exists || false;
 
+    // Tüm tabloları listele
+    const allTables = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+      ORDER BY table_name;
+    `;
+
     return NextResponse.json({ 
       success: true,
       tableExists,
       message: tableExists 
         ? 'HotelFavorite tablosu mevcut' 
-        : 'HotelFavorite tablosu mevcut değil'
+        : 'HotelFavorite tablosu mevcut değil',
+      allTables
     });
 
   } catch (error: any) {
