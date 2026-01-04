@@ -589,6 +589,7 @@ model HotelBooking {
   cancellationReason  String?
 
   user User @relation(fields: [userId], references: [id])
+  apiProvider HotelApiProvider? @relation(fields: [provider], references: [name])
 
   @@index([userId])
   @@index([status])
