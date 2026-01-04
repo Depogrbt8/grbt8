@@ -2,17 +2,22 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import LoginModal from '@/components/LoginModal';
+import ValidationPopup from '@/components/ValidationPopup';
 import { HotelBookingForm } from '@/modules/hotel/components';
-import { getHotelDetails, createBooking } from '@/modules/hotel/services';
+import { getHotelDetails } from '@/modules/hotel/services';
 import { getNights, formatPrice, formatDate } from '@/modules/hotel/utils';
-import type { HotelDetails, RoomType, Rate, GuestInfo, BookingResponse } from '@/modules/hotel/types';
+import { logger } from '@/lib/logger';
+import type { HotelDetails, RoomType, Rate, GuestInfo } from '@/modules/hotel/types';
 
 function HotelBookingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   // URL parametreleri
   const hotelId = searchParams.get('hotelId') || '';
@@ -31,7 +36,10 @@ function HotelBookingContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bookingResult, setBookingResult] = useState<BookingResponse | null>(null);
+  const [bookingResult, setBookingResult] = useState<any>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showValidationPopup, setShowValidationPopup] = useState(false);
 
   // Verileri yükle
   useEffect(() => {
@@ -71,7 +79,7 @@ function HotelBookingContent() {
 
       } catch (err) {
         setError('Veriler yüklenirken bir hata oluştu');
-        console.error('Booking data error:', err);
+        logger.error('Booking data error:', err);
       } finally {
         setLoading(false);
       }
@@ -80,28 +88,126 @@ function HotelBookingContent() {
     loadBookingData();
   }, [hotelId, roomId, rateId]);
 
-  // Rezervasyon gönder
+  // Session'dan kullanıcı bilgilerini al (GuestForm'a otomatik doldurulacak)
+  useEffect(() => {
+    if (session?.user) {
+      // Session bilgileri GuestForm component'inde kullanılabilir
+      // Şimdilik sadece kontrol ediyoruz
+    }
+  }, [session]);
+
+  // Rezervasyon gönder - Veritabanına kayıt et
   const handleSubmit = async (guestInfo: GuestInfo, specialRequests?: string) => {
     if (!hotel || !selectedRoom || !selectedRate) return;
+
+    // Giriş kontrolü
+    if (status === 'unauthenticated') {
+      setShowLoginModal(true);
+      return;
+    }
+
+    if (status === 'loading') {
+      return; // Session yükleniyor, bekle
+    }
+
+    // Form validasyonu
+    const errors: string[] = [];
+    
+    if (!guestInfo.firstName || guestInfo.firstName.trim().length < 2) {
+      errors.push('Ad en az 2 karakter olmalıdır');
+    }
+    if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
+      errors.push('Soyad en az 2 karakter olmalıdır');
+    }
+    if (!guestInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
+      errors.push('Geçerli bir e-posta adresi giriniz');
+    }
+    if (!guestInfo.phone || guestInfo.phone.trim().length < 10) {
+      errors.push('Geçerli bir telefon numarası giriniz');
+    }
+
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setShowValidationPopup(true);
+      return;
+    }
 
     setSubmitting(true);
     setError(null);
 
     try {
-      const result = await createBooking({
-        hotelId: hotel.id,
-        roomTypeId: selectedRoom.id,
-        rateId: selectedRate.id,
-        checkIn,
-        checkOut,
-        guests: { adults, children, rooms },
-        guestInfo,
-        specialRequests
+      const nights = getNights(checkIn, checkOut);
+      const totalPrice = selectedRate.price * nights * rooms;
+
+      // API'ye doğru formatta gönder - Veritabanına kayıt et
+      const response = await fetch('/api/hotels/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hotelId: hotel.id,
+          hotelName: hotel.name,
+          hotelLocation: `${hotel.location.city}, ${hotel.location.country}`,
+          roomType: selectedRoom.id,
+          roomName: selectedRoom.name,
+          checkIn: checkIn,
+          checkOut: checkOut,
+          nights: nights,
+          guests: {
+            adults,
+            children,
+            rooms
+          },
+          guestInfo: {
+            firstName: guestInfo.firstName,
+            lastName: guestInfo.lastName,
+            email: guestInfo.email,
+            phone: guestInfo.phone,
+            country: guestInfo.country || 'TR'
+          },
+          totalPrice: totalPrice,
+          currency: selectedRate.currency,
+          cancellationPolicy: selectedRate.cancellationPolicy || 'İptal politikası otel tarafından belirlenir',
+          specialRequests: specialRequests || null,
+          provider: 'demo'
+        })
       });
 
-      setBookingResult(result);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Rezervasyon oluşturulamadı');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        logger.info('Otel rezervasyonu başarıyla oluşturuldu', {
+          bookingId: result.data.booking.id,
+          confirmationNumber: result.data.confirmationNumber
+        });
+
+        setBookingResult({
+          confirmationNumber: result.data.confirmationNumber,
+          hotel: {
+            name: hotel.name
+          },
+          room: {
+            name: selectedRoom.name
+          },
+          checkIn: checkIn,
+          checkOut: checkOut,
+          totalPrice: totalPrice,
+          currency: selectedRate.currency
+        });
+      } else {
+        throw new Error(result.error || 'Rezervasyon oluşturulamadı');
+      }
+
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Rezervasyon oluşturulamadı');
+      const errorMessage = err instanceof Error ? err.message : 'Rezervasyon oluşturulamadı';
+      setError(errorMessage);
+      logger.error('Otel rezervasyon hatası', { error: err });
     } finally {
       setSubmitting(false);
     }
@@ -187,7 +293,7 @@ function HotelBookingContent() {
                 Ana Sayfaya Dön
               </button>
               <button
-                onClick={() => router.push('/hesabim')}
+                onClick={() => router.push('/hesabim/seyahatlerim')}
                 className="px-6 py-3 border border-gray-300 rounded-xl font-semibold hover:bg-gray-50"
               >
                 Rezervasyonlarım
@@ -243,6 +349,22 @@ function HotelBookingContent() {
       </div>
 
       <main className="container mx-auto px-4 py-6">
+        {/* Giriş yapmamışsa uyarı */}
+        {status === 'unauthenticated' && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              Rezervasyon yapmak için{' '}
+              <button 
+                onClick={() => setShowLoginModal(true)} 
+                className="text-green-600 font-semibold underline hover:text-green-700"
+              >
+                giriş yapmanız
+              </button>
+              {' '}gerekmektedir.
+            </p>
+          </div>
+        )}
+
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Rezervasyon</h1>
 
         <HotelBookingForm
@@ -257,6 +379,7 @@ function HotelBookingContent() {
           currency={selectedRate.currency}
           onSubmit={handleSubmit}
           isLoading={submitting}
+          session={session}
         />
 
         {error && (
@@ -267,6 +390,16 @@ function HotelBookingContent() {
       </main>
 
       <Footer />
+
+      {/* Validation Popup */}
+      <ValidationPopup
+        isOpen={showValidationPopup}
+        onClose={() => setShowValidationPopup(false)}
+        errors={validationErrors}
+      />
+
+      {/* Login Modal */}
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   );
 }
@@ -285,4 +418,6 @@ export default function HotelBookingPage() {
     </Suspense>
   );
 }
+
+
 

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { GuestInfo } from '../../types';
 import GuestForm from './GuestForm';
 import HotelPriceSummary from './HotelPriceSummary';
+import type { Session } from 'next-auth';
 
 interface HotelBookingFormProps {
   hotelName: string;
@@ -17,6 +18,7 @@ interface HotelBookingFormProps {
   currency: string;
   onSubmit: (guestInfo: GuestInfo, specialRequests?: string) => void;
   isLoading?: boolean;
+  session?: Session | null;
 }
 
 export default function HotelBookingForm({
@@ -30,7 +32,8 @@ export default function HotelBookingForm({
   totalPrice,
   currency,
   onSubmit,
-  isLoading = false
+  isLoading = false,
+  session
 }: HotelBookingFormProps) {
   const [guestInfo, setGuestInfo] = useState<GuestInfo>({
     firstName: '',
@@ -41,6 +44,19 @@ export default function HotelBookingForm({
   const [specialRequests, setSpecialRequests] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  // Session'dan kullanıcı bilgilerini otomatik doldur
+  useEffect(() => {
+    if (session?.user) {
+      setGuestInfo(prev => ({
+        ...prev,
+        email: session.user?.email || prev.email,
+        phone: (session.user as any)?.phone || prev.phone,
+        firstName: (session.user as any)?.firstName || prev.firstName,
+        lastName: (session.user as any)?.lastName || prev.lastName,
+      }));
+    }
+  }, [session]);
 
   // Form validasyonu
   const validateForm = (): boolean => {
@@ -156,4 +172,6 @@ export default function HotelBookingForm({
     </form>
   );
 }
+
+
 
