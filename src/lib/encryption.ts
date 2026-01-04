@@ -19,7 +19,7 @@ export function encrypt(text: string): string {
   try {
     const iv = crypto.randomBytes(IV_LENGTH);
     const key = getKeyBuffer();
-    const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+    const cipher = crypto.createCipheriv(ALGORITHM, key as any, iv);
     
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
@@ -48,7 +48,7 @@ export function decrypt(encryptedText: string): string {
     const encryptedData = parts[1];
     const key = getKeyBuffer();
     
-    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+    const decipher = crypto.createDecipheriv(ALGORITHM, key as any, iv);
     
     let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
