@@ -2,40 +2,49 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 // GET: Otel rezervasyonlarını listele
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const page = parseInt(searchParams.get('page') || '1', 10);
     const userId = searchParams.get('userId');
 
-    // Filtre oluştur
-    const where: Record<string, unknown> = {};
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    // Admin panel veya normal kullanıcı authentication kontrolü
+    const authCheck = await checkAdminAccess(request);
+    if (!authCheck.authorized) {
+      return authCheck.error!;
     }
 
-    // Veritabanından admin kontrolü
-    const currentUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true }
-    });
+    // Filtre oluştur
+    const where: Record<string, unknown> = {};
 
-    // Normal kullanıcılar sadece kendi rezervasyonlarını görebilir
-    if (currentUser?.role !== 'admin') {
-      where.userId = session.user.id;
-    } else if (userId) {
-      // Admin belirli bir kullanıcının rezervasyonlarını filtreleyebilir
-      where.userId = userId;
+    if (authCheck.isAdminPanel) {
+      // Admin panel'den gelen istek - userId parametresi ile filtreleme yapılabilir
+      if (userId) {
+        where.userId = userId;
+      }
+      // Admin panel tüm rezervasyonları görebilir (userId yoksa)
+    } else {
+      // Normal kullanıcı isteği - session kontrolü yapıldı
+      const session = await getServerSession(authOptions);
+      
+      // Veritabanından admin kontrolü
+      const currentUser = await prisma.user.findUnique({
+        where: { id: session!.user.id },
+        select: { role: true }
+      });
+
+      // Normal kullanıcılar sadece kendi rezervasyonlarını görebilir
+      if (currentUser?.role !== 'admin') {
+        where.userId = session!.user.id;
+      } else if (userId) {
+        // Admin belirli bir kullanıcının rezervasyonlarını filtreleyebilir
+        where.userId = userId;
+      }
     }
 
     if (status) {
