@@ -71,26 +71,18 @@ const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps
     }
   }, [session]);
 
-  // ContactForm değişikliklerini guestInfo'ya senkronize et
-  useEffect(() => {
-    setGuestInfo(prev => ({
-      ...prev,
-      email: contactEmail,
-      phone: contactPhone
-    }));
-  }, [contactEmail, contactPhone]);
+  // ContactForm değişikliklerini guestInfo'ya senkronize et (GuestForm'da email ve telefon var, bu yüzden gerek yok)
+  // useEffect(() => {
+  //   setGuestInfo(prev => ({
+  //     ...prev,
+  //     email: contactEmail,
+  //     phone: contactPhone
+  //   }));
+  // }, [contactEmail, contactPhone]);
 
   // Form validasyonu
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    // İletişim bilgileri
-    if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
-      newErrors.email = 'Geçerli bir e-posta adresi giriniz';
-    }
-    if (!contactPhone || contactPhone.trim().length < 10) {
-      newErrors.phone = 'Geçerli bir telefon numarası giriniz';
-    }
 
     // Misafir bilgileri
     if (!guestInfo.firstName || guestInfo.firstName.trim().length < 2) {
@@ -99,18 +91,11 @@ const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps
     if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
       newErrors.lastName = 'Soyad en az 2 karakter olmalıdır';
     }
-    if (!guestInfo.gender) {
-      newErrors.gender = 'Cinsiyet seçiniz';
+    if (!guestInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
+      newErrors.email = 'Geçerli bir e-posta adresi giriniz';
     }
-    if (!guestInfo.birthDay || !guestInfo.birthMonth || !guestInfo.birthYear) {
-      newErrors.birthDay = 'Doğum tarihi gereklidir';
-    }
-    
-    // TC Kimlik No validasyonu (sadece T.C. vatandaşları için)
-    if (!guestInfo.isForeigner) {
-      if (!guestInfo.identityNumber || guestInfo.identityNumber.length !== 11) {
-        newErrors.identityNumber = 'TC Kimlik numarası 11 haneli olmalıdır';
-      }
+    if (!guestInfo.phone || guestInfo.phone.trim().length < 10) {
+      newErrors.phone = 'Geçerli bir telefon numarası giriniz';
     }
 
     if (!agreedToTerms) {
