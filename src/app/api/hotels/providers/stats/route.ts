@@ -1,31 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 // GET: Provider istatistikleri
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Admin kontrolü
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true }
-    });
-
-    if (user?.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - Admin only' },
-        { status: 403 }
-      );
+    // Admin panel veya normal kullanıcı authentication kontrolü
+    const authCheck = await checkAdminAccess(request);
+    if (!authCheck.authorized) {
+      return authCheck.error!;
     }
 
     const { searchParams } = new URL(request.url);

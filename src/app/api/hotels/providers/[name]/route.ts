@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { encrypt } from '@/lib/encryption';
+import { checkAdminAccess } from '@/lib/adminAuth';
 
 // GET: Provider detayı
 export async function GET(
@@ -10,26 +9,10 @@ export async function GET(
   { params }: { params: { name: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Admin kontrolü
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true }
-    });
-
-    if (user?.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - Admin only' },
-        { status: 403 }
-      );
+    // Admin panel veya normal kullanıcı authentication kontrolü
+    const authCheck = await checkAdminAccess(request);
+    if (!authCheck.authorized) {
+      return authCheck.error!;
     }
 
     const provider = await prisma.hotelApiProvider.findUnique({
@@ -75,26 +58,10 @@ export async function PUT(
   { params }: { params: { name: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Admin kontrolü
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true }
-    });
-
-    if (user?.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - Admin only' },
-        { status: 403 }
-      );
+    // Admin panel veya normal kullanıcı authentication kontrolü
+    const authCheck = await checkAdminAccess(request);
+    if (!authCheck.authorized) {
+      return authCheck.error!;
     }
 
     const body = await request.json();
@@ -167,26 +134,10 @@ export async function DELETE(
   { params }: { params: { name: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Admin kontrolü
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true }
-    });
-
-    if (user?.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - Admin only' },
-        { status: 403 }
-      );
+    // Admin panel veya normal kullanıcı authentication kontrolü
+    const authCheck = await checkAdminAccess(request);
+    if (!authCheck.authorized) {
+      return authCheck.error!;
     }
 
     // Aktif provider silinemez
