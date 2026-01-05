@@ -27,7 +27,14 @@ const amenityIcons: Record<string, React.ReactNode> = {
 
 export default function HotelCard({ hotel, checkIn, checkOut, guests }: HotelCardProps) {
   const { data: session, status } = useSession();
-  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(hotel.id);
+  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(
+    hotel.id,
+    {
+      name: hotel.name,
+      location: `${hotel.location.city}, ${hotel.location.country}`,
+      image: hotel.images[0]
+    }
+  );
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   // Detay sayfası URL'i

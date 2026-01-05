@@ -40,7 +40,14 @@ export default function HotelDetails({
   onRoomSelect
 }: HotelDetailsProps) {
   const { data: session, status } = useSession();
-  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(hotel.id);
+  const { isFavorite, isLoading, toggleFavorite } = useHotelFavorite(
+    hotel.id,
+    {
+      name: hotel.name,
+      location: `${hotel.location.city}, ${hotel.location.country}`,
+      image: hotel.images[0]
+    }
+  );
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showAllAmenities, setShowAllAmenities] = useState(false);

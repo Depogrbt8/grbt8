@@ -10,7 +10,17 @@ interface UseHotelFavoriteReturn {
   error: string | null;
 }
 
-export function useHotelFavorite(hotelId: string): UseHotelFavoriteReturn {
+interface HotelInfo {
+  hotelId: string;
+  hotelName?: string;
+  hotelLocation?: string;
+  hotelImage?: string;
+}
+
+export function useHotelFavorite(
+  hotelId: string,
+  hotelInfo?: { name?: string; location?: string; image?: string }
+): UseHotelFavoriteReturn {
   const { data: session, status } = useSession();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,11 +72,16 @@ export function useHotelFavorite(hotelId: string): UseHotelFavoriteReturn {
           throw new Error(data.error || 'Favorilerden çıkarma hatası');
         }
       } else {
-        // Favorilere ekle
+        // Favorilere ekle - otel bilgileriyle birlikte
         const response = await fetch('/api/hotel-favorites', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hotelId })
+          body: JSON.stringify({ 
+            hotelId,
+            hotelName: hotelInfo?.name,
+            hotelLocation: hotelInfo?.location,
+            hotelImage: hotelInfo?.image
+          })
         });
         
         if (response.ok) {

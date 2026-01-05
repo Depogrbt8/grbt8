@@ -175,6 +175,50 @@ async function checkAndCreateTable() {
       }
     } else {
       console.log('✅ HotelFavorite tablosu zaten mevcut');
+      
+      // Yeni alanları kontrol et ve ekle
+      try {
+        const columnCheck = await prisma.$queryRaw`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'HotelFavorite' 
+          AND column_name IN ('hotelName', 'hotelLocation', 'hotelImage', 'updatedAt')
+        `;
+        
+        const existingColumns = columnCheck.map(row => row.column_name);
+        
+        if (!existingColumns.includes('hotelName')) {
+          console.log('📦 HotelFavorite tablosuna yeni alanlar ekleniyor...');
+          
+          await prisma.$executeRawUnsafe(`
+            ALTER TABLE "HotelFavorite" 
+            ADD COLUMN IF NOT EXISTS "hotelName" TEXT,
+            ADD COLUMN IF NOT EXISTS "hotelLocation" TEXT,
+            ADD COLUMN IF NOT EXISTS "hotelImage" TEXT,
+            ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP(3)
+          `);
+          
+          // Mevcut kayıtlar için varsayılan değerler
+          await prisma.$executeRawUnsafe(`
+            UPDATE "HotelFavorite" 
+            SET "hotelName" = 'Unknown Hotel',
+                "updatedAt" = "createdAt"
+            WHERE "hotelName" IS NULL
+          `);
+          
+          // hotelName ve updatedAt zorunlu hale getir
+          await prisma.$executeRawUnsafe(`
+            ALTER TABLE "HotelFavorite" 
+            ALTER COLUMN "hotelName" SET NOT NULL,
+            ALTER COLUMN "updatedAt" SET NOT NULL,
+            ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP
+          `);
+          
+          console.log('✅ HotelFavorite tablosu güncellendi (hotelName, hotelLocation, hotelImage, updatedAt)');
+        }
+      } catch (error) {
+        console.log('⚠️  HotelFavorite tablo güncelleme hatası, devam ediliyor:', error.message);
+      }
     }
 
     if (backlinkTableExists) {

@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { hotelId } = await req.json();
+    const { hotelId, hotelName, hotelLocation, hotelImage } = await req.json();
     if (!hotelId) {
       return NextResponse.json({ error: 'Hotel ID gerekli' }, { status: 400 });
     }
@@ -28,17 +28,56 @@ export async function POST(req: NextRequest) {
     });
 
     if (existing) {
+      // Mevcut favoriyi güncelle (otel bilgileri değişmiş olabilir)
+      const updated = await prisma.hotelFavorite.update({
+        where: {
+          userId_hotelId: {
+            userId: session.user.id,
+            hotelId: hotelId
+          }
+        },
+        data: {
+          hotelName: hotelName || existing.hotelName,
+          hotelLocation: hotelLocation || existing.hotelLocation,
+          hotelImage: hotelImage || existing.hotelImage,
+          updatedAt: new Date()
+        }
+      });
+      
       return NextResponse.json({ 
         success: true, 
-        favorite: existing,
+        favorite: updated,
         message: 'Otel zaten favorilerinizde' 
       });
+    }
+
+    // Otel bilgisi verilmediyse API'den çek
+    let finalHotelName = hotelName;
+    let finalHotelLocation = hotelLocation;
+    let finalHotelImage = hotelImage;
+
+    if (!hotelName) {
+      try {
+        const { getHotelDetails } = await import('@/modules/hotel/services');
+        const hotel = await getHotelDetails(hotelId);
+        if (hotel) {
+          finalHotelName = hotel.name;
+          finalHotelLocation = hotel.location;
+          finalHotelImage = hotel.image;
+        }
+      } catch (error) {
+        // API'den çekilemezse varsayılan değerler
+        finalHotelName = 'Unknown Hotel';
+      }
     }
 
     const favorite = await prisma.hotelFavorite.create({
       data: {
         userId: session.user.id,
         hotelId: hotelId,
+        hotelName: finalHotelName || 'Unknown Hotel',
+        hotelLocation: finalHotelLocation,
+        hotelImage: finalHotelImage,
       },
     });
 
@@ -113,34 +152,16 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         hotelId: true,
-        createdAt: true
+        hotelName: true,
+        hotelLocation: true,
+        hotelImage: true,
+        createdAt: true,
+        updatedAt: true
       }
     });
 
-    // Otel bilgilerini çek (demo API'den)
-    const { getHotelDetails } = await import('@/modules/hotel/services');
-    const favoritesWithHotelInfo = await Promise.all(
-      favorites.map(async (favorite) => {
-        try {
-          // Demo API'den otel bilgilerini çek
-          const hotel = await getHotelDetails(favorite.hotelId);
-          return {
-            ...favorite,
-            hotelName: hotel?.name || null,
-            hotelInfo: hotel || null
-          };
-        } catch (error) {
-          return {
-            ...favorite,
-            hotelName: null,
-            hotelInfo: null
-          };
-        }
-      })
-    );
-
     return NextResponse.json({ 
-      favorites: favoritesWithHotelInfo,
+      favorites: favorites,
       hotelIds: favorites.map(f => f.hotelId)
     });
   } catch (error: any) {
