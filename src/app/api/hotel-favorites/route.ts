@@ -62,8 +62,8 @@ export async function POST(req: NextRequest) {
         const hotel = await getHotelDetails(hotelId);
         if (hotel) {
           finalHotelName = hotel.name;
-          finalHotelLocation = hotel.location;
-          finalHotelImage = hotel.image;
+          finalHotelLocation = `${hotel.location.city}, ${hotel.location.country || ''}`;
+          finalHotelImage = hotel.images?.[0];
         }
       } catch (error) {
         // API'den çekilemezse varsayılan değerler
