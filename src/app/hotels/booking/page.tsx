@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import LoginModal from '@/components/LoginModal';
@@ -14,6 +14,16 @@ import { getHotelDetails } from '@/modules/hotel/services';
 import { getNights, formatPrice, formatDate } from '@/modules/hotel/utils';
 import { logger } from '@/lib/logger';
 import type { HotelDetails, RoomType, Rate, GuestInfo } from '@/modules/hotel/types';
+
+type BookingSuccessResult = {
+  confirmationNumber: string;
+  hotel: { name: string };
+  room: { name: string };
+  checkIn: string;
+  checkOut: string;
+  totalPrice: number;
+  currency: string;
+};
 
 function HotelBookingContent() {
   const searchParams = useSearchParams();
@@ -37,7 +47,7 @@ function HotelBookingContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bookingResult, setBookingResult] = useState<any>(null);
+  const [bookingResult, setBookingResult] = useState<BookingSuccessResult | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
@@ -176,21 +186,33 @@ function HotelBookingContent() {
         })
       });
 
+      const responseText = await response.text();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Rezervasyon oluşturulamadı');
+        let errMessage = 'Rezervasyon oluşturulamadı';
+        try {
+          const parsed = JSON.parse(responseText);
+          if (typeof parsed?.error === 'string') errMessage = parsed.error;
+        } catch {
+          if (responseText.length > 0 && responseText.length < 300) errMessage = responseText;
+        }
+        throw new Error(errMessage);
       }
 
-      const result = await response.json();
-      
+      const result = JSON.parse(responseText) as {
+        success?: boolean;
+        data?: { booking: { id: string }; confirmationNumber: string };
+        error?: string;
+      };
+
       if (result.success) {
         logger.info('Otel rezervasyonu başarıyla oluşturuldu', {
-          bookingId: result.data.booking.id,
-          confirmationNumber: result.data.confirmationNumber
+          bookingId: result.data!.booking.id,
+          confirmationNumber: result.data!.confirmationNumber
         });
 
         setBookingResult({
-          confirmationNumber: result.data.confirmationNumber,
+          confirmationNumber: result.data!.confirmationNumber,
           hotel: {
             name: hotel.name
           },
@@ -252,7 +274,7 @@ function HotelBookingContent() {
               Rezervasyon Onaylandı!
             </h1>
             <p className="text-gray-600 mb-6">
-              Rezervasyonunuz başarıyla oluşturuldu. Onay e-postası gönderildi.
+              Rezervasyonunuz oluşturuldu. Onay detayları e-posta ile paylaşılacaktır.
             </p>
 
             <div className="bg-gray-50 rounded-xl p-6 text-left mb-6">

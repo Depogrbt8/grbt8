@@ -71,14 +71,14 @@ const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps
     }
   }, [session]);
 
-  // ContactForm değişikliklerini guestInfo'ya senkronize et (GuestForm'da email ve telefon var, bu yüzden gerek yok)
-  // useEffect(() => {
-  //   setGuestInfo(prev => ({
-  //     ...prev,
-  //     email: contactEmail,
-  //     phone: contactPhone
-  //   }));
-  // }, [contactEmail, contactPhone]);
+  // ContactForm (İletişim) değişikliklerini guestInfo'ya yaz – rezervasyon API'sine doğru email/telefon gitsin
+  useEffect(() => {
+    setGuestInfo(prev => ({
+      ...prev,
+      email: contactEmail,
+      phone: contactPhone
+    }));
+  }, [contactEmail, contactPhone]);
 
   // Form validasyonu
   const validateForm = (): boolean => {
