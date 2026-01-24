@@ -76,9 +76,10 @@ const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps
     setGuestInfo(prev => ({
       ...prev,
       email: contactEmail,
-      phone: contactPhone
+      phone: contactPhone,
+      countryCode
     }));
-  }, [contactEmail, contactPhone]);
+  }, [contactEmail, contactPhone, countryCode]);
 
   // Form validasyonu
   const validateForm = (): boolean => {

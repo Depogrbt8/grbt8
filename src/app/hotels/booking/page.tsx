@@ -176,6 +176,7 @@ function HotelBookingContent() {
             lastName: guestInfo.lastName,
             email: guestInfo.email,
             phone: guestInfo.phone,
+            countryCode: guestInfo.countryCode || '+90',
             country: guestInfo.country || 'TR'
           },
           totalPrice: totalPrice,
