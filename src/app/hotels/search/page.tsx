@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { SlidersHorizontal, Users } from 'lucide-react';
+import { SlidersHorizontal, Users, Map, Filter, ArrowUpDown } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import Header from '@/components/Header';
@@ -14,6 +14,16 @@ import {
 } from '@/modules/hotel/components';
 import { useHotelState, useHotelFilters } from '@/modules/hotel/hooks';
 import { parseSearchParams, buildSearchUrl } from '@/modules/hotel/utils';
+import type { HotelFilters as HotelFiltersType } from '@/modules/hotel/types';
+
+// Sıralama seçenekleri (HotelFilters'ten taşındı)
+const SORT_OPTIONS = [
+  { value: 'popularity', label: 'Popülerlik' },
+  { value: 'price_asc', label: 'Fiyat (Düşükten Yükseğe)' },
+  { value: 'price_desc', label: 'Fiyat (Yüksekten Düşüğe)' },
+  { value: 'rating', label: 'Puan' },
+  { value: 'distance', label: 'Merkeze Uzaklık' }
+];
 
 function HotelSearchContent() {
   const searchParams = useSearchParams();
@@ -22,6 +32,8 @@ function HotelSearchContent() {
   const { filters, setFilters, applyFilters, activeFilterCount } = useHotelFilters();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showSortModal, setShowSortModal] = useState(false);
+  const [showMapView, setShowMapView] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -78,6 +90,16 @@ function HotelSearchContent() {
     }
   };
 
+  // Sıralama değiştir
+  const handleSortChange = (sortBy: HotelFiltersType['sortBy']) => {
+    const newFilters = {
+      ...filters,
+      sortBy
+    };
+    handleFiltersChange(newFilters);
+    setShowSortModal(false);
+  };
+
   // Düzenle modalını aç
   const handleEditClick = () => {
     setShowEditModal(true);
@@ -118,27 +140,112 @@ function HotelSearchContent() {
 
       {/* Mobil: Kompakt özet - sadece arama parametreleri varsa */}
       {isClient && isMobile && hasSearchParams && (
-        <div className="block md:hidden sticky top-0 z-30 bg-white border-b border-gray-200" ref={summaryRef}>
-          <div className="flex items-center justify-between px-4 py-3">
-            <div>
-              <div className="font-bold text-lg text-gray-900 tracking-tight">
-                {urlParams.location}
+        <>
+          <div className="block md:hidden sticky top-0 z-30 bg-white border-b border-gray-200" ref={summaryRef}>
+            <div className="flex items-center justify-between px-4 py-3">
+              <div>
+                <div className="font-bold text-lg text-gray-900 tracking-tight">
+                  {urlParams.location}
+                </div>
+                <div className="text-gray-500 text-sm mt-0.5 flex items-center gap-2">
+                  {formatDateShort(urlParams.checkIn)}
+                  <span className="mx-1">-</span>
+                  {formatDateShort(urlParams.checkOut)}
+                  <span className="ml-2 flex items-center">
+                    <Users className="w-4 h-4 mr-1" />
+                    {urlParams.adults + urlParams.children}
+                  </span>
+                </div>
               </div>
-              <div className="text-gray-500 text-sm mt-0.5 flex items-center gap-2">
-                {formatDateShort(urlParams.checkIn)}
-                <span className="mx-1">-</span>
-                {formatDateShort(urlParams.checkOut)}
-                <span className="ml-2 flex items-center">
-                  <Users className="w-4 h-4 mr-1" />
-                  {urlParams.adults + urlParams.children}
-                </span>
+              <button className="text-green-700 underline font-semibold text-base" onClick={handleEditClick}>
+                Düzenle
+              </button>
+            </div>
+
+            {/* Harita, Filtrele, Sırala butonları */}
+            <div className="flex gap-2 px-4 pb-3 border-b border-gray-200">
+              <button
+                onClick={() => setShowMapView(!showMapView)}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border transition-colors relative ${
+                  showMapView 
+                    ? 'bg-green-50 border-green-500 text-green-700' 
+                    : 'bg-white border-gray-300 text-gray-700'
+                }`}
+              >
+                <Map className="w-5 h-5" />
+                <span className="text-xs font-medium">Harita</span>
+              </button>
+              
+              <button
+                onClick={() => setShowMobileFilters(true)}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border transition-colors relative ${
+                  activeFilterCount > 0
+                    ? 'bg-green-50 border-green-500 text-green-700'
+                    : 'bg-white border-gray-300 text-gray-700'
+                }`}
+              >
+                <Filter className="w-5 h-5" />
+                <span className="text-xs font-medium">Filtrele</span>
+                {activeFilterCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+              
+              <button
+                onClick={() => setShowSortModal(true)}
+                className="flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-700 transition-colors relative"
+              >
+                <ArrowUpDown className="w-5 h-5" />
+                <span className="text-xs font-medium">Sırala</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Harita görünümü (placeholder) */}
+          {showMapView && (
+            <div className="block md:hidden bg-gray-100 border-b border-gray-200 p-8 text-center">
+              <Map className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">Harita görünümü yakında eklenecek</p>
+            </div>
+          )}
+
+          {/* Sıralama Modal */}
+          {showSortModal && (
+            <div className="fixed inset-0 z-50 bg-black/30" onClick={() => setShowSortModal(false)}>
+              <div 
+                className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl p-4 max-h-[60vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-lg">Sıralama</h3>
+                  <button 
+                    onClick={() => setShowSortModal(false)}
+                    className="text-gray-400 text-2xl"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {SORT_OPTIONS.map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleSortChange(option.value as HotelFiltersType['sortBy'])}
+                      className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
+                        filters.sortBy === option.value
+                          ? 'bg-green-50 border-green-500 text-green-700'
+                          : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-            <button className="text-green-700 underline font-semibold text-base" onClick={handleEditClick}>
-              Düzenle
-            </button>
-          </div>
-        </div>
+          )}
+        </>
       )}
 
       {/* Desktop: Büyük form - her zaman göster */}
@@ -183,19 +290,21 @@ function HotelSearchContent() {
             {urlParams.location ? `${urlParams.location} Otelleri` : 'Otel Ara'}
           </h1>
           
-          {/* Mobil filtre butonu */}
-          <button
-            onClick={() => setShowMobileFilters(true)}
-            className="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg"
-          >
-            <SlidersHorizontal className="w-5 h-5" />
-            <span>Filtreler</span>
-            {activeFilterCount > 0 && (
-              <span className="bg-green-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+          {/* Mobil filtre butonu - sadece kompakt özet yoksa göster */}
+          {(!isMobile || !hasSearchParams) && (
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg"
+            >
+              <SlidersHorizontal className="w-5 h-5" />
+              <span>Filtreler</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-green-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
 
         <div className="flex gap-6">
