@@ -19,15 +19,6 @@ interface HotelFiltersProps {
   onClose?: () => void;
 }
 
-// Sıralama seçenekleri
-const SORT_OPTIONS = [
-  { value: 'popularity', label: 'Popülerlik' },
-  { value: 'price_asc', label: 'Fiyat (Düşükten Yükseğe)' },
-  { value: 'price_desc', label: 'Fiyat (Yüksekten Düşüğe)' },
-  { value: 'rating', label: 'Puan' },
-  { value: 'distance', label: 'Merkeze Uzaklık' }
-];
-
 export default function HotelFilters({
   filters,
   availableFilters,
@@ -82,17 +73,11 @@ export default function HotelFilters({
     });
   };
 
-  // Sıralama değiştir
-  const handleSortChange = (sortBy: HotelFiltersType['sortBy']) => {
-    onFiltersChange({
-      ...filters,
-      sortBy
-    });
-  };
-
-  // Filtreleri temizle
+  // Filtreleri temizle (sıralama hariç)
   const clearAllFilters = () => {
-    onFiltersChange({});
+    onFiltersChange({
+      sortBy: filters.sortBy // Sıralamayı koru
+    });
   };
 
   // Aktif filtre sayısı
@@ -128,26 +113,6 @@ export default function HotelFilters({
           </div>
 
           <div className="p-4 space-y-6">
-            {/* Sıralama */}
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-3">Sıralama</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {SORT_OPTIONS.map(option => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleSortChange(option.value as HotelFiltersType['sortBy'])}
-                    className={`px-3 py-2 rounded-lg text-sm border ${
-                      filters.sortBy === option.value
-                        ? 'bg-green-50 border-green-500 text-green-700'
-                        : 'border-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Yıldız rating */}
             <div>
               <h4 className="font-semibold text-gray-800 mb-3">Otel Sınıfı</h4>
@@ -226,22 +191,6 @@ export default function HotelFilters({
             Temizle
           </button>
         )}
-      </div>
-
-      {/* Sıralama */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-700 mb-2">Sıralama</h4>
-        <select
-          value={filters.sortBy || 'popularity'}
-          onChange={(e) => handleSortChange(e.target.value as HotelFiltersType['sortBy'])}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-        >
-          {SORT_OPTIONS.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
       </div>
 
       {/* Fiyat Aralığı */}
