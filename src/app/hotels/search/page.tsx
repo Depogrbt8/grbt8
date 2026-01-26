@@ -283,30 +283,7 @@ function HotelSearchContent() {
         </div>
       )}
 
-      <main className="container mx-auto px-4 py-6">
-        {/* Başlık ve filtre butonu (mobil) */}
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-            {urlParams.location ? `${urlParams.location} Otelleri` : 'Otel Ara'}
-          </h1>
-          
-          {/* Mobil filtre butonu - sadece kompakt özet yoksa göster */}
-          {(!isMobile || !hasSearchParams) && (
-            <button
-              onClick={() => setShowMobileFilters(true)}
-              className="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg"
-            >
-              <SlidersHorizontal className="w-5 h-5" />
-              <span>Filtreler</span>
-              {activeFilterCount > 0 && (
-                <span className="bg-green-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-          )}
-        </div>
-
+      <main className="container mx-auto px-4 pt-4 pb-6">
         <div className="flex gap-6">
           {/* Desktop Sidebar Filtreler */}
           <aside className="hidden md:block w-72 flex-shrink-0">

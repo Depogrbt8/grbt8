@@ -47,11 +47,6 @@ export default function HotelList({
 
   return (
     <div className="space-y-4">
-      {/* Sonuç sayısı */}
-      <div className="text-sm text-gray-500 mb-2">
-        {hotels.length} otel bulundu
-      </div>
-
       {/* Otel kartları */}
       {hotels.map(hotel => (
         <HotelCard
