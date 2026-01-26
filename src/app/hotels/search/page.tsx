@@ -163,28 +163,28 @@ function HotelSearchContent() {
             </div>
 
             {/* Harita, Filtrele, Sırala butonları */}
-            <div className="flex gap-2 px-4 pb-3 border-b border-gray-200">
+            <div className="flex gap-2 px-4 pb-2 border-b border-gray-200">
               <button
                 onClick={() => setShowMapView(!showMapView)}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border transition-colors relative ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border transition-colors relative ${
                   showMapView 
                     ? 'bg-green-50 border-green-500 text-green-700' 
                     : 'bg-white border-gray-300 text-gray-700'
                 }`}
               >
-                <Map className="w-5 h-5" />
+                <Map className="w-4 h-4" />
                 <span className="text-xs font-medium">Harita</span>
               </button>
               
               <button
                 onClick={() => setShowMobileFilters(true)}
-                className={`flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border transition-colors relative ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border transition-colors relative ${
                   activeFilterCount > 0
                     ? 'bg-green-50 border-green-500 text-green-700'
                     : 'bg-white border-gray-300 text-gray-700'
                 }`}
               >
-                <Filter className="w-5 h-5" />
+                <Filter className="w-4 h-4" />
                 <span className="text-xs font-medium">Filtrele</span>
                 {activeFilterCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
@@ -195,9 +195,9 @@ function HotelSearchContent() {
               
               <button
                 onClick={() => setShowSortModal(true)}
-                className="flex-1 flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg border bg-white border-gray-300 text-gray-700 transition-colors relative"
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border bg-white border-gray-300 text-gray-700 transition-colors relative"
               >
-                <ArrowUpDown className="w-5 h-5" />
+                <ArrowUpDown className="w-4 h-4" />
                 <span className="text-xs font-medium">Sırala</span>
               </button>
             </div>
