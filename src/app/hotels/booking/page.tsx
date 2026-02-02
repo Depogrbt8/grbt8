@@ -355,7 +355,7 @@ function HotelBookingContent() {
       <Header />
 
       {/* Rezervasyon Özeti - En Üstte */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-gray-100 border-b border-gray-200">
         <div className="container mx-auto px-4 py-6">
           <HotelPriceSummary
             hotelName={hotel.name}
