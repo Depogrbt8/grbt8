@@ -68,46 +68,6 @@ export default function GuestForm({ guestInfo, onChange, errors = {} }: GuestFor
         </div>
       </div>
 
-      {/* Telefon */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Telefon
-        </label>
-        <div className="flex">
-          <select
-            value={guestInfo.countryCode || '+90'}
-            onChange={(e) => handleChange('countryCode', e.target.value)}
-            className="p-3 border border-r-0 border-gray-300 rounded-l-lg bg-gray-50 focus:ring-1 focus:ring-green-500 focus:border-green-500 appearance-none bg-no-repeat bg-right pr-8"
-            style={{ backgroundImage: 'none' }}
-          >
-            <option value="+90">🇹🇷 +90</option>
-            <option value="+49">🇩🇪 +49</option>
-            <option value="+33">🇫🇷 +33</option>
-            <option value="+32">🇧🇪 +32</option>
-            <option value="+31">🇳🇱 +31</option>
-            <option value="+45">🇩🇰 +45</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+46">🇸🇪 +46</option>
-            <option value="+41">🇨🇭 +41</option>
-            <option value="+43">🇦🇹 +43</option>
-          </select>
-          <input
-            type="tel"
-            value={guestInfo.phone}
-            onChange={(e) => handleChange('phone', e.target.value)}
-            placeholder="5XX XXX XX XX"
-            className={`w-full p-3 border border-gray-300 rounded-r-lg outline-none transition-colors ${
-              errors.phone 
-                ? 'border-red-500 focus:border-red-500' 
-                : 'border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200'
-            }`}
-          />
-        </div>
-        {errors.phone && (
-          <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-        )}
-      </div>
-
       {/* Ülke (opsiyonel) */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
