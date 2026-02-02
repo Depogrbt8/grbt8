@@ -112,7 +112,7 @@ function HotelDetailContent() {
       
       {/* Geri butonu */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 lg:px-8 xl:px-12 py-3 max-w-7xl">
+        <div className="container mx-auto px-4 lg:px-12 xl:px-16 2xl:px-20 py-3 max-w-7xl">
           <button
             onClick={handleBack}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
@@ -123,7 +123,7 @@ function HotelDetailContent() {
         </div>
       </div>
 
-      <main className="container mx-auto px-4 lg:px-8 xl:px-12 py-4 md:py-6 max-w-7xl">
+      <main className="container mx-auto px-4 lg:px-12 xl:px-16 2xl:px-20 py-4 md:py-6 max-w-7xl">
         <HotelDetails
           hotel={hotel}
           checkIn={urlParams.checkIn}
