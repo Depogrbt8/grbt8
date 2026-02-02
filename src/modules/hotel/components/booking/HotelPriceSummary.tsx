@@ -1,10 +1,13 @@
 'use client';
 
-import { Calendar, Users, Building2 } from 'lucide-react';
+import Image from 'next/image';
+import { Calendar, Users, MapPin } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils';
 
 interface HotelPriceSummaryProps {
   hotelName: string;
+  hotelImage?: string;
+  hotelLocation?: string;
   roomName: string;
   rateName: string;
   checkIn: string;
@@ -17,6 +20,8 @@ interface HotelPriceSummaryProps {
 
 export default function HotelPriceSummary({
   hotelName,
+  hotelImage,
+  hotelLocation,
   roomName,
   rateName,
   checkIn,
@@ -34,14 +39,36 @@ export default function HotelPriceSummary({
       <h3 className="text-lg font-bold text-gray-900 mb-4">Rezervasyon Özeti</h3>
 
       {/* Otel bilgisi */}
-      <div className="flex items-start gap-3 mb-4 pb-4 border-b border-gray-100">
-        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-          <Building2 className="w-5 h-5 text-green-600" />
-        </div>
-        <div>
-          <h4 className="font-semibold text-gray-900">{hotelName}</h4>
-          <p className="text-sm text-gray-600">{roomName}</p>
-          <p className="text-xs text-gray-500">{rateName}</p>
+      <div className="flex items-start gap-4 mb-4 pb-4 border-b border-gray-100">
+        {hotelImage ? (
+          <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+            <Image
+              src={hotelImage}
+              alt={hotelName}
+              width={96}
+              height={96}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-gray-400 text-xs">Resim Yok</span>
+          </div>
+        )}
+        <div className="flex-1">
+          <h4 className="font-bold text-gray-900 text-lg mb-1">{hotelName}</h4>
+          {hotelLocation && (
+            <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+              <MapPin className="w-4 h-4" />
+              <span>{hotelLocation}</span>
+            </div>
+          )}
+          <p className="text-sm text-gray-600 mb-1">
+            <span className="font-medium">Oda:</span> {roomName}
+          </p>
+          <p className="text-xs text-gray-500">
+            <span className="font-medium">Fiyat Seçeneği:</span> {rateName}
+          </p>
         </div>
       </div>
 

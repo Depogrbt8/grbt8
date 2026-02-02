@@ -359,6 +359,8 @@ function HotelBookingContent() {
         <div className="container mx-auto px-4 py-6">
           <HotelPriceSummary
             hotelName={hotel.name}
+            hotelImage={hotel.images && hotel.images.length > 0 ? hotel.images[0] : undefined}
+            hotelLocation={`${hotel.location.city}, ${hotel.location.country || 'Türkiye'}`}
             roomName={selectedRoom.name}
             rateName={selectedRate.name}
             checkIn={checkIn}
