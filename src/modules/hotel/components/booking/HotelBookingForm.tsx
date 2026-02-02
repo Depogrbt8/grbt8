@@ -92,9 +92,6 @@ const HotelBookingForm = React.forwardRef<HTMLFormElement, HotelBookingFormProps
     if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
       newErrors.lastName = 'Soyad en az 2 karakter olmalıdır';
     }
-    if (!guestInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
-      newErrors.email = 'Geçerli bir e-posta adresi giriniz';
-    }
     if (!guestInfo.phone || guestInfo.phone.trim().length < 10) {
       newErrors.phone = 'Geçerli bir telefon numarası giriniz';
     }

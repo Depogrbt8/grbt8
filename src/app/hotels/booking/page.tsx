@@ -131,9 +131,6 @@ function HotelBookingContent() {
     if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
       errors.push('Soyad en az 2 karakter olmalıdır');
     }
-    if (!guestInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestInfo.email)) {
-      errors.push('Geçerli bir e-posta adresi giriniz');
-    }
     if (!guestInfo.phone || guestInfo.phone.trim().length < 10) {
       errors.push('Geçerli bir telefon numarası giriniz');
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import { User, Mail } from 'lucide-react';
+import { User } from 'lucide-react';
 import type { GuestInfo } from '../../types';
 
 interface GuestFormProps {
@@ -66,33 +66,6 @@ export default function GuestForm({ guestInfo, onChange, errors = {} }: GuestFor
             <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
           )}
         </div>
-      </div>
-
-      {/* E-posta */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          E-posta
-        </label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="email"
-            value={guestInfo.email}
-            onChange={(e) => handleChange('email', e.target.value)}
-            placeholder="ornek@email.com"
-            className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-colors ${
-              errors.email 
-                ? 'border-red-500 focus:border-red-500' 
-                : 'border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200'
-            }`}
-          />
-        </div>
-        {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-        )}
-        <p className="text-xs text-gray-500 mt-1">
-          Rezervasyon onayı bu adrese gönderilecektir
-        </p>
       </div>
 
       {/* Telefon */}
