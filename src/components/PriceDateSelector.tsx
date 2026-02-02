@@ -252,38 +252,38 @@ export default function PriceDateSelector({
           <div className="flex items-center justify-between w-full gap-2 mt-1 mb-2">
             {onToggleDirectOnly && (
               <button
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border shadow-sm flex-1 min-w-0 transition-colors ${
+                className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg border shadow-sm flex-1 min-w-0 transition-colors ${
                   isDirectOnlyActive 
                     ? 'bg-green-500 border-green-600 text-white active:bg-green-600' 
                     : 'bg-white border-gray-200 text-gray-800 active:bg-green-100'
                 }`}
                 onClick={onToggleDirectOnly}
               >
-                <span className="text-[15px] font-semibold whitespace-nowrap">Aktarmasız</span>
+                <span className="text-[14px] font-semibold whitespace-nowrap">Aktarmasız</span>
               </button>
             )}
             {onOpenPriceAlert && (
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
                 onClick={onOpenPriceAlert}
               >
-                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
+                <span className="text-[14px] font-semibold text-gray-800 whitespace-nowrap">Alarm</span>
               </button>
             )}
             {onOpenMobileFilter && (
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
                 onClick={onOpenMobileFilter}
               >
-                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Filtreler</span>
+                <span className="text-[14px] font-semibold text-gray-800 whitespace-nowrap">Filtreler</span>
               </button>
             )}
             {onOpenSort && (
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
+                className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white border border-gray-200 shadow-sm flex-1 min-w-0 active:bg-green-100"
                 onClick={onOpenSort}
               >
-                <span className="text-[15px] font-semibold text-gray-800 whitespace-nowrap">Sırala</span>
+                <span className="text-[14px] font-semibold text-gray-800 whitespace-nowrap">Sırala</span>
               </button>
             )}
           </div>
