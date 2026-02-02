@@ -354,8 +354,8 @@ function HotelBookingContent() {
     <div className="min-h-screen bg-gray-100">
       <Header />
 
-      {/* Rezervasyon Özeti - En Üstte */}
-      <div className="bg-gray-100 border-b border-gray-200">
+      {/* Rezervasyon Özeti - Mobilde En Üstte */}
+      <div className="lg:hidden bg-gray-100 border-b border-gray-200">
         <div className="container mx-auto px-4 py-6">
           <HotelPriceSummary
             hotelName={hotel.name}
@@ -401,9 +401,26 @@ function HotelBookingContent() {
             )}
           </div>
 
-          {/* Right Column: Rezervasyon Butonu */}
+          {/* Right Column: Rezervasyon Özeti + Buton (Masaüstü) */}
           <div className="lg:col-span-1">
-            <div className="sticky top-4">
+            <div className="sticky top-4 space-y-4">
+              {/* Rezervasyon Özeti - Sadece Masaüstünde */}
+              <div className="hidden lg:block">
+                <HotelPriceSummary
+                  hotelName={hotel.name}
+                  hotelImage={hotel.images && hotel.images.length > 0 ? hotel.images[0] : undefined}
+                  hotelLocation={`${hotel.location.city}, ${hotel.location.country || 'Türkiye'}`}
+                  roomName={selectedRoom.name}
+                  rateName={selectedRate.name}
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  nights={nights}
+                  guests={{ adults, children, rooms }}
+                  totalPrice={totalPrice}
+                  currency={selectedRate.currency}
+                />
+              </div>
+
               {/* Rezervasyon butonu */}
               <button
                 type="button"
