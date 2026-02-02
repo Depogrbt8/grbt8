@@ -354,6 +354,23 @@ function HotelBookingContent() {
     <div className="min-h-screen bg-gray-100">
       <Header />
 
+      {/* Rezervasyon Özeti - En Üstte */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-6">
+          <HotelPriceSummary
+            hotelName={hotel.name}
+            roomName={selectedRoom.name}
+            rateName={selectedRate.name}
+            checkIn={checkIn}
+            checkOut={checkOut}
+            nights={nights}
+            guests={{ adults, children, rooms }}
+            totalPrice={totalPrice}
+            currency={selectedRate.currency}
+          />
+        </div>
+      </div>
+
       <main className="min-h-screen bg-gray-100 py-8">
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column: Forms */}
@@ -382,21 +399,9 @@ function HotelBookingContent() {
             )}
           </div>
 
-          {/* Right Column: Price Summary */}
+          {/* Right Column: Rezervasyon Butonu */}
           <div className="lg:col-span-1">
             <div className="sticky top-4">
-              <HotelPriceSummary
-                hotelName={hotel.name}
-                roomName={selectedRoom.name}
-                rateName={selectedRate.name}
-                checkIn={checkIn}
-                checkOut={checkOut}
-                nights={nights}
-                guests={{ adults, children, rooms }}
-                totalPrice={totalPrice}
-                currency={selectedRate.currency}
-              />
-
               {/* Rezervasyon butonu */}
               <button
                 type="button"
@@ -407,7 +412,7 @@ function HotelBookingContent() {
                   }
                 }}
                 disabled={submitting}
-                className="w-full mt-4 bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? 'İşleniyor...' : 'Rezervasyonu Tamamla'}
               </button>
