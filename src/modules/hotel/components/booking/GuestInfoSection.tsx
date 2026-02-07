@@ -176,9 +176,9 @@ export default function GuestInfoSection({
               </div>
             </div>
 
-            {/* TC vatandaşı değil + TC Kimlik / Pasaport + Cinsiyet - tek satırda düzenli */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-end">
-              <label className="flex items-center gap-2 min-h-[42px]">
+            {/* Otel sayfasında TC No alanı yok; sadece T.C. vatandaşı değil + Cinsiyet (şema aynı kalır) */}
+            <div className="flex flex-wrap items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={guest.isForeigner}
@@ -187,32 +187,8 @@ export default function GuestInfoSection({
                 />
                 <span className="text-sm text-gray-700">T.C. vatandaşı değil</span>
               </label>
-              {!guest.isForeigner ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
-                  <input
-                    type="text"
-                    value={guest.identityNumber || ''}
-                    onChange={(e) => updateGuest(idx, { identityNumber: e.target.value })}
-                    maxLength={11}
-                    placeholder="11 haneli"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-green-500 focus:ring-1 focus:ring-green-200"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pasaport No</label>
-                  <input
-                    type="text"
-                    value={guest.passportNumber || ''}
-                    onChange={(e) => updateGuest(idx, { passportNumber: e.target.value })}
-                    placeholder="Pasaport numarası"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-green-500 focus:ring-1 focus:ring-green-200"
-                  />
-                </div>
-              )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Cinsiyet</label>
+                <span className="block text-sm font-medium text-gray-700 mb-2">Cinsiyet</span>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -301,42 +277,16 @@ export default function GuestInfoSection({
               </div>
             </div>
 
-            {/* TC vatandaşı değil + TC Kimlik / Pasaport */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-              <label className="flex items-center gap-2 min-h-[42px]">
-                <input
-                  type="checkbox"
-                  checked={guest.isForeigner}
-                  onChange={(e) => updateGuest(idx, { isForeigner: e.target.checked })}
-                  className="w-4 h-4 rounded text-green-500 focus:ring-green-500 border-gray-300"
-                />
-                <span className="text-sm text-gray-700">T.C. vatandaşı değil</span>
-              </label>
-              {!guest.isForeigner ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">TC Kimlik No</label>
-                  <input
-                    type="text"
-                    value={guest.identityNumber || ''}
-                    onChange={(e) => updateGuest(idx, { identityNumber: e.target.value })}
-                    maxLength={11}
-                    placeholder="11 haneli"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-green-500 focus:ring-1 focus:ring-green-200"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pasaport No</label>
-                  <input
-                    type="text"
-                    value={guest.passportNumber || ''}
-                    onChange={(e) => updateGuest(idx, { passportNumber: e.target.value })}
-                    placeholder="Pasaport numarası"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-green-500 focus:ring-1 focus:ring-green-200"
-                  />
-                </div>
-              )}
-            </div>
+            {/* Otel sayfasında TC No alanı yok; sadece T.C. vatandaşı değil (şema aynı kalır) */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={guest.isForeigner}
+                onChange={(e) => updateGuest(idx, { isForeigner: e.target.checked })}
+                className="w-4 h-4 rounded text-green-500 focus:ring-green-500 border-gray-300"
+              />
+              <span className="text-sm text-gray-700">T.C. vatandaşı değil</span>
+            </label>
           </div>
         );
       })}
