@@ -577,7 +577,9 @@ model HotelBooking {
   checkOut            DateTime
   nights              Int
   guests              String    // JSON: { adults: number, children: number, rooms: number }
-  guestInfo           String    // JSON: { firstName, lastName, email, phone }
+  guestInfo           String?   // JSON: { firstName, lastName, email, phone } - backward compat
+  contactInfo         String?   // JSON: { email, phone, countryCode } - iletişim kişisi
+  guestDetails        String?   // JSON: HotelGuest[] - her misafir için ayrı obje
   totalPrice          Float
   currency            String    @default("EUR")
   status              String    @default("pending") // pending, confirmed, cancelled, completed

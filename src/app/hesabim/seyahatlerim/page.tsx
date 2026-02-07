@@ -20,55 +20,9 @@ export default function SeyahatlerimPage() {
   const [airRulesLoading, setAirRulesLoading] = useState<string | null>(null);
   const [airRulesError, setAirRulesError] = useState<string | null>(null);
   
-  // Otel rezervasyonları (DEMO veriler)
-  const [hotelReservations, setHotelReservations] = useState<HotelReservation[]>([
-    {
-      id: 'h1',
-      hotelName: 'Grand Hyatt Berlin',
-      location: 'Berlin, Almanya',
-      address: 'Unter den Linden 77, 10117 Berlin',
-      phone: '+49 30 25990',
-      checkIn: '2024-08-15',
-      checkOut: '2024-08-18',
-      roomType: 'Deluxe Oda, Deniz Manzaralı',
-      guests: [
-        { name: 'Ali İncesu', type: 'Yetişkin' },
-        { name: 'Ayşe Yılmaz', type: 'Yetişkin' }
-      ],
-      price: '4.500 TL',
-      status: 'Onaylandı',
-      reservationNo: 'HTL987654',
-      payment: 'Kredi Kartı',
-      rules: 'İptal ve iade girişten 24 saat öncesine kadar ücretsizdir.',
-      services: ['Kahvaltı dahil', 'Ücretsiz Wi-Fi', 'Havuz', 'Otopark'],
-      checkInTime: '14:00',
-      checkOutTime: '12:00',
-      notes: 'Yüksek kat, sigara içilmeyen oda talep edildi.'
-    },
-    {
-      id: 'h2',
-      hotelName: 'Hilton Garden Inn',
-      location: 'Amsterdam, Hollanda',
-      address: 'Nieuwezijds Voorburgwal 106, 1012 SJ Amsterdam',
-      phone: '+31 20 523 1000',
-      checkIn: '2024-08-20',
-      checkOut: '2024-08-22',
-      roomType: 'Deluxe Oda, Deniz Manzaralı',
-      guests: [
-        { name: 'Ali İncesu', type: 'Yetişkin' },
-        { name: 'Ayşe Yılmaz', type: 'Yetişkin' }
-      ],
-      price: '3.500 TL',
-      status: 'Onaylandı',
-      reservationNo: 'HTL987655',
-      payment: 'Kredi Kartı',
-      rules: 'İptal ve iade girişten 24 saat öncesine kadar ücretsizdir.',
-      services: ['Kahvaltı dahil', 'Ücretsiz Wi-Fi', 'Havuz', 'Otopark'],
-      checkInTime: '14:00',
-      checkOutTime: '12:00',
-      notes: 'Yüksek kat, sigara içilmeyen oda talep edildi.'
-    }
-  ]);
+  // Otel rezervasyonları - API'den çekilir
+  const [hotelReservations, setHotelReservations] = useState<HotelReservation[]>([]);
+  const [loadingHotels, setLoadingHotels] = useState(false);
   const [openHotelDetailId, setOpenHotelDetailId] = useState<string | null>(null);
   
   // Araç rezervasyonları (DEMO veriler)
@@ -219,6 +173,75 @@ export default function SeyahatlerimPage() {
     fetchTickets();
   }, []);
 
+  // Otel rezervasyonlarını API'den çek
+  useEffect(() => {
+    async function fetchHotelBookings() {
+      setLoadingHotels(true);
+      try {
+        const res = await fetch('/api/hotels/bookings');
+        if (res.ok) {
+          const json = await res.json();
+          const bookings = json?.data?.bookings ?? [];
+          const mapped: HotelReservation[] = bookings.map((b: any) => {
+            let guestsList: { name: string; type: string }[] = [];
+            if (b.guestDetails) {
+              try {
+                const details = typeof b.guestDetails === 'string' ? JSON.parse(b.guestDetails) : b.guestDetails;
+                guestsList = details.map((g: any) => ({
+                  name: `${g.firstName || ''} ${g.lastName || ''}`.trim(),
+                  type: g.type === 'child' ? 'Çocuk' : 'Yetişkin'
+                }));
+              } catch {
+                // fallback
+              }
+            }
+            if (guestsList.length === 0 && b.guestInfo) {
+              try {
+                const gi = typeof b.guestInfo === 'string' ? JSON.parse(b.guestInfo) : b.guestInfo;
+                if (gi?.firstName || gi?.lastName) {
+                  guestsList = [{ name: `${gi.firstName || ''} ${gi.lastName || ''}`.trim(), type: 'Yetişkin' }];
+                }
+              } catch {
+                // fallback
+              }
+            }
+            const checkInDate = b.checkIn ? new Date(b.checkIn) : null;
+            const checkOutDate = b.checkOut ? new Date(b.checkOut) : null;
+            return {
+              id: b.id,
+              hotelName: b.hotelName || '',
+              location: b.hotelLocation || '',
+              address: b.hotelLocation || '',
+              phone: '',
+              checkIn: checkInDate?.toISOString().slice(0, 10) || '',
+              checkOut: checkOutDate?.toISOString().slice(0, 10) || '',
+              roomType: b.roomName || b.roomType || '',
+              guests: guestsList,
+              price: `${b.totalPrice ?? 0} ${b.currency ?? 'EUR'}`,
+              status: b.status === 'confirmed' ? 'Onaylandı' : b.status === 'pending' ? 'Beklemede' : b.status || '',
+              reservationNo: b.confirmationNumber || b.id,
+              payment: 'Kredi Kartı',
+              rules: b.cancellationPolicy || 'İptal politikası otel tarafından belirlenir.',
+              services: [],
+              checkInTime: '14:00',
+              checkOutTime: '12:00',
+              notes: b.specialRequests || ''
+            };
+          });
+          setHotelReservations(mapped);
+        } else {
+          setHotelReservations([]);
+        }
+      } catch (err) {
+        logger.error('Otel rezervasyonları yüklenirken hata', { error: err });
+        setHotelReservations([]);
+      } finally {
+        setLoadingHotels(false);
+      }
+    }
+    fetchHotelBookings();
+  }, []);
+
   const handleOpenDetail = async (flight: FlightReservation) => {
     if (openDetailId === flight.id) {
       setOpenDetailId(null);
@@ -271,8 +294,13 @@ export default function SeyahatlerimPage() {
   // Otel içeriği
   const renderOtelContent = () => (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Otel Rezervasyonlarım (DEMO)</h2>
-      {hotelReservations.length === 0 ? (
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Otel Rezervasyonlarım</h2>
+      {loadingHotels ? (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Rezervasyonlarınız yükleniyor...</p>
+        </div>
+      ) : hotelReservations.length === 0 ? (
         <EmptyState type="hotel" />
       ) : (
         <div className="space-y-4">

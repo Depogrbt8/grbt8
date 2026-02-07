@@ -116,6 +116,8 @@ export async function POST(request: NextRequest) {
       nights,
       guests,
       guestInfo,
+      contactInfo,
+      guestDetails,
       totalPrice,
       currency,
       cancellationPolicy,
@@ -130,6 +132,20 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // contactInfo + guestDetails (yeni) veya guestInfo (eski) kabul et
+    const hasNewFormat = contactInfo && Array.isArray(guestDetails);
+    const guestInfoPayload = hasNewFormat
+      ? JSON.stringify({
+          firstName: guestDetails[0]?.firstName || '',
+          lastName: guestDetails[0]?.lastName || '',
+          email: contactInfo.email || '',
+          phone: contactInfo.phone || '',
+          countryCode: contactInfo.countryCode || '+90'
+        })
+      : guestInfo
+        ? JSON.stringify(guestInfo)
+        : null;
 
     // Confirmation number oluştur
     const confirmationNumber = `GRB${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -146,7 +162,9 @@ export async function POST(request: NextRequest) {
         checkOut: new Date(checkOut),
         nights: nights || Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)),
         guests: JSON.stringify(guests),
-        guestInfo: JSON.stringify(guestInfo),
+        guestInfo: guestInfoPayload,
+        contactInfo: hasNewFormat ? JSON.stringify(contactInfo) : null,
+        guestDetails: hasNewFormat ? JSON.stringify(guestDetails) : null,
         totalPrice,
         currency: currency || 'EUR',
         status: 'confirmed',

@@ -13,7 +13,8 @@ import { HotelPriceSummary } from '@/modules/hotel/components/booking';
 import { getHotelDetails } from '@/modules/hotel/services';
 import { getNights, formatPrice, formatDate } from '@/modules/hotel/utils';
 import { logger } from '@/lib/logger';
-import type { HotelDetails, RoomType, Rate, GuestInfo } from '@/modules/hotel/types';
+import type { HotelDetails, RoomType, Rate } from '@/modules/hotel/types';
+import type { HotelBookingSubmitPayload } from '@/modules/hotel/components/booking/HotelBookingForm';
 
 type BookingSuccessResult = {
   confirmationNumber: string;
@@ -109,7 +110,7 @@ function HotelBookingContent() {
   }, [session]);
 
   // Rezervasyon gönder - Veritabanına kayıt et
-  const handleSubmit = async (guestInfo: GuestInfo, specialRequests?: string) => {
+  const handleSubmit = async (payload: HotelBookingSubmitPayload) => {
     if (!hotel || !selectedRoom || !selectedRate) return;
 
     // Giriş kontrolü
@@ -124,12 +125,14 @@ function HotelBookingContent() {
 
     // Form validasyonu
     const errors: string[] = [];
-    
-    if (!guestInfo.firstName || guestInfo.firstName.trim().length < 2) {
-      errors.push('Ad en az 2 karakter olmalıdır');
-    }
-    if (!guestInfo.lastName || guestInfo.lastName.trim().length < 2) {
-      errors.push('Soyad en az 2 karakter olmalıdır');
+    for (let i = 0; i < payload.guestDetails.length; i++) {
+      const g = payload.guestDetails[i];
+      if (!g.firstName?.trim() || g.firstName.trim().length < 2) {
+        errors.push(`${i + 1}. misafir: Ad en az 2 karakter olmalıdır`);
+      }
+      if (!g.lastName?.trim() || g.lastName.trim().length < 2) {
+        errors.push(`${i + 1}. misafir: Soyad en az 2 karakter olmalıdır`);
+      }
     }
 
     if (errors.length > 0) {
@@ -165,18 +168,12 @@ function HotelBookingContent() {
             children,
             rooms
           },
-          guestInfo: {
-            firstName: guestInfo.firstName,
-            lastName: guestInfo.lastName,
-            email: guestInfo.email,
-            phone: guestInfo.phone,
-            countryCode: guestInfo.countryCode || '+90',
-            country: guestInfo.country || 'TR'
-          },
+          contactInfo: payload.contactInfo,
+          guestDetails: payload.guestDetails,
           totalPrice: totalPrice,
           currency: selectedRate.currency,
           cancellationPolicy: selectedRate.cancellationPolicy || 'İptal politikası otel tarafından belirlenir',
-          specialRequests: specialRequests || null,
+          specialRequests: payload.specialRequests || null,
           provider: 'demo'
         })
       });

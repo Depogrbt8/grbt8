@@ -139,7 +139,30 @@ export interface BookingRequest {
   paymentMethod?: string;
 }
 
-// Misafir Bilgileri
+// İletişim Bilgileri (rezervasyon sahibi)
+export interface ContactInfo {
+  email: string;
+  phone: string;
+  countryCode?: string;
+}
+
+// Otel misafiri (API uyumlu)
+export interface HotelGuest {
+  type: 'adult' | 'child';
+  firstName: string;
+  lastName: string;
+  identityNumber?: string;
+  isForeigner: boolean;
+  passportNumber?: string;
+  birthDay?: string;
+  birthMonth?: string;
+  birthYear?: string;
+  gender?: 'male' | 'female';
+  roomIndex?: number;
+  passengerId?: string;
+}
+
+// Misafir Bilgileri (legacy - tek kişi)
 export interface GuestInfo {
   firstName: string;
   lastName: string;
