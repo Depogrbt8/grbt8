@@ -187,28 +187,26 @@ export default function GuestInfoSection({
                 />
                 <span className="text-sm text-gray-700">T.C. vatandaşı değil</span>
               </label>
-              <div>
-                <span className="block text-sm font-medium text-gray-700 mb-2">Cinsiyet</span>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      checked={guest.gender === 'male'}
-                      onChange={() => updateGuest(idx, { gender: 'male' })}
-                      className="w-4 h-4 text-green-500 focus:ring-green-500 border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">Erkek</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      checked={guest.gender === 'female'}
-                      onChange={() => updateGuest(idx, { gender: 'female' })}
-                      className="w-4 h-4 text-green-500 focus:ring-green-500 border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">Kadın</span>
-                  </label>
-                </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-700 shrink-0">Cinsiyet</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={guest.gender === 'male'}
+                    onChange={() => updateGuest(idx, { gender: 'male' })}
+                    className="w-4 h-4 text-green-500 focus:ring-green-500 border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Erkek</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    checked={guest.gender === 'female'}
+                    onChange={() => updateGuest(idx, { gender: 'female' })}
+                    className="w-4 h-4 text-green-500 focus:ring-green-500 border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Kadın</span>
+                </label>
               </div>
             </div>
           </div>
