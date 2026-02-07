@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // TC Kimlik validasyonu (basit)
+    // TC Kimlik validasyonu (basit) - sadece TC vatandaşı ise 11 hane zorunlu
     if (data.identityNumber && !data.isForeigner && data.identityNumber.length !== 11) {
       return NextResponse.json(
         { error: 'TC Kimlik numarası 11 haneli olmalıdır' },
@@ -67,12 +67,15 @@ export async function POST(request: Request) {
       );
     }
 
+    // TC vatandaşı değilse identityNumber'ı null yap (unique constraint için; birden fazla yabancı kaydedilebilsin)
+    const identityNumber = data.isForeigner ? null : (data.identityNumber || null);
+
     // Yolcu verilerini hazırla
     const passengerData = {
       userId: userId,
       firstName: data.firstName,
       lastName: data.lastName,
-      identityNumber: data.identityNumber,
+      identityNumber,
       isForeigner: data.isForeigner || false,
       birthDay: data.birthDay,
       birthMonth: data.birthMonth,

@@ -68,13 +68,16 @@ export async function PUT(
       );
     }
 
-    // TC Kimlik validasyonu (basit)
+    // TC Kimlik validasyonu (basit) - sadece TC vatandaşı ise 11 hane zorunlu
     if (data.identityNumber && !data.isForeigner && data.identityNumber.length !== 11) {
       return NextResponse.json(
         { error: 'TC Kimlik numarası 11 haneli olmalıdır' },
         { status: 400 }
       );
     }
+
+    // TC vatandaşı değilse identityNumber'ı null yap (unique constraint için)
+    const identityNumber = data.isForeigner ? null : (data.identityNumber || null);
 
     // Yolcunun mevcut olduğunu ve bu kullanıcıya ait olduğunu kontrol et
     const existingPassenger = await prisma.passenger.findUnique({
@@ -99,7 +102,7 @@ export async function PUT(
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
-        identityNumber: data.identityNumber,
+        identityNumber,
         isForeigner: data.isForeigner || false,
         birthDay: data.birthDay,
         birthMonth: data.birthMonth,
