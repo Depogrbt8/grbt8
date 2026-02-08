@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { getHotelDetails } from '@/modules/hotel/services';
+import { getUserIdFromRequest } from '@/lib/jwtAuth';
 
 // GET: Otel rezervasyonlarını listele (admin: tümü, normal kullanıcı: sadece kendi)
 export async function GET(request: NextRequest) {
@@ -22,22 +21,22 @@ export async function GET(request: NextRequest) {
     if (isAdminPanel) {
       if (userId) where.userId = userId;
     } else {
-      // Ana site: giriş yapmış her kullanıcı kendi rezervasyonlarını görsün (admin rolü şart değil)
-      const session = await getServerSession(authOptions);
-      if (!session?.user?.id) {
+      // JWT token (mobil) veya NextAuth session (web) ile userId al
+      const currentUserId = await getUserIdFromRequest(request);
+      if (!currentUserId) {
         return NextResponse.json(
           { success: false, error: 'Unauthorized' },
           { status: 401 }
         );
       }
       const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
+        where: { id: currentUserId },
         select: { role: true }
       });
       if (currentUser?.role === 'admin' && userId) {
         where.userId = userId;
       } else {
-        where.userId = session.user.id;
+        where.userId = currentUserId;
       }
     }
 
@@ -102,9 +101,10 @@ export async function GET(request: NextRequest) {
 // POST: Yeni otel rezervasyonu oluştur
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // JWT token (mobil) veya NextAuth session (web) ile userId al
+    const currentUserId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.id) {
+    if (!currentUserId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
     }
 
     const bookingData = {
-      userId: session.user.id,
+      userId: currentUserId,
       hotelId,
       hotelName,
       hotelLocation: hotelLocation || '',

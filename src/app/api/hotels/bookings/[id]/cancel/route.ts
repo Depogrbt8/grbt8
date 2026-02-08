@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { checkAdminAccess } from '@/lib/adminAuth';
+import { getUserIdFromRequest } from '@/lib/jwtAuth';
 
 // POST: Otel rezervasyonu iptal et
 export async function POST(
@@ -28,19 +27,19 @@ export async function POST(
       // Admin panel'den gelen iptal isteği
       isAdmin = true;
     } else {
-      // Normal kullanıcı isteği
-      const session = await getServerSession(authOptions);
-      if (!session?.user?.id) {
+      // JWT token (mobil) veya NextAuth session (web) ile userId al
+      const currentUserId = await getUserIdFromRequest(request);
+      if (!currentUserId) {
         return NextResponse.json(
           { success: false, error: 'Unauthorized' },
           { status: 401 }
         );
       }
-      userId = session.user.id;
+      userId = currentUserId;
 
       // Veritabanından admin kontrolü
       const currentUser = await prisma.user.findUnique({
-        where: { id: session.user.id },
+        where: { id: currentUserId },
         select: { role: true }
       });
       if (currentUser?.role === 'admin') {

@@ -46,6 +46,22 @@ const HotelSearchForm = dynamic(
   }
 );
 
+const CarSearchForm = dynamic(
+  () => import('@/modules/car/components/CarSearchForm'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full px-4 md:px-8">
+        <div className="bg-white rounded-[32px] shadow-lg p-8 animate-pulse">
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded mb-4"></div>
+          <div className="h-12 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    )
+  }
+);
+
 // Type tanımları
 interface Airport {
   code: string;
@@ -211,11 +227,7 @@ export default function Home() {
           )}
           
           {activeService === 'car' && (
-            <div className="w-full px-4 mt-8">
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center">
-                <p className="text-gray-500">Araç kiralama hizmeti yakında aktif olacak!</p>
-              </div>
-            </div>
+            <CarSearchForm />
           )}
           
           {activeService === 'esim' && (
