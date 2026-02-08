@@ -13,7 +13,7 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
     const date = new Date(dateString);
     return date.toLocaleDateString('tr-TR', {
       day: '2-digit',
-      month: 'short',
+      month: '2-digit',
       year: 'numeric'
     });
   };
@@ -23,30 +23,24 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
   const guestNames = guestsList.map(g => (g.name || '').trim()).filter(Boolean).join(', ') || '—';
 
   return (
-    <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="font-semibold text-base sm:text-lg text-gray-900">{hotel.hotelName}</div>
-          {hotel.location && (
-            <div className="text-sm text-gray-500 mt-0.5">{hotel.location}</div>
-          )}
-          <div className="text-sm text-gray-600 mt-2">
-            {formatDate(hotel.checkIn)} – {formatDate(hotel.checkOut)}
-            {hotel.checkInTime && hotel.checkOutTime && (
-              <span className="text-gray-500"> · {hotel.checkInTime} / {hotel.checkOutTime}</span>
-            )}
+    <div className="border rounded-xl sm:p-4 p-2 bg-gray-50">
+      <div className="flex justify-between items-center">
+        <div>
+          <div className="font-bold sm:text-lg text-base text-gray-900">{hotel.hotelName}</div>
+          <div className="text-sm text-gray-600">
+            {formatDate(hotel.checkIn)} • {hotel.checkInTime || '14:00'} / {hotel.checkOutTime || '12:00'} • {hotel.roomType}
           </div>
-          <div className="text-sm text-gray-600 mt-0.5">Oda: {hotel.roomType}</div>
-          {guestNames !== '—' && (
-            <div className="text-sm text-gray-600 mt-0.5">Konuklar: {guestNames}</div>
-          )}
+          <div className="text-xs text-gray-500 mt-1">Rez. No: {hotel.reservationNo}</div>
+          <div className="text-xs text-gray-500">
+            Konuklar: {guestNames}
+          </div>
         </div>
-        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0">
-          <div className="text-lg font-bold text-gray-800">{hotel.price}</div>
-          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">{hotel.status}</span>
+        <div className="text-right">
+          <div className="font-bold sm:text-xl text-base text-gray-900">{hotel.price}</div>
+          <div className="text-xs text-green-600">{hotel.status}</div>
           <button
             type="button"
-            className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 active:bg-green-800 min-h-[2.25rem]"
+            className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-300 mt-1"
             onClick={() => onToggleDetail(hotel.id)}
           >
             {isOpen ? 'Kapat' : 'Detay'}
@@ -55,20 +49,42 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
       </div>
 
       {isOpen && (
-        <div className="mt-4 pt-4 border-t border-gray-100 text-left space-y-2">
-          <div className="text-sm font-medium text-gray-700">Rezervasyon No: {hotel.reservationNo}</div>
-          <div className="text-sm text-gray-600"><span className="font-medium">Fiyat:</span> {hotel.price}</div>
+        <div className="mt-2 pt-2 border-t border-gray-200">
+          <div className="mb-2 text-sm font-semibold text-gray-700">Konuklar</div>
+          {guestsList.length > 0 ? (
+            <table className="w-full mb-2 text-xs">
+              <thead>
+                <tr className="text-gray-500">
+                  <th className="text-left py-1">Ad Soyad</th>
+                  <th className="text-left py-1">Tip</th>
+                </tr>
+              </thead>
+              <tbody>
+                {guestsList.map((g, i) => (
+                  <tr key={i} className="border-t border-gray-100">
+                    <td className="py-1">{(g.name || '').trim() || '—'}</td>
+                    <td className="py-1">{g.type === 'child' ? 'Çocuk' : 'Yetişkin'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-xs text-gray-500 mb-2">Konuk bilgisi yok</div>
+          )}
+          <div className="grid grid-cols-2 gap-1 mb-2 text-xs text-gray-700">
+            <div><b>Rezervasyon No:</b> {hotel.reservationNo}</div>
+            <div><b>Otel:</b> {hotel.hotelName}</div>
+            <div><b>Giriş:</b> {formatDate(hotel.checkIn)} {hotel.checkInTime || '14:00'}</div>
+            <div><b>Çıkış:</b> {formatDate(hotel.checkOut)} {hotel.checkOutTime || '12:00'}</div>
+            <div><b>Oda:</b> {hotel.roomType}</div>
+            <div><b>Durum:</b> {hotel.status}</div>
+            <div><b>Fiyat:</b> {hotel.price}</div>
+          </div>
           {hotel.rules && (
-            <div className="text-sm text-gray-600"><span className="font-medium">İptal:</span> {hotel.rules}</div>
+            <div className="mb-2 text-xs text-gray-700"><b>İptal:</b> {hotel.rules}</div>
           )}
           {hotel.notes && (
-            <div className="text-sm text-gray-600"><span className="font-medium">Not:</span> {hotel.notes}</div>
-          )}
-          {guestNames !== '—' && (
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">Konuklar:</span>{' '}
-              {guestsList.map(g => `${g.name || ''} (${g.type || 'Yetişkin'})`).filter(Boolean).join(', ')}
-            </div>
+            <div className="text-xs text-gray-700"><b>Not:</b> {hotel.notes}</div>
           )}
         </div>
       )}

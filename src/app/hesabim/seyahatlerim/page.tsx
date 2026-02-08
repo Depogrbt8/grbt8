@@ -310,7 +310,7 @@ export default function SeyahatlerimPage() {
               key={hotel.id}
               hotel={hotel}
               openDetailId={openHotelDetailId}
-              onToggleDetail={setOpenHotelDetailId}
+              onToggleDetail={(id) => setOpenHotelDetailId((prev) => (prev === id ? null : id))}
             />
           ))}
         </div>
