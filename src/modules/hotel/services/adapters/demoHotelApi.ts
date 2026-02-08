@@ -489,6 +489,19 @@ export async function createBookingDemo(request: BookingRequest): Promise<Bookin
 
   const totalPrice = rate.price * nights * request.guests.rooms;
 
+  // guestInfo (legacy) veya contactInfo + guestDetails (yeni format) ile GuestInfo oluştur
+  const guestInfo =
+    request.guestInfo ??
+    (request.contactInfo && request.guestDetails?.[0]
+      ? {
+          firstName: request.guestDetails[0].firstName,
+          lastName: request.guestDetails[0].lastName,
+          email: request.contactInfo.email,
+          phone: request.contactInfo.phone,
+          countryCode: request.contactInfo.countryCode ?? '+90'
+        }
+      : { firstName: '', lastName: '', email: '', phone: '' });
+
   return {
     bookingId: `BK${Date.now()}`,
     confirmationNumber: `GRB${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
@@ -501,7 +514,7 @@ export async function createBookingDemo(request: BookingRequest): Promise<Bookin
     totalPrice,
     currency: rate.currency,
     status: 'confirmed',
-    guestInfo: request.guestInfo,
+    guestInfo,
     createdAt: new Date().toISOString()
   };
 }
