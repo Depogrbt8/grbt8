@@ -65,16 +65,15 @@ export async function GET(request: NextRequest) {
       prisma.hotelBooking.count({ where })
     ]);
 
-    // Her rezervasyonda ilgili otelin ilk resmi olsun: kayıtlı yoksa otel detaydan al
+    // Her rezervasyona ilgili otelin ilk resmini ekle (DB'de saklanmaz, runtime'da doldurulur)
     const bookings = await Promise.all(
-      bookingsRaw.map(async (b: { hotelImageUrl?: string | null; hotelId: string; [key: string]: unknown }) => {
-        if (b.hotelImageUrl) return b;
+      bookingsRaw.map(async (b) => {
         try {
           const hotel = await getHotelDetails(b.hotelId);
-          const firstImage = hotel?.images?.[0];
-          return { ...b, hotelImageUrl: firstImage || b.hotelImageUrl };
+          const firstImage = hotel?.images?.[0] || null;
+          return { ...b, hotelImageUrl: firstImage };
         } catch {
-          return b;
+          return { ...b, hotelImageUrl: null };
         }
       })
     );
@@ -116,7 +115,6 @@ export async function POST(request: NextRequest) {
     const {
       hotelId,
       hotelName,
-      hotelImageUrl,
       hotelLocation,
       roomType,
       roomName,
@@ -177,7 +175,6 @@ export async function POST(request: NextRequest) {
       userId: session.user.id,
       hotelId,
       hotelName,
-      hotelImageUrl: hotelImageUrl && typeof hotelImageUrl === 'string' ? hotelImageUrl : null,
       hotelLocation: hotelLocation || '',
       roomType,
       roomName,
@@ -197,7 +194,7 @@ export async function POST(request: NextRequest) {
       provider: providerValue
     };
     const booking = await prisma.hotelBooking.create({
-      data: bookingData as Parameters<typeof prisma.hotelBooking.create>[0]['data']
+      data: bookingData
     });
 
     return NextResponse.json({
