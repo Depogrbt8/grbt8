@@ -150,6 +150,9 @@ export async function POST(request: NextRequest) {
     // Confirmation number oluştur
     const confirmationNumber = `GRB${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
+    // provider: 'demo' için null kullan - HotelApiProvider'da demo kaydı yoksa FK hatası önlenir
+    const providerValue = provider && provider !== 'demo' ? provider : null;
+
     const booking = await prisma.hotelBooking.create({
       data: {
         userId: session.user.id,
@@ -171,7 +174,7 @@ export async function POST(request: NextRequest) {
         confirmationNumber,
         cancellationPolicy,
         specialRequests,
-        provider: provider || 'demo'
+        provider: providerValue
       }
     });
 
