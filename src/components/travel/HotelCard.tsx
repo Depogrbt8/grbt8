@@ -29,6 +29,17 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
     });
   };
 
+  // Kartta tek satır: "15 Şubat - 17 Şubat 2026" (yıl sonda bir kez)
+  const formatDateRangeOneLine = () => {
+    if (!hotel.checkIn || !hotel.checkOut) return '';
+    const d1 = new Date(hotel.checkIn);
+    const d2 = new Date(hotel.checkOut);
+    const part1 = d1.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+    const part2 = d2.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+    const year = d1.getFullYear();
+    return `${part1} - ${part2} ${year}`;
+  };
+
   const checkIn = hotel.checkIn ? new Date(hotel.checkIn) : null;
   const checkOut = hotel.checkOut ? new Date(hotel.checkOut) : null;
   const nights = checkIn && checkOut ? Math.max(0, Math.ceil((checkOut.getTime() - checkIn.getTime()) / (24 * 60 * 60 * 1000))) : null;
@@ -58,25 +69,22 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             <div className="font-bold sm:text-lg text-base text-gray-900">{hotel.hotelName}</div>
-            <div className="flex items-center gap-1.5 text-sm text-gray-600 mt-0.5">
+            <div className="flex items-center gap-1.5 text-sm text-gray-600 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis min-w-0">
               <CalendarIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-              <span>{formatDate(hotel.checkIn)} - {formatDate(hotel.checkOut)}</span>
+              <span className="truncate">{formatDateRangeOneLine()}</span>
             </div>
             {nights != null && <div className="text-sm text-gray-600">{nights} gece</div>}
             <div className="text-xs text-gray-500 mt-1">Rez. No: {hotel.reservationNo}</div>
           </div>
           <div className="flex items-center justify-between gap-2 mt-2">
             <span className="text-xs text-green-600 font-medium">{hotel.status}</span>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-gray-900 text-sm sm:text-base">{hotel.price}</span>
-              <button
+            <button
                 type="button"
                 className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-300"
                 onClick={() => onToggleDetail(hotel.id)}
               >
                 {isOpen ? 'Kapat' : 'Detay'}
               </button>
-            </div>
           </div>
         </div>
       </div>
