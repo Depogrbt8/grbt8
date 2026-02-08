@@ -153,6 +153,17 @@ export async function POST(request: NextRequest) {
     // provider: 'demo' için null kullan - HotelApiProvider'da demo kaydı yoksa FK hatası önlenir
     const providerValue = provider && provider !== 'demo' ? provider : null;
 
+    const guestsPayload = guests && typeof guests === 'object'
+      ? JSON.stringify(guests)
+      : JSON.stringify({ adults: 1, children: 0, rooms: 1 });
+    const totalPriceNum = Number(totalPrice);
+    if (isNaN(totalPriceNum) || totalPriceNum < 0) {
+      return NextResponse.json(
+        { success: false, error: 'Geçersiz tutar' },
+        { status: 400 }
+      );
+    }
+
     const booking = await prisma.hotelBooking.create({
       data: {
         userId: session.user.id,
@@ -164,16 +175,16 @@ export async function POST(request: NextRequest) {
         checkIn: new Date(checkIn),
         checkOut: new Date(checkOut),
         nights: nights || Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)),
-        guests: JSON.stringify(guests),
+        guests: guestsPayload,
         guestInfo: guestInfoPayload,
         contactInfo: hasNewFormat ? JSON.stringify(contactInfo) : null,
         guestDetails: hasNewFormat ? JSON.stringify(guestDetails) : null,
-        totalPrice,
+        totalPrice: totalPriceNum,
         currency: currency || 'EUR',
         status: 'confirmed',
         confirmationNumber,
-        cancellationPolicy,
-        specialRequests,
+        cancellationPolicy: cancellationPolicy || null,
+        specialRequests: specialRequests || null,
         provider: providerValue
       }
     });
@@ -185,10 +196,17 @@ export async function POST(request: NextRequest) {
         confirmationNumber
       }
     }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Hotel booking create error:', error);
+    const errCode = error && typeof error === 'object' && 'code' in error ? String((error as { code?: string }).code) : '';
+    const errMsg = error instanceof Error ? error.message : '';
     return NextResponse.json(
-      { success: false, error: 'Failed to create hotel booking' },
+      {
+        success: false,
+        error: 'Failed to create hotel booking',
+        code: errCode || undefined,
+        ...(process.env.NODE_ENV === 'development' && errMsg && { debug: errMsg })
+      },
       { status: 500 }
     );
   }

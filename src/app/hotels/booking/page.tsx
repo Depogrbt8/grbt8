@@ -185,6 +185,8 @@ function HotelBookingContent() {
         try {
           const parsed = JSON.parse(responseText);
           if (typeof parsed?.error === 'string') errMessage = parsed.error;
+          if (parsed?.code) errMessage += ` [${parsed.code}]`;
+          if (parsed?.debug) errMessage += ` - ${parsed.debug}`;
         } catch {
           if (responseText.length > 0 && responseText.length < 300) errMessage = responseText;
         }
