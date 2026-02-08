@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, Check, Search } from 'lucide-react';
+import { X, Check, Search } from 'lucide-react';
 import { searchAirports } from '@/services/flightApi';
 import { Airport } from '@/types/flight';
 import { useSession } from 'next-auth/react';
@@ -287,17 +287,6 @@ export default function SurveyPopup() {
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      // Önceki cevabı geri yükle
-      const prevAnswer = answers.find((a) => a.questionId === questions[currentStep - 1].id);
-      setCurrentAnswer(prevAnswer?.answer || []);
-      setSearchTerm('');
-      setShowSearchResults(false);
-    }
-  };
-
   const handleAnswerChange = (answer: string) => {
     if (questions[currentStep].type === 'multiple') {
       const currentAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
@@ -542,7 +531,7 @@ export default function SurveyPopup() {
 
                       {/* Gidiş havaalanı arama sonuçları */}
                       {showDepartureResults && departureSearchTerm && departureSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                        <div className="w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm max-h-48 overflow-y-auto">
                           {departureSuggestions.map((airport, index) => (
                             <button
                               key={index}
@@ -604,7 +593,7 @@ export default function SurveyPopup() {
 
                       {/* Dönüş havaalanı arama sonuçları */}
                       {showReturnResults && returnSearchTerm && returnSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                        <div className="w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm max-h-48 overflow-y-auto">
                           {returnSuggestions.map((airport, index) => (
                             <button
                               key={index}
@@ -663,7 +652,7 @@ export default function SurveyPopup() {
 
                     {/* Arama sonuçları */}
                     {showSearchResults && searchTerm && filteredCities.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      <div className="w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm max-h-48 overflow-y-auto">
                         {filteredCities.map((city, index) => (
                           <button
                             key={index}
@@ -931,36 +920,10 @@ export default function SurveyPopup() {
                 )}
               </div>
 
-              {/* Navigation */}
+              {/* Adım göstergesi */}
               {currentQuestion.type !== 'permissions' && (
-                <div className="flex justify-between items-center mt-6">
-                  <button
-                    onClick={handlePrevious}
-                    disabled={currentStep === 0}
-                    className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    <span>Önceki</span>
-                  </button>
-
-                  <span className="text-sm text-gray-500">{currentStep + 1} / 10</span>
-
-                  <button
-                    onClick={handleNext}
-                    disabled={
-                      currentQuestion.required &&
-                      (currentQuestion.type === 'airports' 
-                        ? (!departureAirport || !returnAirport)
-                        : currentQuestion.type === 'demographics'
-                        ? (!selectedGender || !selectedAgeRange)
-                        : Array.isArray(currentAnswer) ? currentAnswer.length === 0 : !currentAnswer || currentAnswer.toString().trim() === ''
-                      )
-                    }
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <span>{currentStep === questions.length - 1 ? 'Tamamla' : 'Sonraki'}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                <div className="flex justify-center mt-6">
+                  <span className="text-sm text-gray-400">{currentStep + 1} / {questions.length}</span>
                 </div>
               )}
             </>
