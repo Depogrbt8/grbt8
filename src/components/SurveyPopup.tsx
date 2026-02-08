@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Check, Search } from 'lucide-react';
+import { X, ChevronLeft, Check, Search } from 'lucide-react';
 import { searchAirports } from '@/services/flightApi';
 import { Airport } from '@/types/flight';
 import { useSession } from 'next-auth/react';
@@ -284,6 +284,16 @@ export default function SurveyPopup() {
         setAnswers([...answers, newAnswer]);
       }
       setIsCompleted(true);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      const prevAnswer = answers.find((a) => a.questionId === questions[currentStep - 1].id);
+      setCurrentAnswer(prevAnswer?.answer || []);
+      setSearchTerm('');
+      setShowSearchResults(false);
     }
   };
 
@@ -920,10 +930,20 @@ export default function SurveyPopup() {
                 )}
               </div>
 
-              {/* Adım göstergesi */}
+              {/* Navigasyon: Önceki butonu + adım göstergesi */}
               {currentQuestion.type !== 'permissions' && (
-                <div className="flex justify-center mt-6">
+                <div className="flex justify-between items-center mt-6">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentStep === 0}
+                    className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className="text-sm">Önceki</span>
+                  </button>
                   <span className="text-sm text-gray-400">{currentStep + 1} / {questions.length}</span>
+                  {/* Sağ taraf boş — dengeleme için */}
+                  <div className="w-20" />
                 </div>
               )}
             </>
