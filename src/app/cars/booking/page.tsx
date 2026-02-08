@@ -100,11 +100,29 @@ function CarBookingContent() {
         }
       };
       
+      // API üzerinden rezervasyon oluştur
       const booking = await createBooking(bookingData);
       
-      // Başarılı, onay sayfasına yönlendir
-      alert(`Rezervasyon başarılı! Rezervasyon No: ${booking.bookingNumber}`);
-      router.push('/hesabim/seyahatlerim');
+      // DB'ye kaydet
+      const response = await fetch('/api/cars/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+      });
+      
+      if (!response.ok) {
+        throw new Error('API error');
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Başarılı, onay sayfasına yönlendir
+        alert(`Rezervasyon başarılı! Rezervasyon No: ${booking.bookingNumber}`);
+        router.push('/hesabim/seyahatlerim');
+      } else {
+        throw new Error(result.error || 'Unknown error');
+      }
       
     } catch (err) {
       console.error('Rezervasyon hatası:', err);

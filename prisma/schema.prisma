@@ -48,6 +48,7 @@ model User {
   billingInfos     BillingInfo[]
   hotelBookings    HotelBooking[]
   hotelFavorites  HotelFavorite[]
+  carBookings      CarBooking[]
 
   @@index([status])
   @@index([createdAt])
@@ -602,6 +603,84 @@ model HotelBooking {
   @@index([checkIn])
   @@index([checkOut])
   @@index([confirmationNumber])
+  @@index([providerBookingId])
+  @@index([createdAt])
+}
+
+// Araç Kiralama Rezervasyonları
+model CarBooking {
+  id                  String    @id @default(cuid())
+  userId              String
+  bookingNumber       String    @unique // GRB-CAR-12345678
+  bookingReference    String?   // Provider booking reference
+  
+  // Araç bilgileri
+  carId               String
+  carName             String
+  carCategory         String
+  carImage            String?
+  transmission        String    // automatic, manual
+  fuelType            String    // petrol, diesel, hybrid, electric
+  seats               Int
+  
+  // Tedarikçi
+  supplierId          Int
+  supplierName        String
+  supplierLogo        String?
+  
+  // Rota (JSON)
+  pickupLocation      String    // JSON: CarLocation
+  dropoffLocation     String    // JSON: CarLocation
+  pickupDateTime      DateTime
+  dropoffDateTime     DateTime
+  pickupDepot         String?   // JSON: { id, name, address, phone }
+  dropoffDepot        String?   // JSON: { id, name, address, phone }
+  
+  // Sürücü bilgileri (JSON)
+  driver              String    // JSON: Driver
+  additionalDrivers   String?   // JSON: Driver[]
+  
+  // Seçilen hizmetler (JSON)
+  extras              String?   // JSON: ExtraService[]
+  insurance           String?   // JSON: InsuranceOption
+  
+  // Fiyat detayları (JSON)
+  priceBreakdown      String    // JSON: PriceBreakdown
+  totalPrice          Float
+  currency            String    @default("EUR")
+  depositAmount       Float?
+  excessAmount        Float?
+  
+  // Durum
+  status              String    @default("pending") // pending, confirmed, cancelled, completed, no_show
+  
+  // Tarihler
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  cancelledAt         DateTime?
+  cancellationReason  String?
+  
+  // İletişim
+  confirmationEmail   String
+  confirmationSms     String?
+  
+  // Politikalar
+  cancellationPolicy  String?
+  amendmentPolicy     String?
+  
+  // Provider bilgisi
+  provider            String    @default("demo") // demo, rentalcars, cartrawler, garenta
+  providerBookingId   String?   // External provider booking ID
+  searchToken         String?   // Search token (90 dakika geçerli)
+  
+  // İlişkiler
+  user                User      @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([status])
+  @@index([bookingNumber])
+  @@index([pickupDateTime])
+  @@index([dropoffDateTime])
   @@index([providerBookingId])
   @@index([createdAt])
 }

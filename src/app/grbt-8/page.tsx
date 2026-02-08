@@ -87,6 +87,22 @@ export default async function GRBT8Dashboard() {
                 SEO'yu Yönet
               </a>
             </div>
+
+            {/* Araç Rezervasyonları Kartı */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                🚗 Araç Rezervasyonları
+              </h2>
+              <p className="text-gray-600 mb-4">
+                Araç kiralama rezervasyonlarını görüntüle ve yönet
+              </p>
+              <a 
+                href="/grbt-8/arac-rezervasyonlari" 
+                className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Rezervasyonları Görüntüle
+              </a>
+            </div>
           </div>
         </div>
       </main>

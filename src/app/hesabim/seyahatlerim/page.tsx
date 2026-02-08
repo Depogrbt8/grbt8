@@ -25,32 +25,9 @@ export default function SeyahatlerimPage() {
   const [loadingHotels, setLoadingHotels] = useState(false);
   const [openHotelDetailId, setOpenHotelDetailId] = useState<string | null>(null);
   
-  // Araç rezervasyonları (DEMO veriler)
-  const [carReservations, setCarReservations] = useState<CarReservation[]>([
-    {
-      id: 'c1',
-      car: 'Volkswagen Golf',
-      type: 'Ekonomi, Dizel, Otomatik',
-      plate: '34 ABC 123',
-      pickupLocation: 'Sabiha Gökçen Havalimanı',
-      pickupCity: 'İstanbul',
-      pickupDate: '2024-09-01',
-      pickupTime: '10:00',
-      dropoffLocation: 'Esenboğa Havalimanı',
-      dropoffCity: 'Ankara',
-      dropoffDate: '2024-09-05',
-      dropoffTime: '14:00',
-      price: '2.100 TL',
-      status: 'Onaylandı',
-      reservationNo: 'CAR456789',
-      payment: 'Kredi Kartı',
-      services: ['Ek Sürücü', 'Çocuk Koltuğu', 'Tam Sigorta'],
-      renter: 'Ali İncesu',
-      rules: 'Araç en az %25 yakıt ile teslim edilmelidir. İptal 24 saat öncesine kadar ücretsizdir.',
-      officePhone: '+90 216 123 45 67',
-      notes: 'Beyaz renk, navigasyon opsiyonel.'
-    }
-  ]);
+  // Araç rezervasyonları - API'den çekilir
+  const [carReservations, setCarReservations] = useState<CarReservation[]>([]);
+  const [loadingCars, setLoadingCars] = useState(false);
   const [openCarDetailId, setOpenCarDetailId] = useState<string | null>(null);
 
   // Rezervasyonları veritabanından çek
@@ -171,6 +148,56 @@ export default function SeyahatlerimPage() {
       }
     }
     fetchTickets();
+  }, []);
+
+  // Araç rezervasyonlarını API'den çek
+  useEffect(() => {
+    async function fetchCarBookings() {
+      setLoadingCars(true);
+      try {
+        const res = await fetch('/api/cars/bookings', { credentials: 'include' });
+        if (res.ok) {
+          const json = await res.json();
+          const bookings = json?.data?.bookings ?? [];
+          const mapped: CarReservation[] = bookings.map((b: any) => {
+            const pickupLoc = JSON.parse(b.pickupLocation);
+            const dropoffLoc = JSON.parse(b.dropoffLocation);
+            const driver = JSON.parse(b.driver);
+            const extras = b.extras ? JSON.parse(b.extras) : [];
+            
+            return {
+              id: b.id,
+              car: b.carName,
+              type: `${b.carCategory}, ${b.fuelType}, ${b.transmission}`,
+              plate: '',
+              pickupLocation: pickupLoc.name,
+              pickupCity: pickupLoc.city || '',
+              pickupDate: new Date(b.pickupDateTime).toISOString().split('T')[0],
+              pickupTime: new Date(b.pickupDateTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+              dropoffLocation: dropoffLoc.name,
+              dropoffCity: dropoffLoc.city || '',
+              dropoffDate: new Date(b.dropoffDateTime).toISOString().split('T')[0],
+              dropoffTime: new Date(b.dropoffDateTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+              price: `${b.totalPrice} ${b.currency}`,
+              status: b.status === 'confirmed' ? 'Onaylandı' : b.status === 'cancelled' ? 'İptal Edildi' : 'Beklemede',
+              reservationNo: b.bookingNumber,
+              payment: 'Kredi Kartı',
+              services: extras.map((e: any) => e.name),
+              renter: `${driver.firstName} ${driver.lastName}`,
+              rules: b.cancellationPolicy || '',
+              officePhone: '',
+              notes: ''
+            };
+          });
+          setCarReservations(mapped);
+        }
+      } catch (error) {
+        console.error('Araç rezervasyonları yüklenirken hata:', error);
+      } finally {
+        setLoadingCars(false);
+      }
+    }
+    fetchCarBookings();
   }, []);
 
   // Otel rezervasyonlarını API'den çek
@@ -326,8 +353,13 @@ export default function SeyahatlerimPage() {
   // Araç içeriği
   const renderAracContent = () => (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Araç Rezervasyonlarım (DEMO)</h2>
-      {carReservations.length === 0 ? (
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Araç Rezervasyonlarım</h2>
+      {loadingCars ? (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Rezervasyonlarınız yükleniyor...</p>
+        </div>
+      ) : carReservations.length === 0 ? (
         <EmptyState type="car" />
       ) : (
         <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-1">
