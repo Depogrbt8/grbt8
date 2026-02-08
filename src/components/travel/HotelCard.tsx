@@ -13,64 +13,63 @@ export default function HotelCard({ hotel, openDetailId, onToggleDetail }: Hotel
     const date = new Date(dateString);
     return date.toLocaleDateString('tr-TR', {
       day: '2-digit',
-      month: '2-digit',
+      month: 'short',
       year: 'numeric'
     });
   };
 
   const isOpen = openDetailId === hotel.id;
+  const guestsList = Array.isArray(hotel.guests) ? hotel.guests : [];
+  const guestNames = guestsList.map(g => (g.name || '').trim()).filter(Boolean).join(', ') || '—';
 
   return (
-    <div className="border rounded-xl p-4 bg-gray-50">
-      <div className="flex justify-between items-center">
-        <div>
-          <div className="font-semibold text-lg text-blue-700">{hotel.hotelName}</div>
-          <div className="text-sm text-gray-500">{hotel.location}</div>
-          <div className="text-sm text-gray-500">
-            Giriş: {formatDate(hotel.checkIn)} {hotel.checkInTime} <b>• Çıkış:</b> {formatDate(hotel.checkOut)} {hotel.checkOutTime}
+    <div className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="font-semibold text-base sm:text-lg text-gray-900">{hotel.hotelName}</div>
+          {hotel.location && (
+            <div className="text-sm text-gray-500 mt-0.5">{hotel.location}</div>
+          )}
+          <div className="text-sm text-gray-600 mt-2">
+            {formatDate(hotel.checkIn)} – {formatDate(hotel.checkOut)}
+            {hotel.checkInTime && hotel.checkOutTime && (
+              <span className="text-gray-500"> · {hotel.checkInTime} / {hotel.checkOutTime}</span>
+            )}
           </div>
-          <div className="text-sm text-gray-500">Oda: {hotel.roomType}</div>
-          <div className="text-sm text-gray-500">
-            Konuklar: {hotel.guests.map(g => g.name).join(', ')}
-          </div>
+          <div className="text-sm text-gray-600 mt-0.5">Oda: {hotel.roomType}</div>
+          {guestNames !== '—' && (
+            <div className="text-sm text-gray-600 mt-0.5">Konuklar: {guestNames}</div>
+          )}
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 shrink-0">
           <div className="text-lg font-bold text-gray-800">{hotel.price}</div>
-          <div className="text-xs text-green-600">{hotel.status}</div>
+          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">{hotel.status}</span>
           <button
-            className="mt-2 px-4 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
+            type="button"
+            className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 active:bg-green-800 min-h-[2.25rem]"
             onClick={() => onToggleDetail(hotel.id)}
           >
-            Detay
+            {isOpen ? 'Kapat' : 'Detay'}
           </button>
         </div>
       </div>
-      
+
       {isOpen && (
-        <div className="mt-4 p-4 bg-white rounded-xl border text-left">
-          <div className="mb-2 text-base font-semibold text-gray-700">Otel Bilgileri</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Otel:</b> {hotel.hotelName}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Adres:</b> {hotel.address}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Telefon:</b> {hotel.phone}</div>
-          <div className="mb-2 text-sm text-gray-700">
-            <b>Giriş Tarihi:</b> {formatDate(hotel.checkIn)} {hotel.checkInTime}
-          </div>
-          <div className="mb-2 text-sm text-gray-700">
-            <b>Çıkış Tarihi:</b> {formatDate(hotel.checkOut)} {hotel.checkOutTime}
-          </div>
-          <div className="mb-2 text-sm text-gray-700"><b>Oda Tipi:</b> {hotel.roomType}</div>
-          <div className="mb-2 text-sm text-gray-700">
-            <b>Konuklar:</b> {hotel.guests.map(g => g.name + ' (' + g.type + ')').join(', ')}
-          </div>
-          <div className="mb-2 text-sm text-gray-700"><b>Rezervasyon No:</b> {hotel.reservationNo}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Durum:</b> {hotel.status}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Fiyat:</b> {hotel.price}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Ödeme:</b> {hotel.payment}</div>
-          <div className="mb-2 text-sm text-gray-700"><b>Kurallar:</b> {hotel.rules}</div>
-          <div className="mb-2 text-sm text-gray-700">
-            <b>Ek Hizmetler:</b> {hotel.services.join(', ')}
-          </div>
-          <div className="mb-2 text-sm text-gray-700"><b>Notlar:</b> {hotel.notes}</div>
+        <div className="mt-4 pt-4 border-t border-gray-100 text-left space-y-2">
+          <div className="text-sm font-medium text-gray-700">Rezervasyon No: {hotel.reservationNo}</div>
+          <div className="text-sm text-gray-600"><span className="font-medium">Fiyat:</span> {hotel.price}</div>
+          {hotel.rules && (
+            <div className="text-sm text-gray-600"><span className="font-medium">İptal:</span> {hotel.rules}</div>
+          )}
+          {hotel.notes && (
+            <div className="text-sm text-gray-600"><span className="font-medium">Not:</span> {hotel.notes}</div>
+          )}
+          {guestNames !== '—' && (
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">Konuklar:</span>{' '}
+              {guestsList.map(g => `${g.name || ''} (${g.type || 'Yetişkin'})`).filter(Boolean).join(', ')}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { checkAdminAccess } from '@/lib/adminAuth';
 
-// GET: Otel rezervasyonlarını listele
+// GET: Otel rezervasyonlarını listele (admin: tümü, normal kullanıcı: sadece kendi)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -13,37 +12,31 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1', 10);
     const userId = searchParams.get('userId');
 
-    // Admin panel veya normal kullanıcı authentication kontrolü
-    const authCheck = await checkAdminAccess(request);
-    if (!authCheck.authorized) {
-      return authCheck.error!;
-    }
-
-    // Filtre oluştur
     const where: Record<string, unknown> = {};
 
-    if (authCheck.isAdminPanel) {
-      // Admin panel'den gelen istek - userId parametresi ile filtreleme yapılabilir
-      if (userId) {
-        where.userId = userId;
-      }
-      // Admin panel tüm rezervasyonları görebilir (userId yoksa)
+    // Admin panel token varsa admin olarak işle
+    const adminToken = request.headers.get('x-admin-panel-token');
+    const isAdminPanel = adminToken === process.env.ADMIN_PANEL_SECRET;
+
+    if (isAdminPanel) {
+      if (userId) where.userId = userId;
     } else {
-      // Normal kullanıcı isteği - session kontrolü yapıldı
+      // Ana site: giriş yapmış her kullanıcı kendi rezervasyonlarını görsün (admin rolü şart değil)
       const session = await getServerSession(authOptions);
-      
-      // Veritabanından admin kontrolü
+      if (!session?.user?.id) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
       const currentUser = await prisma.user.findUnique({
-        where: { id: session!.user.id },
+        where: { id: session.user.id },
         select: { role: true }
       });
-
-      // Normal kullanıcılar sadece kendi rezervasyonlarını görebilir
-      if (currentUser?.role !== 'admin') {
-        where.userId = session!.user.id;
-      } else if (userId) {
-        // Admin belirli bir kullanıcının rezervasyonlarını filtreleyebilir
+      if (currentUser?.role === 'admin' && userId) {
         where.userId = userId;
+      } else {
+        where.userId = session.user.id;
       }
     }
 

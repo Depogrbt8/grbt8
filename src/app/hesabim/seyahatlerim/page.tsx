@@ -178,10 +178,11 @@ export default function SeyahatlerimPage() {
     async function fetchHotelBookings() {
       setLoadingHotels(true);
       try {
-        const res = await fetch('/api/hotels/bookings');
+        const res = await fetch('/api/hotels/bookings', { credentials: 'include' });
         if (res.ok) {
           const json = await res.json();
-          const bookings = json?.data?.bookings ?? [];
+          const raw = json?.data;
+          const bookings = Array.isArray(raw) ? raw : (raw?.bookings ?? []);
           const mapped: HotelReservation[] = bookings.map((b: any) => {
             let guestsList: { name: string; type: string }[] = [];
             if (b.guestDetails) {
@@ -293,8 +294,8 @@ export default function SeyahatlerimPage() {
 
   // Otel içeriği
   const renderOtelContent = () => (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Otel Rezervasyonlarım</h2>
+    <div className="bg-white rounded-lg shadow-sm sm:p-6 p-4">
+      <h2 className="sm:text-xl text-lg font-bold mb-4 text-gray-700">Otel Rezervasyonlarım</h2>
       {loadingHotels ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
@@ -303,7 +304,7 @@ export default function SeyahatlerimPage() {
       ) : hotelReservations.length === 0 ? (
         <EmptyState type="hotel" />
       ) : (
-        <div className="space-y-4">
+        <div className="sm:space-y-4 space-y-3">
           {hotelReservations.map(hotel => (
             <HotelCard
               key={hotel.id}
