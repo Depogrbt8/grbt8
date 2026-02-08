@@ -570,6 +570,7 @@ model HotelBooking {
   userId              String
   hotelId             String
   hotelName           String
+  hotelImageUrl       String?   // Otelin ilk görseli (rezervasyon kartında gösterilir)
   hotelLocation       String
   roomType            String
   roomName            String

@@ -157,6 +157,7 @@ function HotelBookingContent() {
         body: JSON.stringify({
           hotelId: hotel.id,
           hotelName: hotel.name,
+          hotelImageUrl: hotel.images?.[0] || undefined,
           hotelLocation: `${hotel.location.city}, ${hotel.location.country}`,
           roomType: selectedRoom.id,
           roomName: selectedRoom.name,

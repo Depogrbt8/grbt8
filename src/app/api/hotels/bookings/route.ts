@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { getHotelDetails } from '@/modules/hotel/services';
 
 // GET: Otel rezervasyonlarını listele (admin: tümü, normal kullanıcı: sadece kendi)
 export async function GET(request: NextRequest) {
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       where.status = status;
     }
 
-    const [bookings, total] = await Promise.all([
+    const [bookingsRaw, total] = await Promise.all([
       prisma.hotelBooking.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -63,6 +64,20 @@ export async function GET(request: NextRequest) {
       }),
       prisma.hotelBooking.count({ where })
     ]);
+
+    // Her rezervasyonda ilgili otelin ilk resmi olsun: kayıtlı yoksa otel detaydan al
+    const bookings = await Promise.all(
+      bookingsRaw.map(async (b: { hotelImageUrl?: string | null; hotelId: string; [key: string]: unknown }) => {
+        if (b.hotelImageUrl) return b;
+        try {
+          const hotel = await getHotelDetails(b.hotelId);
+          const firstImage = hotel?.images?.[0];
+          return { ...b, hotelImageUrl: firstImage || b.hotelImageUrl };
+        } catch {
+          return b;
+        }
+      })
+    );
 
     return NextResponse.json({
       success: true,
@@ -101,6 +116,7 @@ export async function POST(request: NextRequest) {
     const {
       hotelId,
       hotelName,
+      hotelImageUrl,
       hotelLocation,
       roomType,
       roomName,
@@ -157,29 +173,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const bookingData = {
+      userId: session.user.id,
+      hotelId,
+      hotelName,
+      hotelImageUrl: hotelImageUrl && typeof hotelImageUrl === 'string' ? hotelImageUrl : null,
+      hotelLocation: hotelLocation || '',
+      roomType,
+      roomName,
+      checkIn: new Date(checkIn),
+      checkOut: new Date(checkOut),
+      nights: nights || Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)),
+      guests: guestsPayload,
+      guestInfo: guestInfoPayload,
+      contactInfo: hasNewFormat ? JSON.stringify(contactInfo) : null,
+      guestDetails: hasNewFormat ? JSON.stringify(guestDetails) : null,
+      totalPrice: totalPriceNum,
+      currency: currency || 'EUR',
+      status: 'confirmed',
+      confirmationNumber,
+      cancellationPolicy: cancellationPolicy || null,
+      specialRequests: specialRequests || null,
+      provider: providerValue
+    };
     const booking = await prisma.hotelBooking.create({
-      data: {
-        userId: session.user.id,
-        hotelId,
-        hotelName,
-        hotelLocation: hotelLocation || '',
-        roomType,
-        roomName,
-        checkIn: new Date(checkIn),
-        checkOut: new Date(checkOut),
-        nights: nights || Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)),
-        guests: guestsPayload,
-        guestInfo: guestInfoPayload,
-        contactInfo: hasNewFormat ? JSON.stringify(contactInfo) : null,
-        guestDetails: hasNewFormat ? JSON.stringify(guestDetails) : null,
-        totalPrice: totalPriceNum,
-        currency: currency || 'EUR',
-        status: 'confirmed',
-        confirmationNumber,
-        cancellationPolicy: cancellationPolicy || null,
-        specialRequests: specialRequests || null,
-        provider: providerValue
-      }
+      data: bookingData as Parameters<typeof prisma.hotelBooking.create>[0]['data']
     });
 
     return NextResponse.json({
