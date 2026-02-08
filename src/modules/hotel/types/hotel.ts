@@ -134,7 +134,9 @@ export interface BookingRequest {
     children: number;
     rooms: number;
   };
-  guestInfo: GuestInfo;
+  guestInfo?: GuestInfo; // Legacy format (tek kişi)
+  contactInfo?: ContactInfo; // Yeni format: iletişim bilgileri
+  guestDetails?: HotelGuest[]; // Yeni format: tüm misafir bilgileri
   specialRequests?: string;
   paymentMethod?: string;
 }

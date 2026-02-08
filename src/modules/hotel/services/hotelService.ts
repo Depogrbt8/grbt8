@@ -121,7 +121,10 @@ export async function createBooking(request: BookingRequest): Promise<BookingRes
     if (!request.checkIn || !request.checkOut) {
       throw new HotelApiError(HOTEL_ERROR_CODES.INVALID_PARAMS, 'Tarihler gereklidir');
     }
-    if (!request.guestInfo?.firstName || !request.guestInfo?.lastName || !request.guestInfo?.email) {
+    // Yeni format (contactInfo + guestDetails) veya eski format (guestInfo) kontrolü
+    const hasNewFormat = request.contactInfo && Array.isArray(request.guestDetails) && request.guestDetails.length > 0;
+    const hasLegacyFormat = request.guestInfo?.firstName && request.guestInfo?.lastName && request.guestInfo?.email;
+    if (!hasNewFormat && !hasLegacyFormat) {
       throw new HotelApiError(HOTEL_ERROR_CODES.INVALID_PARAMS, 'Misafir bilgileri gereklidir');
     }
 
