@@ -33,6 +33,7 @@ export type HotelGuest = {
 export type HotelReservation = {
   id: string;
   hotelName: string;
+  imageUrl?: string;
   location: string;
   address: string;
   phone: string;

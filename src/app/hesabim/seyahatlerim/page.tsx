@@ -211,6 +211,7 @@ export default function SeyahatlerimPage() {
             return {
               id: b.id,
               hotelName: b.hotelName || '',
+              imageUrl: b.hotelImageUrl || undefined,
               location: b.hotelLocation || '',
               address: b.hotelLocation || '',
               phone: '',
