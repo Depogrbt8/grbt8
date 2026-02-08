@@ -276,9 +276,10 @@ export default function SeyahatlerimPage() {
       ) : flightReservations.length === 0 ? (
         <EmptyState type="flight" />
       ) : (
-        <div className="sm:space-y-4 space-y-2">
-          {flightReservations.map(flight => (
-            <FlightCard
+        <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-1">
+          <div className="sm:space-y-4 space-y-2">
+            {flightReservations.map(flight => (
+              <FlightCard
               key={flight.id}
               flight={flight}
               airRules={airRules}
@@ -287,7 +288,8 @@ export default function SeyahatlerimPage() {
               onOpenDetail={handleOpenDetail}
               openDetailId={openDetailId}
             />
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -305,15 +307,17 @@ export default function SeyahatlerimPage() {
       ) : hotelReservations.length === 0 ? (
         <EmptyState type="hotel" />
       ) : (
-        <div className="sm:space-y-4 space-y-3">
-          {hotelReservations.map(hotel => (
-            <HotelCard
+        <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-1">
+          <div className="sm:space-y-4 space-y-3">
+            {hotelReservations.map(hotel => (
+              <HotelCard
               key={hotel.id}
               hotel={hotel}
               openDetailId={openHotelDetailId}
               onToggleDetail={(id) => setOpenHotelDetailId((prev) => (prev === id ? null : id))}
             />
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -326,15 +330,17 @@ export default function SeyahatlerimPage() {
       {carReservations.length === 0 ? (
         <EmptyState type="car" />
       ) : (
-        <div className="space-y-4">
-          {carReservations.map(car => (
-            <CarCard
+        <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-1">
+          <div className="space-y-4">
+            {carReservations.map(car => (
+              <CarCard
               key={car.id}
               car={car}
               openDetailId={openCarDetailId}
               onToggleDetail={setOpenCarDetailId}
             />
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
