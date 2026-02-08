@@ -6,6 +6,7 @@ import { Loader2, ArrowLeft, Check } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getCarDetails, createBooking } from '@/modules/car/services';
+import { initiatePayment, completePayment } from '@/modules/car/services/payment';
 import type { CarDetails, Driver, CarBookingData } from '@/modules/car/types';
 
 function CarBookingContent() {
@@ -19,6 +20,7 @@ function CarBookingContent() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paymentStep, setPaymentStep] = useState<'form' | 'payment' | 'processing'>('form');
   
   // Form state
   const [driver, setDriver] = useState<Partial<Driver>>({
@@ -100,10 +102,10 @@ function CarBookingContent() {
         }
       };
       
-      // API üzerinden rezervasyon oluştur
+      // 1. API üzerinden rezervasyon oluştur (henüz ödeme yok)
       const booking = await createBooking(bookingData);
       
-      // DB'ye kaydet
+      // 2. DB'ye kaydet (status: pending)
       const response = await fetch('/api/cars/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -111,17 +113,55 @@ function CarBookingContent() {
       });
       
       if (!response.ok) {
-        throw new Error('API error');
+        throw new Error('Rezervasyon oluşturulamadı');
       }
       
       const result = await response.json();
       
-      if (result.success) {
+      if (!result.success) {
+        throw new Error(result.error || 'Rezervasyon hatası');
+      }
+      
+      // 3. Ödeme işlemini başlat
+      setPaymentStep('payment');
+      
+      const paymentResult = await initiatePayment(
+        booking,
+        'credit_card'
+        // Card details buraya eklenebilir
+      );
+      
+      if (!paymentResult.success) {
+        throw new Error(paymentResult.error || 'Ödeme başlatılamadı');
+      }
+      
+      // 4. 3D Secure varsa yönlendir
+      if (paymentResult.redirectUrl) {
+        window.location.href = paymentResult.redirectUrl;
+        return;
+      }
+      
+      // 5. Ödeme tamamlandı
+      setPaymentStep('processing');
+      
+      const completeResult = await completePayment(
+        paymentResult.paymentId!,
+        result.data.booking.id
+      );
+      
+      if (completeResult.success) {
+        // Rezervasyon durumunu güncelle
+        await fetch(`/api/cars/bookings/${result.data.booking.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'confirmed' })
+        });
+        
         // Başarılı, onay sayfasına yönlendir
-        alert(`Rezervasyon başarılı! Rezervasyon No: ${booking.bookingNumber}`);
+        alert(`Rezervasyon ve ödeme başarılı! Rezervasyon No: ${booking.bookingNumber}`);
         router.push('/hesabim/seyahatlerim');
       } else {
-        throw new Error(result.error || 'Unknown error');
+        throw new Error(completeResult.error || 'Ödeme tamamlanamadı');
       }
       
     } catch (err) {

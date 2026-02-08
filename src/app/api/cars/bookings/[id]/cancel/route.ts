@@ -84,6 +84,42 @@ export async function POST(
       }
     });
     
+    // İptal email ve SMS gönder (async)
+    try {
+      const { sendBookingCancellationEmail } = await import('@/modules/car/services/email');
+      const { sendBookingCancellationSMS } = await import('@/modules/car/services/sms');
+      
+      const bookingForNotification = {
+        ...booking,
+        status: 'cancelled',
+        cancelledAt: new Date().toISOString(),
+        cancellationReason: reason,
+        car: JSON.parse(booking.driver), // Mock - gerçekte car objesini parse etmek gerek
+        route: {
+          pickup: {
+            location: JSON.parse(booking.pickupLocation),
+            depot: JSON.parse(booking.pickupDepot || '{}'),
+            datetime: booking.pickupDateTime.toISOString()
+          },
+          dropoff: {
+            location: JSON.parse(booking.dropoffLocation),
+            depot: JSON.parse(booking.dropoffDepot || '{}'),
+            datetime: booking.dropoffDateTime.toISOString()
+          }
+        },
+        driver: JSON.parse(booking.driver),
+        priceBreakdown: JSON.parse(booking.priceBreakdown)
+      };
+      
+      // Email ve SMS'i paralel gönder
+      Promise.all([
+        sendBookingCancellationEmail(bookingForNotification as any, refundAmount),
+        sendBookingCancellationSMS(bookingForNotification as any, refundAmount)
+      ]).catch(console.error);
+    } catch (notificationError) {
+      console.error('Bildirim gönderme hatası:', notificationError);
+    }
+    
     return NextResponse.json({
       success: true,
       data: {

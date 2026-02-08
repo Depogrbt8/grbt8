@@ -172,6 +172,29 @@ export async function POST(request: NextRequest) {
       data: bookingData
     });
     
+    // Email ve SMS gönder (async, hata olsa bile devam et)
+    try {
+      const { sendBookingConfirmationEmail } = await import('@/modules/car/services/email');
+      const { sendBookingConfirmationSMS } = await import('@/modules/car/services/sms');
+      
+      // Bildirim için booking objesini oluştur
+      const bookingForNotification = {
+        ...body,
+        id: booking.id,
+        createdAt: booking.createdAt.toISOString(),
+        updatedAt: booking.updatedAt.toISOString()
+      };
+      
+      // Email ve SMS'i paralel gönder
+      Promise.all([
+        sendBookingConfirmationEmail(bookingForNotification),
+        sendBookingConfirmationSMS(bookingForNotification)
+      ]).catch(console.error);
+    } catch (notificationError) {
+      console.error('Bildirim gönderme hatası:', notificationError);
+      // Bildirim hatası rezervasyonu etkilemez
+    }
+    
     return NextResponse.json({
       success: true,
       data: { booking }
