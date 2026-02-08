@@ -221,6 +221,155 @@ async function checkAndCreateTable() {
       }
     }
 
+    // HotelApiProvider tablosunu kontrol et ve oluştur (HotelBooking'dan önce)
+    const hotelApiProviderCheck = await prisma.$queryRaw`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'HotelApiProvider'
+      );
+    `;
+    const hotelApiProviderExists = (hotelApiProviderCheck[0]?.exists || false);
+
+    if (!hotelApiProviderExists) {
+      console.log('📦 HotelApiProvider tablosu yok, oluşturuluyor...');
+      try {
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS "HotelApiProvider" (
+            "id" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "displayName" TEXT NOT NULL,
+            "isActive" BOOLEAN NOT NULL DEFAULT false,
+            "isTestMode" BOOLEAN NOT NULL DEFAULT true,
+            "apiKey" TEXT,
+            "apiSecret" TEXT,
+            "apiUrl" TEXT,
+            "accessToken" TEXT,
+            "refreshToken" TEXT,
+            "tokenExpiresAt" TIMESTAMP(3),
+            "timeout" INTEGER NOT NULL DEFAULT 30000,
+            "retryCount" INTEGER NOT NULL DEFAULT 3,
+            "retryDelay" INTEGER NOT NULL DEFAULT 1000,
+            "priority" INTEGER NOT NULL DEFAULT 1,
+            "maxConcurrentRequests" INTEGER NOT NULL DEFAULT 10,
+            "lastSyncAt" TIMESTAMP(3),
+            "lastTestAt" TIMESTAMP(3),
+            "healthStatus" TEXT NOT NULL DEFAULT 'unknown',
+            "healthCheckUrl" TEXT,
+            "errorCount" INTEGER NOT NULL DEFAULT 0,
+            "lastErrorAt" TIMESTAMP(3),
+            "lastErrorMessage" TEXT,
+            "description" TEXT,
+            "documentationUrl" TEXT,
+            "supportEmail" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT "HotelApiProvider_pkey" PRIMARY KEY ("id")
+          )
+        `);
+        await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "HotelApiProvider_name_key" ON "HotelApiProvider"("name")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelApiProvider_name_idx" ON "HotelApiProvider"("name")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelApiProvider_isActive_idx" ON "HotelApiProvider"("isActive")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelApiProvider_healthStatus_idx" ON "HotelApiProvider"("healthStatus")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelApiProvider_priority_idx" ON "HotelApiProvider"("priority")`);
+        console.log('✅ HotelApiProvider tablosu oluşturuldu');
+      } catch (error) {
+        console.log('⚠️  HotelApiProvider tablosu oluşturma hatası, devam ediliyor:', error.message);
+      }
+    } else {
+      console.log('✅ HotelApiProvider tablosu zaten mevcut');
+    }
+
+    // HotelBooking tablosunu kontrol et ve oluştur
+    const hotelBookingCheck = await prisma.$queryRaw`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'HotelBooking'
+      );
+    `;
+    const hotelBookingExists = (hotelBookingCheck[0]?.exists || false);
+
+    if (!hotelBookingExists) {
+      console.log('📦 HotelBooking tablosu yok, oluşturuluyor...');
+      try {
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS "HotelBooking" (
+            "id" TEXT NOT NULL,
+            "userId" TEXT NOT NULL,
+            "hotelId" TEXT NOT NULL,
+            "hotelName" TEXT NOT NULL,
+            "hotelLocation" TEXT NOT NULL,
+            "roomType" TEXT NOT NULL,
+            "roomName" TEXT NOT NULL,
+            "checkIn" TIMESTAMP(3) NOT NULL,
+            "checkOut" TIMESTAMP(3) NOT NULL,
+            "nights" INTEGER NOT NULL,
+            "guests" TEXT NOT NULL,
+            "guestInfo" TEXT,
+            "contactInfo" TEXT,
+            "guestDetails" TEXT,
+            "totalPrice" DOUBLE PRECISION NOT NULL,
+            "currency" TEXT NOT NULL DEFAULT 'EUR',
+            "status" TEXT NOT NULL DEFAULT 'pending',
+            "confirmationNumber" TEXT,
+            "bookingReference" TEXT,
+            "cancellationPolicy" TEXT,
+            "specialRequests" TEXT,
+            "provider" TEXT,
+            "providerBookingId" TEXT,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "cancelledAt" TIMESTAMP(3),
+            "cancellationReason" TEXT,
+            CONSTRAINT "HotelBooking_pkey" PRIMARY KEY ("id")
+          )
+        `);
+        await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "HotelBooking_confirmationNumber_key" ON "HotelBooking"("confirmationNumber") WHERE "confirmationNumber" IS NOT NULL`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_userId_idx" ON "HotelBooking"("userId")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_status_idx" ON "HotelBooking"("status")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_checkIn_idx" ON "HotelBooking"("checkIn")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_checkOut_idx" ON "HotelBooking"("checkOut")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_confirmationNumber_idx" ON "HotelBooking"("confirmationNumber")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_providerBookingId_idx" ON "HotelBooking"("providerBookingId")`);
+        await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "HotelBooking_createdAt_idx" ON "HotelBooking"("createdAt")`);
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE "HotelBooking" ADD CONSTRAINT "HotelBooking_userId_fkey"
+          FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE
+        `).catch(() => {});
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE "HotelBooking" ADD CONSTRAINT "HotelBooking_provider_fkey"
+          FOREIGN KEY ("provider") REFERENCES "HotelApiProvider"("name") ON DELETE SET NULL ON UPDATE CASCADE
+        `).catch(() => {});
+        console.log('✅ HotelBooking tablosu oluşturuldu');
+      } catch (error) {
+        console.log('⚠️  HotelBooking tablosu oluşturma hatası, devam ediliyor:', error.message);
+      }
+    } else {
+      console.log('✅ HotelBooking tablosu zaten mevcut');
+      // contactInfo, guestDetails varsa kontrol et
+      try {
+        const columnCheck = await prisma.$queryRaw`
+          SELECT column_name FROM information_schema.columns
+          WHERE table_name = 'HotelBooking' AND column_name IN ('contactInfo', 'guestDetails')
+        `;
+        const cols = (columnCheck || []).map(r => r.column_name);
+        if (!cols.includes('contactInfo')) {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "HotelBooking" ADD COLUMN IF NOT EXISTS "contactInfo" TEXT`);
+          console.log('✅ HotelBooking.contactInfo eklendi');
+        }
+        if (!cols.includes('guestDetails')) {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "HotelBooking" ADD COLUMN IF NOT EXISTS "guestDetails" TEXT`);
+          console.log('✅ HotelBooking.guestDetails eklendi');
+        }
+        if (cols.includes('guestInfo')) {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "HotelBooking" ALTER COLUMN "guestInfo" DROP NOT NULL`).catch(() => {});
+        }
+      } catch (e) {
+        console.log('⚠️  HotelBooking kolon kontrolü atlandı:', e.message);
+      }
+    }
+
     if (backlinkTableExists) {
       // Her backlink'i tek tek kontrol et ve eksik olanları ekle
       console.log(`📝 ${predefinedBacklinks.length} backlink kontrol ediliyor...`);
