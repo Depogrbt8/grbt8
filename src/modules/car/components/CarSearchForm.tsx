@@ -174,7 +174,7 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
     <div className="w-full px-4 md:px-8">
       <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8">
         {/* Tek satır: masaüstünde tüm alanlar yan yana */}
-        <div className="flex flex-col lg:flex-row lg:items-end gap-4 flex-wrap">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
             <label className="block text-sm font-medium text-gray-700 mb-2">
