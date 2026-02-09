@@ -69,28 +69,39 @@ class MonitoringClient {
     if (typeof window === 'undefined') return;
 
     // Sayfa yüklendikten sonra performans metriklerini topla
+    // Not: getEntriesByType('largest-contentful-paint') deprecated; LCP için PerformanceObserver kullanılıyor
+    let lcpValue: number | undefined;
+    try {
+      const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const last = entries[entries.length - 1];
+        if (last) lcpValue = last.startTime;
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch {
+      // Tarayıcı desteklemiyorsa yok say
+    }
+
     window.addEventListener('load', () => {
       setTimeout(() => {
-        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
         const paintEntries = performance.getEntriesByType('paint');
-        
         const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-        const lcp = performance.getEntriesByType('largest-contentful-paint')[0] as PerformanceEntry & { size: number };
-        
+
         const metrics: PerformanceMetrics = {
           timestamp: new Date().toISOString(),
           page: window.location.pathname,
-          loadTime: navigation.loadEventEnd - navigation.fetchStart,
+          loadTime: navigation ? navigation.loadEventEnd - navigation.fetchStart : 0,
           firstContentfulPaint: fcp ? fcp.startTime : undefined,
-          largestContentfulPaint: lcp ? lcp.startTime : undefined,
-          cumulativeLayoutShift: 0, // CLS için ayrı hesaplama gerekir
+          largestContentfulPaint: lcpValue,
+          cumulativeLayoutShift: 0,
           userAgent: navigator.userAgent,
           deviceType: this.getDeviceType(),
           connectionType: (navigator as any).connection?.effectiveType
         };
 
         this.sendPerformanceMetrics(metrics);
-      }, 2000); // 2 saniye bekle ki tüm metrikler toplansın
+      }, 2000);
     });
   }
 

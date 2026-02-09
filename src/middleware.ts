@@ -72,15 +72,15 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
   // Content Security Policy
-  // Not: Admin paneli (https://www.grbt8.store) iframe ile ana sitede gösterilebilsin diye frame-src'e admin domaini eklendi
-  // GÜVENLİK İYİLEŞTİRMESİ: unsafe-eval kaldırıldı (sistemde kullanılmıyor)
+  // script-src: Google Tag Manager ve Facebook Pixel (Analytics bileşeninde kullanılıyor)
+  // connect-src: Analytics/GTM/Facebook event gönderimi için
   response.headers.set('Content-Security-Policy', `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel-scripts.com;
+    script-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel-scripts.com https://www.googletagmanager.com https://connect.facebook.net;
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self';
-    connect-src 'self' https://vercel.live https://*.vercel-scripts.com;
+    connect-src 'self' https://vercel.live https://*.vercel-scripts.com https://www.google-analytics.com https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
