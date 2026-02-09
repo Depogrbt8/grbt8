@@ -708,9 +708,20 @@ export class DemoCarAPI implements CarRentalAPI {
     return '01h' + Math.random().toString(36).substring(2, 25);
   }
   
+  /** UTF-8 güvenli base64 (Türkçe karakterler btoa ile hata verir) */
+  private base64Encode(str: string): string {
+    if (typeof Buffer !== 'undefined') {
+      return Buffer.from(str, 'utf8').toString('base64');
+    }
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
   private generateSearchToken(params: CarSearchParams): string {
     // JWT benzeri token (90 dakika geçerli)
-    const payload = btoa(JSON.stringify({
+    const payload = this.base64Encode(JSON.stringify({
       p: params,
       exp: Date.now() + 90 * 60 * 1000
     }));
@@ -718,7 +729,7 @@ export class DemoCarAPI implements CarRentalAPI {
   }
   
   private generatePageToken(offset: number): string {
-    return btoa(JSON.stringify({ offset }));
+    return this.base64Encode(JSON.stringify({ offset }));
   }
   
   private highlightMatch(text: string, query: string): string {

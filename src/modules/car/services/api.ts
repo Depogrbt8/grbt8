@@ -79,12 +79,14 @@ export function setCarRentalAPI(api: CarRentalAPI) {
 
 /**
  * Aktif API instance'ını getir
+ * Sunucu (API route) tarafında init çağrılmadığı için lazy init: ilk kullanımda demo API set edilir
  */
 export function getCarRentalAPI(): CarRentalAPI {
   if (!apiInstance) {
-    throw new Error('Car Rental API not initialized. Call setCarRentalAPI() first.');
+    const { demoCarAPI } = require('./adapters/demo');
+    setCarRentalAPI(demoCarAPI);
   }
-  return apiInstance;
+  return apiInstance!;
 }
 
 /**

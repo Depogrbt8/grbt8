@@ -264,7 +264,7 @@ export default function Home() {
           <div className="sm:hidden px-3 mb-4">
             <div className="relative w-full overflow-hidden rounded-xl shadow-sm">
               <Image
-                src="/images/Ekran Resmi 2025-09-19 09.25.26.png"
+                src={encodeURI('/images/Ekran Resmi 2025-09-19 09.25.26.png')}
                 alt="Mobil ekran görseli"
                 width={1200}
                 height={800}
