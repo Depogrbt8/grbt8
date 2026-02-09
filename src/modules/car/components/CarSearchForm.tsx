@@ -338,7 +338,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 value={pickupDate}
                 onChange={(e) => setPickupDate(e.target.value)}
                 min={today}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
               />
             </div>
           </div>
@@ -350,7 +350,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 type="time"
                 value={pickupTime}
                 onChange={(e) => setPickupTime(e.target.value)}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
               />
             </div>
           </div>
@@ -365,7 +365,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 value={dropoffDate}
                 onChange={(e) => setDropoffDate(e.target.value)}
                 min={minDropoffDate}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
               />
             </div>
           </div>
@@ -377,7 +377,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 type="time"
                 value={dropoffTime}
                 onChange={(e) => setDropoffTime(e.target.value)}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
               />
             </div>
           </div>

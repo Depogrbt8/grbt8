@@ -122,3 +122,16 @@ input:focus {
   flex-direction: row !important;
   gap: 2rem;
 }
+
+/* Araç formu: tarih/saat inputlarında sağdaki tarayıcı ikonunu gizle (sadece soldaki ikon kalsın) */
+.car-form-date-time-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.car-form-date-time-input::-webkit-date-and-time-value {
+  text-align: left;
+}
