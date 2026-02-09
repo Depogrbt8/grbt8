@@ -13,6 +13,8 @@ interface DateInputProps {
   placeholder?: string;
   label?: string;
   showPrices?: boolean;
+  /** true ise tetikleyici buton içeriği gösterilmez (üstte özel gösterim varsa) */
+  hideTriggerContent?: boolean;
 }
 
 function PriceDayContent(props: any) {
@@ -37,7 +39,7 @@ function DefaultDayContent(props: any) {
   );
 }
 
-const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, className, placeholder, label, showPrices = true }) => {
+const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, className, placeholder, label, showPrices = true, hideTriggerContent = false }) => {
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<Date | undefined>(value);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -131,7 +133,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
           color: selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)')
         }}
       >
-        {selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin')}
+        {!hideTriggerContent && (selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin'))}
       </button>
       {/* Masaüstü popup */}
       {show && !isMobile && (
