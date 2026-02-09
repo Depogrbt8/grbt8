@@ -457,11 +457,16 @@ export default function HotelSearchForm({
             </div>
           </div>
 
-          {/* Giriş Tarihi */}
+          {/* Giriş Tarihi - tarih takvim ikonunun yanında */}
           <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Giriş Tarihi</label>
-            <div className="relative w-full flex items-center">
-              <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
+            <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
+                <span className="text-sm text-gray-500 font-light">
+                  {checkInDate ? format(checkInDate, 'd MMM yyyy', { locale: tr }) : 'Giriş tarihi'}
+                </span>
+              </div>
               <DateInput
                 value={checkInDate}
                 onChange={(date) => {
@@ -470,18 +475,23 @@ export default function HotelSearchForm({
                   }
                   setCheckInDate(date || undefined);
                 }}
-                className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
                 placeholder="Giriş tarihi"
                 showPrices={false}
               />
             </div>
           </div>
 
-          {/* Çıkış Tarihi */}
+          {/* Çıkış Tarihi - tarih takvim ikonunun yanında */}
           <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Çıkış Tarihi</label>
-            <div className="relative w-full flex items-center">
-              <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
+            <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
+                <span className="text-sm text-gray-500 font-light">
+                  {checkOutDate ? format(checkOutDate, 'd MMM yyyy', { locale: tr }) : 'Çıkış tarihi'}
+                </span>
+              </div>
               <DateInput
                 value={checkOutDate}
                 onChange={(date) => {
@@ -490,7 +500,7 @@ export default function HotelSearchForm({
                   }
                   setCheckOutDate(date || undefined);
                 }}
-                className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
                 placeholder="Çıkış tarihi"
                 showPrices={false}
               />
