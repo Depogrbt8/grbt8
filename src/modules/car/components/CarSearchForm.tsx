@@ -31,7 +31,9 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   const [pickupTime, setPickupTime] = useState(initialValues?.pickupTime || '10:00');
   const [dropoffDate, setDropoffDate] = useState(initialValues?.dropoffDate || '');
   const [dropoffTime, setDropoffTime] = useState(initialValues?.dropoffTime || '10:00');
-  const [sameLocation, setSameLocation] = useState(true);
+  const [sameLocation, setSameLocation] = useState(
+    () => !(initialValues?.pickupLocationId && initialValues?.dropoffLocationId && initialValues.pickupLocationId !== initialValues.dropoffLocationId)
+  );
   
   // Lokasyon arama state
   const [pickupQuery, setPickupQuery] = useState('');
@@ -173,26 +175,6 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   return (
     <div className="w-full px-4 md:px-8">
       <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8">
-        {/* Farklı lokasyonda teslim: işaretlenince teslim alanı açılır */}
-        <div className="mb-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={!sameLocation}
-              onChange={(e) => {
-                const farkliLokasyon = e.target.checked;
-                setSameLocation(!farkliLokasyon);
-                if (!farkliLokasyon) {
-                  setDropoffLocation(pickupLocation);
-                  setDropoffQuery(pickupQuery);
-                }
-              }}
-              className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">Farklı bir lokasyonda teslim edeceğim</span>
-          </label>
-        </div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Alış Lokasyonu */}
           <div className="relative">
@@ -257,7 +239,27 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
             )}
           </div>
           
-          {/* Teslim Lokasyonu */}
+          {/* Farklı lokasyonda teslim: işaretlenince aşağıda teslim alanı açılır */}
+          <div className="col-span-full flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={!sameLocation}
+                onChange={(e) => {
+                  const farkliLokasyon = e.target.checked;
+                  setSameLocation(!farkliLokasyon);
+                  if (!farkliLokasyon) {
+                    setDropoffLocation(pickupLocation);
+                    setDropoffQuery(pickupQuery);
+                  }
+                }}
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+              />
+              <span className="text-sm text-gray-700">Farklı bir lokasyonda teslim edeceğim</span>
+            </label>
+          </div>
+          
+          {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
           {!sameLocation && (
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">
