@@ -192,6 +192,25 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
               placeholder="Havalimanı veya şehir"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
+            {/* Farklı yerde teslim - alış lokasyonu kutusunun altında */}
+            <div className="mt-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={!sameLocation}
+                  onChange={(e) => {
+                    const farkliLokasyon = e.target.checked;
+                    setSameLocation(!farkliLokasyon);
+                    if (!farkliLokasyon) {
+                      setDropoffLocation(pickupLocation);
+                      setDropoffQuery(pickupQuery);
+                    }
+                  }}
+                  className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                />
+                <span className="text-sm text-gray-700">Farklı yerde teslim</span>
+              </label>
+            </div>
             
             {/* Öneriler */}
             {showPickupSuggestions && (
@@ -236,26 +255,6 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
                 )}
               </div>
             )}
-          </div>
-          
-          {/* Farklı lokasyonda teslim - tek satırda */}
-          <div className="flex-shrink-0 flex items-center gap-2 lg:pb-[10px]">
-            <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
-              <input
-                type="checkbox"
-                checked={!sameLocation}
-                onChange={(e) => {
-                  const farkliLokasyon = e.target.checked;
-                  setSameLocation(!farkliLokasyon);
-                  if (!farkliLokasyon) {
-                    setDropoffLocation(pickupLocation);
-                    setDropoffQuery(pickupQuery);
-                  }
-                }}
-                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-              />
-              <span className="text-sm text-gray-700">Farklı yerde teslim</span>
-            </label>
           </div>
           
           {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
