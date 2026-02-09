@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import type { LocationSearchResult } from '../types';
 import { searchLocations, getPopularLocations } from '../services';
+import { initCarRentalModule } from '../init';
 
 interface CarSearchFormProps {
   initialValues?: {
@@ -46,6 +47,11 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   
+  // Araç kiralama API'sini başlat (ana sayfa vb. sayfalarda init çağrılmamış olabilir)
+  useEffect(() => {
+    initCarRentalModule();
+  }, []);
+
   // Popüler lokasyonları yükle
   useEffect(() => {
     loadPopularLocations();
