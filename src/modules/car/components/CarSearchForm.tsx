@@ -173,29 +173,10 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   return (
     <div className="w-full px-4 md:px-8">
       <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8">
-        {/* Farklı lokasyonda teslim: işaretlenince teslim alanı açılır */}
-        <div className="mb-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={!sameLocation}
-              onChange={(e) => {
-                const farkliLokasyon = e.target.checked;
-                setSameLocation(!farkliLokasyon);
-                if (!farkliLokasyon) {
-                  setDropoffLocation(pickupLocation);
-                  setDropoffQuery(pickupQuery);
-                }
-              }}
-              className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">Farklı bir lokasyonda teslim edeceğim</span>
-          </label>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Tek satır: masaüstünde tüm alanlar yan yana */}
+        <div className="flex flex-col lg:flex-row lg:items-end gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
-          <div className="relative">
+          <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <MapPin className="w-4 h-4 inline mr-1" />
               Alış Lokasyonu
@@ -257,9 +238,29 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
             )}
           </div>
           
-          {/* Teslim Lokasyonu */}
+          {/* Farklı lokasyonda teslim - tek satırda */}
+          <div className="flex-shrink-0 flex items-center gap-2 lg:pb-[10px]">
+            <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+              <input
+                type="checkbox"
+                checked={!sameLocation}
+                onChange={(e) => {
+                  const farkliLokasyon = e.target.checked;
+                  setSameLocation(!farkliLokasyon);
+                  if (!farkliLokasyon) {
+                    setDropoffLocation(pickupLocation);
+                    setDropoffQuery(pickupQuery);
+                  }
+                }}
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+              />
+              <span className="text-sm text-gray-700">Farklı yerde teslim</span>
+            </label>
+          </div>
+          
+          {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
           {!sameLocation && (
-            <div className="relative">
+            <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <MapPin className="w-4 h-4 inline mr-1" />
                 Teslim Lokasyonu
@@ -322,62 +323,58 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
             </div>
           )}
           
-          {/* Alış Tarihi ve Saati */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="w-4 h-4 inline mr-1" />
-                Alış Tarihi
-              </label>
-              <input
-                type="date"
-                value={pickupDate}
-                onChange={(e) => setPickupDate(e.target.value)}
-                min={today}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Clock className="w-4 h-4 inline mr-1" />
-                Saat
-              </label>
-              <input
-                type="time"
-                value={pickupTime}
-                onChange={(e) => setPickupTime(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+          {/* Alış Tarihi - tek satırda */}
+          <div className="w-full lg:w-auto lg:min-w-[130px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Alış Tarihi
+            </label>
+            <input
+              type="date"
+              value={pickupDate}
+              onChange={(e) => setPickupDate(e.target.value)}
+              min={today}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+          <div className="w-full lg:w-auto lg:min-w-[90px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock className="w-4 h-4 inline mr-1" />
+              Saat
+            </label>
+            <input
+              type="time"
+              value={pickupTime}
+              onChange={(e) => setPickupTime(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
           </div>
           
-          {/* Teslim Tarihi ve Saati */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="w-4 h-4 inline mr-1" />
-                Teslim Tarihi
-              </label>
-              <input
-                type="date"
-                value={dropoffDate}
-                onChange={(e) => setDropoffDate(e.target.value)}
-                min={minDropoffDate}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Clock className="w-4 h-4 inline mr-1" />
-                Saat
-              </label>
-              <input
-                type="time"
-                value={dropoffTime}
-                onChange={(e) => setDropoffTime(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+          {/* Teslim Tarihi ve Saat - tek satırda */}
+          <div className="w-full lg:w-auto lg:min-w-[130px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Teslim Tarihi
+            </label>
+            <input
+              type="date"
+              value={dropoffDate}
+              onChange={(e) => setDropoffDate(e.target.value)}
+              min={minDropoffDate}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+          <div className="w-full lg:w-auto lg:min-w-[90px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock className="w-4 h-4 inline mr-1" />
+              Saat
+            </label>
+            <input
+              type="time"
+              value={dropoffTime}
+              onChange={(e) => setDropoffTime(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
           </div>
         </div>
         
