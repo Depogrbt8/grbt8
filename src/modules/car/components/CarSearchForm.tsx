@@ -172,26 +172,26 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   
   return (
     <div className="w-full px-4 md:px-8">
-      <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8">
-        {/* Tek satır: masaüstünde tüm alanlar yan yana */}
+      <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8 border border-gray-200">
+        {/* Tek satır: masaüstünde tüm alanlar yan yana - uçuş/otel formu ile aynı tasarım */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <MapPin className="w-4 h-4 inline mr-1" />
-              Alış Lokasyonu
-            </label>
-            <input
-              type="text"
-              value={pickupQuery}
-              onChange={(e) => {
-                setPickupQuery(e.target.value);
-                setShowPickupSuggestions(true);
-              }}
-              onFocus={() => setShowPickupSuggestions(true)}
-              placeholder="Havalimanı veya şehir"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Lokasyonu</label>
+            <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={pickupQuery}
+                onChange={(e) => {
+                  setPickupQuery(e.target.value);
+                  setShowPickupSuggestions(true);
+                }}
+                onFocus={() => setShowPickupSuggestions(true)}
+                placeholder="Havalimanı veya şehir"
+                className="w-full pl-10 pr-4 h-12 text-base text-gray-700 placeholder-gray-400 focus:ring-0 outline-none bg-transparent border-none rounded-xl"
+              />
+            </div>
             {/* Farklı yerde teslim - alış lokasyonu kutusunun altında */}
             <div className="mt-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -214,7 +214,7 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
             
             {/* Öneriler */}
             {showPickupSuggestions && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
                 {isLoadingLocations ? (
                   <div className="p-4 text-center text-gray-500">
                     <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -260,25 +260,25 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
           {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
           {!sameLocation && (
             <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <MapPin className="w-4 h-4 inline mr-1" />
-                Teslim Lokasyonu
-              </label>
-              <input
-                type="text"
-                value={dropoffQuery}
-                onChange={(e) => {
-                  setDropoffQuery(e.target.value);
-                  setShowDropoffSuggestions(true);
-                }}
-                onFocus={() => setShowDropoffSuggestions(true)}
-                placeholder="Havalimanı veya şehir"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
+              <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Lokasyonu</label>
+              <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={dropoffQuery}
+                  onChange={(e) => {
+                    setDropoffQuery(e.target.value);
+                    setShowDropoffSuggestions(true);
+                  }}
+                  onFocus={() => setShowDropoffSuggestions(true)}
+                  placeholder="Havalimanı veya şehir"
+                  className="w-full pl-10 pr-4 h-12 text-base text-gray-700 placeholder-gray-400 focus:ring-0 outline-none bg-transparent border-none rounded-xl"
+                />
+              </div>
               
               {/* Öneriler */}
               {showDropoffSuggestions && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
                   {isLoadingLocations ? (
                     <div className="p-4 text-center text-gray-500">
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -322,68 +322,68 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
             </div>
           )}
           
-          {/* Alış Tarihi - tek satırda */}
+          {/* Alış Tarihi */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              Alış Tarihi
-            </label>
-            <input
-              type="date"
-              value={pickupDate}
-              onChange={(e) => setPickupDate(e.target.value)}
-              min={today}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
+            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <input
+                type="date"
+                value={pickupDate}
+                onChange={(e) => setPickupDate(e.target.value)}
+                min={today}
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+              />
+            </div>
           </div>
           <div className="w-full lg:w-auto lg:min-w-[90px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock className="w-4 h-4 inline mr-1" />
-              Saat
-            </label>
-            <input
-              type="time"
-              value={pickupTime}
-              onChange={(e) => setPickupTime(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <input
+                type="time"
+                value={pickupTime}
+                onChange={(e) => setPickupTime(e.target.value)}
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+              />
+            </div>
           </div>
           
-          {/* Teslim Tarihi ve Saat - tek satırda */}
+          {/* Teslim Tarihi ve Saat */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              Teslim Tarihi
-            </label>
-            <input
-              type="date"
-              value={dropoffDate}
-              onChange={(e) => setDropoffDate(e.target.value)}
-              min={minDropoffDate}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
+            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <input
+                type="date"
+                value={dropoffDate}
+                onChange={(e) => setDropoffDate(e.target.value)}
+                min={minDropoffDate}
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+              />
+            </div>
           </div>
           <div className="w-full lg:w-auto lg:min-w-[90px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock className="w-4 h-4 inline mr-1" />
-              Saat
-            </label>
-            <input
-              type="time"
-              value={dropoffTime}
-              onChange={(e) => setDropoffTime(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <input
+                type="time"
+                value={dropoffTime}
+                onChange={(e) => setDropoffTime(e.target.value)}
+                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light"
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* Arama Butonu */}
-        <div className="mt-6">
-          <button
-            onClick={handleSearch}
-            disabled={isSearching}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          
+          {/* Arama Butonu - satır içi lg'de */}
+          <div className="w-full lg:w-auto lg:flex-1 lg:min-w-[120px] lg:max-w-[160px] flex flex-col justify-end">
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={isSearching}
+              className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
             {isSearching ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -395,7 +395,8 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
                 Araç Ara
               </>
             )}
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     </div>
