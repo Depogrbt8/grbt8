@@ -1,8 +1,5 @@
 // Araç Kiralama Modülü - Main Export
 
-// Initialize module
-import './init';
-
 // Types
 export type {
   CarLocation,
