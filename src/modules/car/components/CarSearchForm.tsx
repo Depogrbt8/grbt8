@@ -371,7 +371,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 value={pickupTime}
                 onChange={setPickupTime}
                 placeholder="Saat"
-                className="w-full h-full min-h-0 pl-20 pr-2 text-transparent [&_button]:text-transparent [&_button]:justify-start"
+                hideTriggerContent
+                className="w-full h-full min-h-0"
               />
             </div>
           </div>
@@ -409,7 +410,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 value={dropoffTime}
                 onChange={setDropoffTime}
                 placeholder="Saat"
-                className="w-full h-full min-h-0 pl-20 pr-2 text-transparent [&_button]:text-transparent [&_button]:justify-start"
+                hideTriggerContent
+                className="w-full h-full min-h-0"
               />
             </div>
           </div>
