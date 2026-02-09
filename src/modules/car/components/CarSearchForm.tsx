@@ -17,7 +17,7 @@ interface CarSearchFormProps {
     pickupTime?: string;
     dropoffDate?: string;
     dropoffTime?: string;
-    driverAge?: number;
+    driverAge?: number; // Formda gösterilmiyor; arama sayfası URL'den geçirebilir
   };
 }
 
@@ -31,7 +31,6 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   const [pickupTime, setPickupTime] = useState(initialValues?.pickupTime || '10:00');
   const [dropoffDate, setDropoffDate] = useState(initialValues?.dropoffDate || '');
   const [dropoffTime, setDropoffTime] = useState(initialValues?.dropoffTime || '10:00');
-  const [driverAge, setDriverAge] = useState(initialValues?.driverAge || 30);
   const [sameLocation, setSameLocation] = useState(true);
   
   // Lokasyon arama state
@@ -147,7 +146,7 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
       pickupTime,
       dropoffDate,
       dropoffTime,
-      driverAge: driverAge.toString()
+      driverAge: '30'
     });
     
     // Arama sayfasına yönlendir
@@ -372,21 +371,6 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
-          </div>
-          
-          {/* Sürücü Yaşı */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sürücü Yaşı
-            </label>
-            <input
-              type="number"
-              value={driverAge}
-              onChange={(e) => setDriverAge(parseInt(e.target.value) || 18)}
-              min={18}
-              max={99}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
           </div>
         </div>
         
