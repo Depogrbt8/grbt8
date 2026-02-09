@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, MapPin, Clock, Search, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import type { LocationSearchResult } from '../types';
 import { searchLocations, getPopularLocations } from '../services';
 import { initCarRentalModule } from '../init';
+import DateInput from '@/components/DateInput';
+import TimeInput from '@/components/TimeInput';
 
 interface CarSearchFormProps {
   initialValues?: {
@@ -26,7 +28,7 @@ interface CarSearchFormProps {
 export default function CarSearchForm({ initialValues, useHomepageSpacing }: CarSearchFormProps) {
   const router = useRouter();
   
-  // Form state
+  // Form state (tarih string YYYY-MM-DD, saat HH:mm - URL ile uyumlu)
   const [pickupLocation, setPickupLocation] = useState<LocationSearchResult | null>(null);
   const [dropoffLocation, setDropoffLocation] = useState<LocationSearchResult | null>(null);
   const [pickupDate, setPickupDate] = useState(initialValues?.pickupDate || '');
@@ -34,6 +36,18 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   const [dropoffDate, setDropoffDate] = useState(initialValues?.dropoffDate || '');
   const [dropoffTime, setDropoffTime] = useState(initialValues?.dropoffTime || '10:00');
   const [sameLocation, setSameLocation] = useState(true);
+
+  const safeParseDate = (s: string): Date | undefined => {
+    if (!s || s.length !== 10) return undefined;
+    try {
+      const d = parse(s, 'yyyy-MM-dd', new Date());
+      return isNaN(d.getTime()) ? undefined : d;
+    } catch {
+      return undefined;
+    }
+  };
+  const pickupDateObj = safeParseDate(pickupDate);
+  const dropoffDateObj = safeParseDate(dropoffDate);
   
   // Lokasyon arama state
   const [pickupQuery, setPickupQuery] = useState('');
@@ -119,10 +133,6 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
     }
   }, [sameLocation, pickupLocation, pickupQuery]);
   
-  // Minimum tarihler
-  const today = new Date().toISOString().split('T')[0];
-  const minDropoffDate = pickupDate || today;
-  
   const handleSearch = () => {
     // Validasyon
     if (!pickupLocation) {
@@ -133,7 +143,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
       alert('Lütfen teslim lokasyonu seçin');
       return;
     }
-    if (!pickupDate || !dropoffDate) {
+    if (!pickupDate || !dropoffDate || !pickupDateObj || !dropoffDateObj) {
       alert('Lütfen tarih seçin');
       return;
     }
@@ -328,56 +338,78 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           )}
           
-          {/* Alış Tarihi */}
+          {/* Alış Tarihi - otel ile aynı takvim popup (DateInput) */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
             <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-              <input
-                type="date"
-                value={pickupDate}
-                onChange={(e) => setPickupDate(e.target.value)}
-                min={today}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500 font-light">
+                  {pickupDateObj ? format(pickupDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
+                </span>
+              </div>
+              <DateInput
+                value={pickupDateObj}
+                onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
+                placeholder="Alış tarihi"
+                showPrices={false}
               />
             </div>
           </div>
+          {/* Alış Saati - otel takvim popup ile uyumlu saat popup */}
           <div className="w-full lg:w-auto lg:min-w-[90px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
             <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-              <input
-                type="time"
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500 font-light">
+                  {pickupTime || '10:00'}
+                </span>
+              </div>
+              <TimeInput
                 value={pickupTime}
-                onChange={(e) => setPickupTime(e.target.value)}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
+                onChange={setPickupTime}
+                placeholder="Saat"
+                className="w-full h-full min-h-0 pl-20 pr-2 text-transparent [&_button]:text-transparent [&_button]:justify-start"
               />
             </div>
           </div>
           
-          {/* Teslim Tarihi ve Saat */}
+          {/* Teslim Tarihi - otel ile aynı takvim popup */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
             <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-              <input
-                type="date"
-                value={dropoffDate}
-                onChange={(e) => setDropoffDate(e.target.value)}
-                min={minDropoffDate}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500 font-light">
+                  {dropoffDateObj ? format(dropoffDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
+                </span>
+              </div>
+              <DateInput
+                value={dropoffDateObj}
+                onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
+                placeholder="Teslim tarihi"
+                showPrices={false}
               />
             </div>
           </div>
+          {/* Teslim Saati */}
           <div className="w-full lg:w-auto lg:min-w-[90px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
             <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-              <input
-                type="time"
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-500 font-light">
+                  {dropoffTime || '10:00'}
+                </span>
+              </div>
+              <TimeInput
                 value={dropoffTime}
-                onChange={(e) => setDropoffTime(e.target.value)}
-                className="w-full pl-10 pr-4 h-full py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-transparent border-none rounded-xl text-left font-light car-form-date-time-input"
+                onChange={setDropoffTime}
+                placeholder="Saat"
+                className="w-full h-full min-h-0 pl-20 pr-2 text-transparent [&_button]:text-transparent [&_button]:justify-start"
               />
             </div>
           </div>
