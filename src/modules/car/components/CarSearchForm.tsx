@@ -19,9 +19,11 @@ interface CarSearchFormProps {
     dropoffTime?: string;
     driverAge?: number; // Formda gösterilmiyor; arama sayfası URL'den geçirebilir
   };
+  /** Ana sayfada kullanıldığında uçuş/otel formu ile aynı üst boşluk (mt-24) ve container */
+  useHomepageSpacing?: boolean;
 }
 
-export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
+export default function CarSearchForm({ initialValues, useHomepageSpacing }: CarSearchFormProps) {
   const router = useRouter();
   
   // Form state
@@ -170,8 +172,12 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
     setShowDropoffSuggestions(false);
   };
   
+  const wrapperClass = useHomepageSpacing
+    ? 'w-full sm:container sm:mx-auto px-0 sm:px-4 mt-8 sm:mt-24'
+    : 'w-full px-4 md:px-8';
+
   return (
-    <div className="w-full px-4 md:px-8">
+    <div className={wrapperClass}>
       <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8 border border-gray-200">
         {/* Tek satır: masaüstünde tüm alanlar yan yana - uçuş/otel formu ile aynı tasarım */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">

@@ -227,7 +227,7 @@ export default function Home() {
           )}
           
           {activeService === 'car' && (
-            <CarSearchForm />
+            <CarSearchForm useHomepageSpacing />
           )}
           
           {activeService === 'esim' && (
