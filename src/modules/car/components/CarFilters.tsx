@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Filter, X } from 'lucide-react';
-import type { CarFilters as CarFiltersType, CarCategory } from '../types';
+import type { CarFiltersType, CarCategory } from '../types';
 import {
   CAR_CATEGORY_LABELS,
   TRANSMISSION_LABELS,

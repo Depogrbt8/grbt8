@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CarList, CarFilters, CarSearchForm } from '@/modules/car/components';
 import { searchCars } from '@/modules/car/services';
-import type { Car, CarFilters as CarFiltersType, CarSearchResult } from '@/modules/car/types';
+import type { Car, CarFiltersType, CarSearchResult } from '@/modules/car/types';
 import { Loader2, SlidersHorizontal } from 'lucide-react';
 
 function CarSearchContent() {

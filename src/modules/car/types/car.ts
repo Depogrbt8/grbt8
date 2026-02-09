@@ -228,7 +228,7 @@ export interface CarSearchParams {
   currency: string; // ISO 4217 (EUR, TL, USD)
   
   // Filtreler (opsiyonel)
-  filters?: CarFilters;
+  filters?: CarFiltersType;
   
   // Ödeme tercihi
   payment?: {
@@ -245,9 +245,9 @@ export interface CarSearchParams {
 }
 
 /**
- * Araç Filtreleri
+ * Araç Filtreleri (Type)
  */
-export interface CarFilters {
+export interface CarFiltersType {
   carCategories?: CarCategory[];
   transmissionType?: 'automatic' | 'manual';
   mileageType?: 'unlimited' | 'limited';
@@ -460,6 +460,7 @@ export interface CarBooking {
   createdAt: string;
   updatedAt?: string;
   cancelledAt?: string;
+  cancellationReason?: string;
   
   // İletişim
   confirmationEmail: string;

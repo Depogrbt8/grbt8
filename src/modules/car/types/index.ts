@@ -13,7 +13,7 @@ export type {
   // Arama
   CarSearchParams,
   CarSearchResult,
-  CarFilters,
+  CarFiltersType,
   SimpleCarSearchParams,
   CarFilterOptions,
   CarSortOption,

@@ -109,25 +109,25 @@ export class DemoCarAPI implements CarRentalAPI {
         youngDriverFee: {
           ageRange: '21-25',
           amount: 15,
-          currency: params.currency || 'EUR'
+          currency: car.currency
         },
         additionalDriverFee: {
           amount: 10,
-          currency: params.currency || 'EUR',
+          currency: car.currency,
           perDriver: true
         },
         crossBorderAllowed: true,
         crossBorderFee: 50
       },
-      insuranceOptions: this.getMockInsuranceOptions(params.currency || 'EUR'),
-      extraServices: this.getMockExtraServices(params.currency || 'EUR'),
+      insuranceOptions: this.getMockInsuranceOptions(car.currency),
+      extraServices: this.getMockExtraServices(car.currency),
       policies: {
         cancellation: 'Alış tarihinden 48 saat öncesine kadar ücretsiz iptal. Sonrasında 1 günlük ücret kesilir.',
         amendment: 'Değişiklik ücreti: 25 EUR. Alış tarihinden 24 saat öncesine kadar yapılabilir.',
         lateReturn: 'Geç teslim: İlk 1 saat ücretsiz, sonrasında saatlik ücret uygulanır.',
         earlyReturn: 'Erken teslim: İade yapılmaz.',
-        damage: `Hasar durumunda muafiyet: ${car.excessAmount} ${params.currency || 'EUR'}. Tam kasko sigortası ile muafiyet sıfırlanabilir.`,
-        theft: `Çalınma durumunda muafiyet: ${car.excessAmount} ${params.currency || 'EUR'}.`
+        damage: `Hasar durumunda muafiyet: ${car.excessAmount} ${car.currency}. Tam kasko sigortası ile muafiyet sıfırlanabilir.`,
+        theft: `Çalınma durumunda muafiyet: ${car.excessAmount} ${car.currency}.`
       },
       supplier: {
         id: car.supplierId,
