@@ -21,7 +21,7 @@ export default function RoomCard({ room, nights, roomsNeeded, onSelect }: RoomCa
       {/* Görsel */}
       <div className="relative h-40">
         <Image
-          src={room.images[0] || '/images/room-placeholder.jpg'}
+          src={room.images[0] || '/images/campaigns/placeholder.svg'}
           alt={room.name}
           fill
           className="object-cover"

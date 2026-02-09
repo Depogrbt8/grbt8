@@ -35,9 +35,9 @@ interface Errors {
 }
 
 const cardBrands = [
-  { name: "Visa", regex: /^4/, logo: "/images/visa.svg" },
-  { name: "MasterCard", regex: /^5[1-5]/, logo: "/images/mastercard.svg" },
-  { name: "Amex", regex: /^3[47]/, logo: "/images/amex.svg" },
+  { name: "Visa", regex: /^4/, logo: "/images/payment/visa.png" },
+  { name: "MasterCard", regex: /^5[1-5]/, logo: "/images/payment/mastercard.png" },
+  { name: "Amex", regex: /^3[47]/, logo: "/images/payment/amex.png" },
 ];
 
 function detectCardBrand(number: string) {

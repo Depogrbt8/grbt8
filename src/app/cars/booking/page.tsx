@@ -6,6 +6,7 @@ import { Loader2, ArrowLeft, Check } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getCarDetails, createBooking } from '@/modules/car/services';
+import { initCarRentalModule } from '@/modules/car/init';
 import { initiatePayment, completePayment } from '@/modules/car/services/payment';
 import type { CarDetails, Driver, CarBookingData } from '@/modules/car/types';
 
@@ -44,6 +45,11 @@ function CarBookingContent() {
     }
   });
   
+  // Araç kiralama API'sini başlat (doğrudan bu sayfaya gelindiyse)
+  useEffect(() => {
+    initCarRentalModule();
+  }, []);
+
   // Araç detaylarını yükle
   useEffect(() => {
     async function loadCarDetails() {

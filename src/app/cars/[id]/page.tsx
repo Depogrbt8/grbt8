@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getCarDetails } from '@/modules/car/services';
+import { initCarRentalModule } from '@/modules/car/init';
 import type { CarDetails } from '@/modules/car/types';
 import {
   TRANSMISSION_LABELS,
@@ -27,6 +28,11 @@ function CarDetailContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Araç kiralama API'sini başlat (doğrudan bu sayfaya gelindiyse)
+  useEffect(() => {
+    initCarRentalModule();
+  }, []);
 
   // Araç detaylarını yükle
   useEffect(() => {

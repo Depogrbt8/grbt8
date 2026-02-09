@@ -60,7 +60,7 @@ export default function HotelCard({ hotel, checkIn, checkOut, guests }: HotelCar
             {/* Otel Görseli */}
             <div className="relative w-full md:w-64 h-48 md:h-auto flex-shrink-0">
               <Image
-                src={hotel.images[0] || '/images/hotel-placeholder.jpg'}
+                src={hotel.images[0] || '/images/campaigns/placeholder.svg'}
                 alt={hotel.name}
                 fill
                 className="object-cover"

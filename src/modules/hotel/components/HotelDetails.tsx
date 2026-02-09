@@ -83,7 +83,7 @@ export default function HotelDetails({
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <div className="relative h-64 sm:h-80 md:h-96 bg-gray-200">
           <Image
-            src={hotel.images[currentImageIndex] || '/images/hotel-placeholder.jpg'}
+            src={hotel.images[currentImageIndex] || '/images/campaigns/placeholder.svg'}
             alt={hotel.name}
             fill
             className="object-cover"

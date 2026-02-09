@@ -39,7 +39,7 @@ export default function RoomSelector({
             {/* Oda Görseli */}
             <div className="relative w-full md:w-48 h-40 md:h-auto flex-shrink-0">
               <Image
-                src={room.images[0] || '/images/room-placeholder.jpg'}
+                src={room.images[0] || '/images/campaigns/placeholder.svg'}
                 alt={room.name}
                 fill
                 className="object-cover"
