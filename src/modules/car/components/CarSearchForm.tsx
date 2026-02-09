@@ -382,13 +382,14 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           </div>
           
-          {/* Arama Butonu - satır içi lg'de */}
-          <div className="w-full lg:w-auto lg:flex-1 lg:min-w-[120px] lg:max-w-[160px] flex flex-col justify-end">
+          {/* Arama Butonu - diğer kutularla aynı hizada (üstte label boşluğu) */}
+          <div className="w-full lg:w-auto lg:flex-1 lg:min-w-[120px] lg:max-w-[160px]">
+            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium invisible select-none">Ara</label>
             <button
               type="button"
               onClick={handleSearch}
               disabled={isSearching}
-              className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-green-500 text-white py-0 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
             {isSearching ? (
               <>
