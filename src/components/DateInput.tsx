@@ -53,6 +53,11 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // value prop değişince selected'i güncelle (kontrollü kullanım)
+  useEffect(() => {
+    setSelected(value);
+  }, [value]);
+
   // İlk açılışta 2 ay göster
   useEffect(() => {
     if (show && isMobile) {
@@ -124,7 +129,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
     <div className={`relative ${className || ''}`} ref={inputRef}>
             <button
         type="button"
-        className="w-full h-full text-center focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-center text-[14px] font-normal text-black flight-search-input transition-all duration-200"
+        className="relative w-full h-full min-h-[3rem] text-center focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-center text-[14px] font-normal text-black flight-search-input transition-all duration-200 cursor-pointer"
         onClick={() => setShow(!show)}
         disabled={disabled}
         style={{ 
@@ -133,7 +138,11 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
           color: selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)')
         }}
       >
-        {!hideTriggerContent && (selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin'))}
+        {hideTriggerContent ? (
+          <span className="absolute inset-0 block w-full h-full" aria-hidden />
+        ) : (
+          selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin')
+        )}
       </button>
       {/* Masaüstü popup */}
       {show && !isMobile && (
