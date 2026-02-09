@@ -173,16 +173,23 @@ export default function CarSearchForm({ initialValues }: CarSearchFormProps) {
   return (
     <div className="w-full px-4 md:px-8">
       <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8">
-        {/* Aynı lokasyon checkbox */}
+        {/* Farklı lokasyonda teslim: işaretlenince teslim alanı açılır */}
         <div className="mb-4">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={sameLocation}
-              onChange={(e) => setSameLocation(e.target.checked)}
+              checked={!sameLocation}
+              onChange={(e) => {
+                const farkliLokasyon = e.target.checked;
+                setSameLocation(!farkliLokasyon);
+                if (!farkliLokasyon) {
+                  setDropoffLocation(pickupLocation);
+                  setDropoffQuery(pickupQuery);
+                }
+              }}
               className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
             />
-            <span className="text-sm text-gray-700">Aynı lokasyonda teslim edeceğim</span>
+            <span className="text-sm text-gray-700">Farklı bir lokasyonda teslim edeceğim</span>
           </label>
         </div>
         
