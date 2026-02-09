@@ -79,9 +79,9 @@ export class DemoCarAPI implements CarRentalAPI {
       description: `${car.name} ile konforlu ve güvenli bir yolculuk deneyimi yaşayın. ${car.seats} kişilik, ${car.transmission === 'automatic' ? 'otomatik vites' : 'manuel vites'}, ${car.airConditioning ? 'klimalı' : 'klimasız'} bu araç, şehir içi ve şehirlerarası yolculuklarınız için idealdir.`,
       images: [
         car.imageUrl,
-        '/images/cars/interior-1.jpg',
-        '/images/cars/trunk-1.jpg',
-        '/images/cars/side-1.jpg'
+        '/images/cars/placeholder.svg',
+        '/images/cars/placeholder.svg',
+        '/images/cars/placeholder.svg'
       ],
       specifications: {
         make: car.name.split(' ')[0],
@@ -338,25 +338,27 @@ export class DemoCarAPI implements CarRentalAPI {
   // ========== HELPER METHODS ==========
   
   private generateMockCars(pickup: CarLocation, dropoff: CarLocation): Car[] {
+    const carImagePlaceholder = '/images/cars/placeholder.svg';
+    const supplierLogoPlaceholder = '/images/suppliers/placeholder.svg';
     const suppliers = [
-      { id: 7455, name: 'Garenta', logo: '/images/suppliers/garenta.png', rating: 4.5 },
-      { id: 7456, name: 'Avis', logo: '/images/suppliers/avis.png', rating: 4.3 },
-      { id: 7457, name: 'Budget', logo: '/images/suppliers/budget.png', rating: 4.2 },
-      { id: 7458, name: 'Enterprise', logo: '/images/suppliers/enterprise.png', rating: 4.4 },
-      { id: 7459, name: 'Sixt', logo: '/images/suppliers/sixt.png', rating: 4.6 }
+      { id: 7455, name: 'Garenta', logo: supplierLogoPlaceholder, rating: 4.5 },
+      { id: 7456, name: 'Avis', logo: supplierLogoPlaceholder, rating: 4.3 },
+      { id: 7457, name: 'Budget', logo: supplierLogoPlaceholder, rating: 4.2 },
+      { id: 7458, name: 'Enterprise', logo: supplierLogoPlaceholder, rating: 4.4 },
+      { id: 7459, name: 'Sixt', logo: supplierLogoPlaceholder, rating: 4.6 }
     ];
     
     const carTemplates = [
-      { name: 'Fiat Egea', category: 'compact' as const, seats: 5, doors: 4, image: '/images/cars/fiat-egea.jpg' },
-      { name: 'Renault Clio', category: 'economy' as const, seats: 5, doors: 4, image: '/images/cars/renault-clio.jpg' },
-      { name: 'Volkswagen Golf', category: 'compact' as const, seats: 5, doors: 4, image: '/images/cars/vw-golf.jpg' },
-      { name: 'Toyota Corolla', category: 'intermediate' as const, seats: 5, doors: 4, image: '/images/cars/toyota-corolla.jpg' },
-      { name: 'Hyundai i20', category: 'economy' as const, seats: 5, doors: 4, image: '/images/cars/hyundai-i20.jpg' },
-      { name: 'Peugeot 301', category: 'compact' as const, seats: 5, doors: 4, image: '/images/cars/peugeot-301.jpg' },
-      { name: 'BMW 3 Serisi', category: 'premium' as const, seats: 5, doors: 4, image: '/images/cars/bmw-3.jpg' },
-      { name: 'Mercedes C-Class', category: 'luxury' as const, seats: 5, doors: 4, image: '/images/cars/mercedes-c.jpg' },
-      { name: 'Dacia Duster', category: 'suv' as const, seats: 5, doors: 4, image: '/images/cars/dacia-duster.jpg' },
-      { name: 'Ford Transit', category: 'minivan' as const, seats: 9, doors: 4, image: '/images/cars/ford-transit.jpg' }
+      { name: 'Fiat Egea', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Renault Clio', category: 'economy' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Volkswagen Golf', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Toyota Corolla', category: 'intermediate' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Hyundai i20', category: 'economy' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Peugeot 301', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'BMW 3 Serisi', category: 'premium' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Mercedes C-Class', category: 'luxury' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Dacia Duster', category: 'suv' as const, seats: 5, doors: 4, image: carImagePlaceholder },
+      { name: 'Ford Transit', category: 'minivan' as const, seats: 9, doors: 4, image: carImagePlaceholder }
     ];
     
     const cars: Car[] = [];

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#e5e7eb"/>
+  <path d="M80 180 L120 180 L140 160 L260 160 L280 180 L320 180 L310 200 L90 200 Z" fill="#9ca3af" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="130" cy="200" r="18" fill="#4b5563"/>
+  <circle cx="270" cy="200" r="18" fill="#4b5563"/>
+  <text x="200" y="250" font-family="Arial" font-size="14" fill="#6b7280" text-anchor="middle">Araç görseli</text>
+</svg>

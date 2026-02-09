@@ -65,7 +65,7 @@
   "scripts": {
     "dev": "next dev -p 4000",
     "postinstall": "prisma generate || true",
-    "build": "node vercel-protection.js && node scripts/run-migration-safe.js && next build",
+    "build": "node vercel-protection.js && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",

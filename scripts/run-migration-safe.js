@@ -370,6 +370,30 @@ async function checkAndCreateTable() {
       }
     }
 
+    // CarBooking tablosunu kontrol et ve oluştur (Araç Kiralama)
+    const carBookingCheck = await prisma.$queryRaw`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'CarBooking'
+      );
+    `;
+    const carBookingExists = (carBookingCheck[0]?.exists || false);
+
+    if (!carBookingExists) {
+      console.log('📦 CarBooking tablosu yok, oluşturuluyor...');
+      try {
+        const carMigrationPath = join(process.cwd(), 'prisma/migrations/20260208000000_add_car_bookings/migration.sql');
+        const carMigrationSQL = readFileSync(carMigrationPath, 'utf-8');
+        await prisma.$executeRawUnsafe(carMigrationSQL);
+        console.log('✅ CarBooking tablosu oluşturuldu');
+      } catch (error) {
+        console.log('⚠️  CarBooking tablosu oluşturma hatası, devam ediliyor:', error.message);
+      }
+    } else {
+      console.log('✅ CarBooking tablosu zaten mevcut');
+    }
+
     if (backlinkTableExists) {
       // Her backlink'i tek tek kontrol et ve eksik olanları ekle
       console.log(`📝 ${predefinedBacklinks.length} backlink kontrol ediliyor...`);

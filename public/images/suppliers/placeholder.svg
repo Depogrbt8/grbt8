@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="60" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="60" fill="#f3f4f6" rx="4" stroke="#d1d5db" stroke-width="1"/>
+  <text x="60" y="36" font-family="Arial" font-size="12" fill="#6b7280" text-anchor="middle">Tedarikçi</text>
+</svg>
