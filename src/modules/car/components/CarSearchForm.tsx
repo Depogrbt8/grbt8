@@ -189,8 +189,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   return (
     <div className={wrapperClass}>
       <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8">
-        {/* Alanlar: mobilde alt alta, desktop'ta tek satır */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
+        {/* Alanlar: mobilde alt alta, desktop'ta tek satır; her kutu arası yatay boşluk aynı (1rem) */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:gap-[1rem]">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
             {/* Üst satır: sol Alış Lokasyonu, sağda Farklı yerde teslim */}
@@ -339,7 +339,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           )}
           
           {/* Tarih + Saat + Buton alanları */}
-          <div className="w-full mt-3 lg:mt-0 lg:flex-1">
+          <div className="w-full mt-2 lg:mt-0 lg:flex-1">
             {/* Mobil / tablet düzeni (alış ve teslim grupları alt alta) */}
             <div className="flex flex-col gap-3 lg:hidden">
               {/* Alış Tarihi + Saat */}
@@ -440,8 +440,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
             </div>
 
-            {/* Desktop: tüm kutular tek satırda */}
-            <div className="hidden lg:flex lg:flex-row lg:items-end lg:gap-4 w-full">
+            {/* Desktop: tüm kutular tek satırda, kutular arası yatay boşluk ana satırla aynı (1rem) */}
+            <div className="hidden lg:flex lg:flex-row lg:items-end gap-[1rem] w-full">
               {/* Alış Tarihi */}
               <div className="flex-1 min-w-[160px]">
                 <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Tarihi</label>
