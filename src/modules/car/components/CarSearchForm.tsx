@@ -218,7 +218,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           </label>
         </div>
         {/* Alanlar: mobilde alt alta, desktop'ta tek satır; mobilde üst boşluk (checkbox için) */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:flex-nowrap lg:gap-[1rem] pt-10 lg:pt-0">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:flex-nowrap lg:gap-[1rem] pt-6 lg:pt-0">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px] lg:flex lg:flex-col lg:items-stretch">
             {/* Üst satır: desktop'ta Alış Lokasyonu etiketi; mobilde etiket yok (checkbox sağ üstte) */}
@@ -240,7 +240,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               />
             </div>
             {/* Desktop: Farklı yerde teslim form sol alt, alış lokasyonu kutusunun altında */}
-            <label className="hidden lg:flex items-center gap-1.5 mt-2 cursor-pointer w-fit">
+            <label className="hidden lg:flex items-center gap-1.5 mt-1 cursor-pointer w-fit">
               <input
                 type="checkbox"
                 checked={!sameLocation}
