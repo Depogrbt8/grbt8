@@ -188,7 +188,26 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
 
   return (
     <div className={wrapperClass}>
-      <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8">
+      <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8 relative">
+        {/* Mobil: Farklı yerde teslim butonu formun sağ üst köşesinde */}
+        <div className="absolute right-4 top-4 lg:hidden">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!sameLocation}
+              onChange={(e) => {
+                const farkliLokasyon = e.target.checked;
+                setSameLocation(!farkliLokasyon);
+                if (!farkliLokasyon) {
+                  setDropoffLocation(pickupLocation);
+                  setDropoffQuery(pickupQuery);
+                }
+              }}
+              className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+            />
+            <span className="text-sm text-gray-900 font-semibold whitespace-nowrap">Farklı yerde teslim</span>
+          </label>
+        </div>
         {/* Tek satır: masaüstünde tüm alanlar yan yana - uçuş/otel formu ile aynı tasarım */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
@@ -208,8 +227,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
               />
             </div>
-            {/* Farklı yerde teslim - alış lokasyonu kutusunun altında */}
-            <div className="mt-2">
+            {/* Farklı yerde teslim - alış lokasyonu kutusunun altında (sadece desktop) */}
+            <div className="mt-2 hidden lg:block">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
