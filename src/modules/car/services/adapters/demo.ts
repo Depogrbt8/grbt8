@@ -63,6 +63,15 @@ export class DemoCarAPI implements CarRentalAPI {
     };
   }
   
+  /** Projede yüklü gerçek araç fotoğrafları (public/images/cars/) */
+  private static readonly CAR_IMAGES = [
+    '/images/cars/car-sedan1.jpg',
+    '/images/cars/car-sedan2.jpg',
+    '/images/cars/car-compact.jpg',
+    '/images/cars/car-suv.jpg',
+    '/images/cars/car-white.jpg'
+  ] as const;
+
   /**
    * Araç detaylarını getir
    */
@@ -74,15 +83,16 @@ export class DemoCarAPI implements CarRentalAPI {
       throw new Error('Araç bulunamadı');
     }
     
+    const allImages = DemoCarAPI.CAR_IMAGES;
+    const primaryIndex = allImages.indexOf(car.imageUrl as typeof allImages[number]);
+    const detailImages = primaryIndex >= 0
+      ? [car.imageUrl, ...allImages.filter((_, i) => i !== primaryIndex).slice(0, 3)]
+      : [car.imageUrl, allImages[0], allImages[1], allImages[2]];
+    
     return {
       ...car,
       description: `${car.name} ile konforlu ve güvenli bir yolculuk deneyimi yaşayın. ${car.seats} kişilik, ${car.transmission === 'automatic' ? 'otomatik vites' : 'manuel vites'}, ${car.airConditioning ? 'klimalı' : 'klimasız'} bu araç, şehir içi ve şehirlerarası yolculuklarınız için idealdir.`,
-      images: [
-        car.imageUrl,
-        '/images/cars/placeholder.svg',
-        '/images/cars/placeholder.svg',
-        '/images/cars/placeholder.svg'
-      ],
+      images: detailImages as string[],
       specifications: {
         make: car.name.split(' ')[0],
         model: car.name.split(' ')[1],
@@ -338,7 +348,7 @@ export class DemoCarAPI implements CarRentalAPI {
   // ========== HELPER METHODS ==========
   
   private generateMockCars(pickup: CarLocation, dropoff: CarLocation): Car[] {
-    const carImagePlaceholder = '/images/cars/placeholder.svg';
+    const carImages = DemoCarAPI.CAR_IMAGES;
     const supplierLogoPlaceholder = '/images/suppliers/placeholder.svg';
     const suppliers = [
       { id: 7455, name: 'Garenta', logo: supplierLogoPlaceholder, rating: 4.5 },
@@ -349,16 +359,16 @@ export class DemoCarAPI implements CarRentalAPI {
     ];
     
     const carTemplates = [
-      { name: 'Fiat Egea', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Renault Clio', category: 'economy' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Volkswagen Golf', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Toyota Corolla', category: 'intermediate' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Hyundai i20', category: 'economy' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Peugeot 301', category: 'compact' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'BMW 3 Serisi', category: 'premium' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Mercedes C-Class', category: 'luxury' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Dacia Duster', category: 'suv' as const, seats: 5, doors: 4, image: carImagePlaceholder },
-      { name: 'Ford Transit', category: 'minivan' as const, seats: 9, doors: 4, image: carImagePlaceholder }
+      { name: 'Fiat Egea', category: 'compact' as const, seats: 5, doors: 4, image: carImages[0] },
+      { name: 'Renault Clio', category: 'economy' as const, seats: 5, doors: 4, image: carImages[1] },
+      { name: 'Volkswagen Golf', category: 'compact' as const, seats: 5, doors: 4, image: carImages[2] },
+      { name: 'Toyota Corolla', category: 'intermediate' as const, seats: 5, doors: 4, image: carImages[3] },
+      { name: 'Hyundai i20', category: 'economy' as const, seats: 5, doors: 4, image: carImages[4] },
+      { name: 'Peugeot 301', category: 'compact' as const, seats: 5, doors: 4, image: carImages[0] },
+      { name: 'BMW 3 Serisi', category: 'premium' as const, seats: 5, doors: 4, image: carImages[4] },
+      { name: 'Mercedes C-Class', category: 'luxury' as const, seats: 5, doors: 4, image: carImages[4] },
+      { name: 'Dacia Duster', category: 'suv' as const, seats: 5, doors: 4, image: carImages[3] },
+      { name: 'Ford Transit', category: 'minivan' as const, seats: 9, doors: 4, image: carImages[1] }
     ];
     
     const cars: Car[] = [];
