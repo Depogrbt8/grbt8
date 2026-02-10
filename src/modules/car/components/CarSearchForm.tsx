@@ -191,7 +191,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
       <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8 relative">
         {/* Mobil: Farklı yerde teslim butonu formun sağ üst köşesinde */}
         <div className="absolute right-4 top-4 lg:hidden">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
               checked={!sameLocation}
@@ -203,19 +203,19 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   setDropoffQuery(pickupQuery);
                 }
               }}
-              className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+              className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
             />
-            <span className="text-sm text-gray-900 font-semibold whitespace-nowrap">Farklı yerde teslim</span>
+            <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
           </label>
         </div>
-        {/* Tek satır: masaüstünde tüm alanlar yan yana - uçuş/otel formu ile aynı tasarım */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
+        {/* Tek satır: masaüstünde tüm alanlar yan yana - mobilde üst boşluk (checkbox ile kutu arası) */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap pt-12 lg:pt-0">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
             {/* Üst satır: sol Alış Lokasyonu, sağda (sadece desktop) Farklı yerde teslim */}
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center justify-between mb-2">
               <span className="block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
-              <label className="hidden lg:flex items-center gap-2 cursor-pointer mr-1">
+              <label className="hidden lg:flex items-center gap-1.5 cursor-pointer mr-1">
                 <input
                   type="checkbox"
                   checked={!sameLocation}
@@ -227,9 +227,9 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                       setDropoffQuery(pickupQuery);
                     }
                   }}
-                  className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                  className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
                 />
-                <span className="text-xs text-gray-900 font-semibold whitespace-nowrap">Farklı yerde teslim</span>
+                <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
               </label>
             </div>
             <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
