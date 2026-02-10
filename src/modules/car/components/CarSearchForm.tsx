@@ -338,10 +338,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           )}
           
-          {/* Alış Tarihi + Saat (mobilde yan yana, gruplu) */}
-          <div className="w-full flex flex-col gap-3 sm:flex-row sm:w-auto sm:gap-4">
+          {/* Alış Tarihi + Saat (mobilde yan yana, iki grup alt alta) */}
+          <div className="w-full flex flex-row flex-wrap gap-3">
             {/* Alış Tarihi */}
-            <div className="w-full sm:w-auto sm:min-w-[130px]">
+            <div className="flex-1 min-w-[150px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
               <div className="relative w-full flex items-center">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
@@ -355,7 +355,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
             </div>
             {/* Alış Saati */}
-            <div className="w-full sm:w-auto sm:min-w-[90px]">
+            <div className="flex-1 min-w-[110px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
               <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
@@ -375,10 +375,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           </div>
           
-          {/* Teslim Tarihi + Saat (mobilde yan yana, gruplu) */}
-          <div className="w-full flex flex-col gap-3 sm:flex-row sm:w-auto sm:gap-4">
+          {/* Teslim Tarihi + Saat (mobilde yan yana, ikinci grup) */}
+          <div className="w-full flex flex-row flex-wrap gap-3">
             {/* Teslim Tarihi */}
-            <div className="w-full sm:w-auto sm:min-w-[130px]">
+            <div className="flex-1 min-w-[150px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
               <div className="relative w-full flex items-center">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
@@ -392,7 +392,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
             </div>
             {/* Teslim Saati */}
-            <div className="w-full sm:w-auto sm:min-w-[90px]">
+            <div className="flex-1 min-w-[110px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
               <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
