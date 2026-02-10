@@ -475,7 +475,7 @@ export default function HotelSearchForm({
                   }
                   setCheckInDate(date || undefined);
                 }}
-                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
+                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:!text-transparent [&_button]:!placeholder-transparent [&_button>*]:!text-transparent"
                 placeholder="Giriş tarihi"
                 showPrices={false}
                 hideTriggerContent
@@ -501,7 +501,7 @@ export default function HotelSearchForm({
                   }
                   setCheckOutDate(date || undefined);
                 }}
-                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
+                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:!text-transparent [&_button]:!placeholder-transparent [&_button>*]:!text-transparent"
                 placeholder="Çıkış tarihi"
                 showPrices={false}
                 hideTriggerContent

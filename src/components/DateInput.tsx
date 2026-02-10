@@ -135,7 +135,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
         style={{ 
           textAlign: 'center', 
           outline: 'none !important',
-          color: selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)')
+          color: hideTriggerContent ? 'transparent' : (selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)'))
         }}
       >
         {hideTriggerContent ? (
