@@ -458,7 +458,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
 
               {/* Alış Saati */}
-              <div className="flex-1 min-w-[120px] max-w-[160px]">
+              <div className="flex-none w-[110px]">
                 <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
                 <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
@@ -493,7 +493,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
 
               {/* Teslim Saati */}
-              <div className="flex-1 min-w-[120px] max-w-[160px]">
+              <div className="flex-none w-[110px]">
                 <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
                 <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
@@ -513,7 +513,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
 
               {/* Arama Butonu */}
-              <div className="flex-1 min-w-[140px] max-w-[180px]">
+              <div className="flex-none w-[160px]">
                 <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium invisible select-none">Ara</label>
                 <button
                   type="button"
