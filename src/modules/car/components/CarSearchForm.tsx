@@ -183,7 +183,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   };
   
   const wrapperClass = useHomepageSpacing
-    ? 'w-full sm:container sm:mx-auto px-0 sm:px-4 mt-8 sm:mt-24'
+    ? 'w-full px-4 sm:container sm:mx-auto sm:px-4 mt-8 sm:mt-24'
     : 'w-full px-4 md:px-8';
 
   return (
