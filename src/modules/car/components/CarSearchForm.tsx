@@ -338,101 +338,203 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           )}
           
-          {/* Alış Tarihi + Saat (mobilde uçuş/otel ile benzer ölçüler) */}
-          <div className="w-full flex flex-row flex-wrap gap-3">
-            {/* Alış Tarihi */}
-            <div className="flex-1 min-w-[150px]">
-              <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
-              <div className="relative w-full flex items-center h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-                <DateInput
-                  value={pickupDateObj}
-                  onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                  className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
-                  placeholder="Tarih seçin"
-                  showPrices={false}
-                />
-              </div>
-            </div>
-            {/* Alış Saati */}
-            <div className="flex-1 min-w-[110px]">
-              <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
-              <div className="relative w-full h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
-                  <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-[15px] text-gray-500 font-light">
-                    {pickupTime || '10:00'}
-                  </span>
+          {/* Tarih + Saat + Buton alanları */}
+          <div className="w-full mt-2">
+            {/* Mobil / tablet düzeni (alış ve teslim grupları alt alta) */}
+            <div className="flex flex-col gap-3 lg:hidden">
+              {/* Alış Tarihi + Saat */}
+              <div className="w-full flex flex-row flex-wrap gap-3">
+                {/* Alış Tarihi */}
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
+                  <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                    <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                    <DateInput
+                      value={pickupDateObj}
+                      onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                      className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
+                      placeholder="Tarih seçin"
+                      showPrices={false}
+                    />
+                  </div>
                 </div>
-                <TimeInput
-                  value={pickupTime}
-                  onChange={setPickupTime}
-                  placeholder="Saat"
-                  hideTriggerContent
-                  className="w-full h-full min-h-0"
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Teslim Tarihi + Saat (mobilde uçuş/otel ile benzer ölçüler, ikinci grup) */}
-          <div className="w-full flex flex-row flex-wrap gap-3">
-            {/* Teslim Tarihi */}
-            <div className="flex-1 min-w-[150px]">
-              <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
-              <div className="relative w-full flex items-center h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-                <DateInput
-                  value={dropoffDateObj}
-                  onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                  className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
-                  placeholder="Tarih seçin"
-                  showPrices={false}
-                />
-              </div>
-            </div>
-            {/* Teslim Saati */}
-            <div className="flex-1 min-w-[110px]">
-              <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
-              <div className="relative w-full h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
-                  <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-[15px] text-gray-500 font-light">
-                    {dropoffTime || '10:00'}
-                  </span>
+                {/* Alış Saati */}
+                <div className="flex-1 min-w-[110px]">
+                  <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+                  <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                      <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-[15px] text-gray-500 font-light">
+                        {pickupTime || '10:00'}
+                      </span>
+                    </div>
+                    <TimeInput
+                      value={pickupTime}
+                      onChange={setPickupTime}
+                      placeholder="Saat"
+                      hideTriggerContent
+                      className="w-full h-full min-h-0"
+                    />
+                  </div>
                 </div>
-                <TimeInput
-                  value={dropoffTime}
-                  onChange={setDropoffTime}
-                  placeholder="Saat"
-                  hideTriggerContent
-                  className="w-full h-full min-h-0"
-                />
+              </div>
+
+              {/* Teslim Tarihi + Saat */}
+              <div className="w-full flex flex-row flex-wrap gap-3">
+                {/* Teslim Tarihi */}
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
+                  <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                    <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                    <DateInput
+                      value={dropoffDateObj}
+                      onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                      className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
+                      placeholder="Tarih seçin"
+                      showPrices={false}
+                    />
+                  </div>
+                </div>
+                {/* Teslim Saati */}
+                <div className="flex-1 min-w-[110px]">
+                  <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+                  <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                      <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-[15px] text-gray-500 font-light">
+                        {dropoffTime || '10:00'}
+                      </span>
+                    </div>
+                    <TimeInput
+                      value={dropoffTime}
+                      onChange={setDropoffTime}
+                      placeholder="Saat"
+                      hideTriggerContent
+                      className="w-full h-full min-h-0"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Arama Butonu */}
+              <div className="w-full">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium invisible select-none">Ara</label>
+                <button
+                  type="button"
+                  onClick={handleSearch}
+                  disabled={isSearching}
+                  className="w-full h-12 bg-green-500 text-white py-0 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSearching ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Aranıyor...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-5 h-5" />
+                      Araç Ara
+                    </>
+                  )}
+                </button>
               </div>
             </div>
-          </div>
-          
-          {/* Arama Butonu - diğer kutularla aynı hizada (üstte label boşluğu) */}
-          <div className="w-full lg:w-auto lg:flex-1 lg:min-w-[120px] lg:max-w-[160px]">
-            <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium invisible select-none">Ara</label>
-            <button
-              type="button"
-              onClick={handleSearch}
-              disabled={isSearching}
-              className="w-full h-12 bg-green-500 text-white py-0 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-            {isSearching ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Aranıyor...
-              </>
-            ) : (
-              <>
-                <Search className="w-5 h-5" />
-                Araç Ara
-              </>
-            )}
-            </button>
+
+            {/* Desktop: tüm kutular tek satırda */}
+            <div className="hidden lg:flex lg:flex-row lg:items-end lg:gap-4 w-full">
+              {/* Alış Tarihi */}
+              <div className="flex-1 min-w-[160px]">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
+                <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                  <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                  <DateInput
+                    value={pickupDateObj}
+                    onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                    className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
+                    placeholder="Tarih seçin"
+                    showPrices={false}
+                  />
+                </div>
+              </div>
+
+              {/* Alış Saati */}
+              <div className="flex-1 min-w-[120px] max-w-[160px]">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+                <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                  <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                    <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-[15px] text-gray-500 font-light">
+                      {pickupTime || '10:00'}
+                    </span>
+                  </div>
+                  <TimeInput
+                    value={pickupTime}
+                    onChange={setPickupTime}
+                    placeholder="Saat"
+                    hideTriggerContent
+                    className="w-full h-full min-h-0"
+                  />
+                </div>
+              </div>
+
+              {/* Teslim Tarihi */}
+              <div className="flex-1 min-w-[160px]">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
+                <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                  <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                  <DateInput
+                    value={dropoffDateObj}
+                    onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
+                    className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
+                    placeholder="Tarih seçin"
+                    showPrices={false}
+                  />
+                </div>
+              </div>
+
+              {/* Teslim Saati */}
+              <div className="flex-1 min-w-[120px] max-w-[160px]">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
+                <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                  <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                    <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <span className="text-[15px] text-gray-500 font-light">
+                      {dropoffTime || '10:00'}
+                    </span>
+                  </div>
+                  <TimeInput
+                    value={dropoffTime}
+                    onChange={setDropoffTime}
+                    placeholder="Saat"
+                    hideTriggerContent
+                    className="w-full h-full min-h-0"
+                  />
+                </div>
+              </div>
+
+              {/* Arama Butonu */}
+              <div className="flex-1 min-w-[140px] max-w-[180px]">
+                <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium invisible select-none">Ara</label>
+                <button
+                  type="button"
+                  onClick={handleSearch}
+                  disabled={isSearching}
+                  className="w-full h-12 bg-green-500 text-white py-0 rounded-xl font-semibold text-lg shadow-md hover:bg-green-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSearching ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Aranıyor...
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-5 h-5" />
+                      Araç Ara
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
