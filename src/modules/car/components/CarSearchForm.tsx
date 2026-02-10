@@ -217,47 +217,28 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
           </label>
         </div>
-        {/* Alanlar: mobilde alt alta, desktop'ta tek satır; mobilde üst boşluk (checkbox için) */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:flex-nowrap lg:gap-[1rem] pt-6 lg:pt-0">
-          {/* Alış Lokasyonu */}
-          <div className="relative flex-1 min-w-0 lg:min-w-[140px] lg:flex lg:flex-col lg:items-stretch">
-            {/* Üst satır: desktop'ta Alış Lokasyonu etiketi; mobilde etiket yok (checkbox sağ üstte) */}
-            <div className="flex items-center justify-between mb-1">
-              <span className="hidden lg:block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
-            </div>
-            <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex-shrink-0">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-              <input
-                type="text"
-                value={pickupQuery}
-                onChange={(e) => {
-                  setPickupQuery(e.target.value);
-                  setShowPickupSuggestions(true);
-                }}
-                onFocus={() => setShowPickupSuggestions(true)}
-                placeholder={isMobile ? 'Alış Lokasyonu' : 'Havalimanı veya şehir'}
-                className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
-              />
-            </div>
-            {/* Desktop: Farklı yerde teslim form sol alt, alış lokasyonu kutusunun altında */}
-            <label className="hidden lg:flex items-center gap-1.5 mt-1 cursor-pointer w-fit">
-              <input
-                type="checkbox"
-                checked={!sameLocation}
-                onChange={(e) => {
-                  const farkliLokasyon = e.target.checked;
-                  setSameLocation(!farkliLokasyon);
-                  if (!farkliLokasyon) {
-                    setDropoffLocation(pickupLocation);
-                    setDropoffQuery(pickupQuery);
-                  }
-                }}
-                className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
-              />
-              <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
-            </label>
-            
-            {/* Öneriler */}
+        {/* Alanlar: mobilde alt alta, desktop'ta tek satır; tüm inputlar aynı hizada */}
+        <div className="flex flex-col gap-4 pt-6 lg:pt-0">
+          {/* Desktop: tek satır, tüm kutular items-end ile hizalı; checkbox ayrı satırda */}
+          <div className="flex flex-col lg:flex-row lg:items-end gap-4 lg:gap-[1rem] flex-wrap lg:flex-nowrap">
+            {/* Alış Lokasyonu - desktop'ta sadece etiket + kutu (checkbox aşağıda) */}
+            <div className="relative flex-1 min-w-0 lg:min-w-[140px] flex flex-col lg:items-stretch">
+              <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Lokasyonu</label>
+              <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex-shrink-0">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <input
+                  type="text"
+                  value={pickupQuery}
+                  onChange={(e) => {
+                    setPickupQuery(e.target.value);
+                    setShowPickupSuggestions(true);
+                  }}
+                  onFocus={() => setShowPickupSuggestions(true)}
+                  placeholder={isMobile ? 'Alış Lokasyonu' : 'Havalimanı veya şehir'}
+                  className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
+                />
+              </div>
+              {/* Öneriler */}
             {showPickupSuggestions && (
               <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
                 {isLoadingLocations ? (
@@ -300,11 +281,11 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 )}
               </div>
             )}
-          </div>
-          
+            </div>
+
           {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
           {!sameLocation && (
-            <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
+            <div className="relative flex-1 min-w-0 lg:min-w-[140px] flex flex-col lg:items-stretch">
               <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Lokasyonu</label>
               <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
@@ -588,6 +569,26 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Desktop: Farklı yerde teslim alış kutusunun altında, sol tarafa hizalı */}
+          <div className="hidden lg:block mt-1">
+            <label className="flex items-center gap-1.5 cursor-pointer w-fit">
+              <input
+                type="checkbox"
+                checked={!sameLocation}
+                onChange={(e) => {
+                  const farkliLokasyon = e.target.checked;
+                  setSameLocation(!farkliLokasyon);
+                  if (!farkliLokasyon) {
+                    setDropoffLocation(pickupLocation);
+                    setDropoffQuery(pickupQuery);
+                  }
+                }}
+                className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
+              />
+              <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
+            </label>
           </div>
         </div>
       </div>
