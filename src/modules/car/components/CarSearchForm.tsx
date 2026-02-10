@@ -212,24 +212,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
-            <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Lokasyonu</label>
-            <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-              <input
-                type="text"
-                value={pickupQuery}
-                onChange={(e) => {
-                  setPickupQuery(e.target.value);
-                  setShowPickupSuggestions(true);
-                }}
-                onFocus={() => setShowPickupSuggestions(true)}
-                placeholder="Havalimanı veya şehir"
-                className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
-              />
-            </div>
-            {/* Farklı yerde teslim - alış lokasyonu kutusunun altında (sadece desktop) */}
-            <div className="mt-2 hidden lg:block">
-              <label className="flex items-center gap-2 cursor-pointer">
+            {/* Üst satır: sol Alış Lokasyonu, sağda (sadece desktop) Farklı yerde teslim */}
+            <div className="flex items-center justify-between mb-1">
+              <span className="block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
+              <label className="hidden lg:flex items-center gap-2 cursor-pointer mr-1">
                 <input
                   type="checkbox"
                   checked={!sameLocation}
@@ -243,8 +229,22 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   }}
                   className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
                 />
-                <span className="text-sm text-gray-900 font-semibold">Farklı yerde teslim</span>
+                <span className="text-xs text-gray-900 font-semibold whitespace-nowrap">Farklı yerde teslim</span>
               </label>
+            </div>
+            <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={pickupQuery}
+                onChange={(e) => {
+                  setPickupQuery(e.target.value);
+                  setShowPickupSuggestions(true);
+                }}
+                onFocus={() => setShowPickupSuggestions(true)}
+                placeholder="Havalimanı veya şehir"
+                className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
+              />
             </div>
             
             {/* Öneriler */}
