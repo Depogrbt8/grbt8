@@ -61,6 +61,15 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   // Loading state
   const [isSearching, setIsSearching] = useState(false);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+
+  // Mobil görünüm (etiketleri kutu içine taşımak için)
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 1024);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   
   // Araç kiralama API'sini başlat (ana sayfa vb. sayfalarda init çağrılmamış olabilir)
   useEffect(() => {
@@ -193,9 +202,9 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:gap-[1rem]">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
-            {/* Üst satır: sol Alış Lokasyonu, sağda Farklı yerde teslim */}
+            {/* Üst satır: sol Alış Lokasyonu (desktop), sağda Farklı yerde teslim; mobilde sadece checkbox */}
             <div className="flex items-center justify-between mb-2">
-              <span className="block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
+              <span className="hidden lg:block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
               <label className="flex items-center gap-1.5 cursor-pointer mr-1">
                 <input
                   type="checkbox"
@@ -223,7 +232,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   setShowPickupSuggestions(true);
                 }}
                 onFocus={() => setShowPickupSuggestions(true)}
-                placeholder="Havalimanı veya şehir"
+                placeholder={isMobile ? 'Alış Lokasyonu' : 'Havalimanı veya şehir'}
                 className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
               />
             </div>
@@ -276,7 +285,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           {/* Teslim Lokasyonu - sadece checkbox işaretliyken */}
           {!sameLocation && (
             <div className="relative flex-1 min-w-0 lg:min-w-[140px]">
-              <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Lokasyonu</label>
+              <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Lokasyonu</label>
               <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 <input
@@ -287,7 +296,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                     setShowDropoffSuggestions(true);
                   }}
                   onFocus={() => setShowDropoffSuggestions(true)}
-                  placeholder="Havalimanı veya şehir"
+                  placeholder={isMobile ? 'Teslim Lokasyonu' : 'Havalimanı veya şehir'}
                   className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
                 />
               </div>
@@ -346,21 +355,21 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               <div className="w-full flex flex-row flex-wrap gap-3">
                 {/* Alış Tarihi */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Tarihi</label>
+                  <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Tarihi</label>
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                     <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
                     <DateInput
                       value={pickupDateObj}
                       onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
                       className="w-full h-full pl-9 pr-2 text-[15px] text-gray-900 placeholder-gray-700 bg-transparent border-none outline-none text-left font-semibold focus:outline-none focus:ring-0"
-                      placeholder="Tarih seçin"
+                      placeholder={isMobile ? 'Alış Tarihi' : 'Tarih seçin'}
                       showPrices={false}
                     />
                   </div>
                 </div>
                 {/* Alış Saati */}
                 <div className="flex-1 min-w-[110px]">
-                  <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Saat</label>
+                  <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Saat</label>
                   <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -383,21 +392,21 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               <div className="w-full flex flex-row flex-wrap gap-3">
                 {/* Teslim Tarihi */}
                 <div className="flex-1 min-w-[150px]">
-                  <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Tarihi</label>
+                  <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Tarihi</label>
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                     <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
                     <DateInput
                       value={dropoffDateObj}
                       onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
                       className="w-full h-full pl-9 pr-2 text-[15px] text-gray-900 placeholder-gray-700 bg-transparent border-none outline-none text-left font-semibold focus:outline-none focus:ring-0"
-                      placeholder="Tarih seçin"
+                      placeholder={isMobile ? 'Teslim Tarihi' : 'Tarih seçin'}
                       showPrices={false}
                     />
                   </div>
                 </div>
                 {/* Teslim Saati */}
                 <div className="flex-1 min-w-[110px]">
-                  <label className="block text-xs text-gray-900 mb-1 ml-1 font-semibold">Saat</label>
+                  <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Saat</label>
                   <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
