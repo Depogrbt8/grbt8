@@ -188,7 +188,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
 
   return (
     <div className={wrapperClass}>
-      <div className="bg-white rounded-[32px] shadow-lg p-4 sm:p-8 border border-gray-200">
+      <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8">
         {/* Tek satır: masaüstünde tüm alanlar yan yana - uçuş/otel formu ile aynı tasarım */}
         <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap">
           {/* Alış Lokasyonu */}
