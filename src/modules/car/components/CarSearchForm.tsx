@@ -197,30 +197,33 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
 
   return (
     <div className={wrapperClass}>
-      <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8">
-        {/* Alanlar: mobilde alt alta, desktop'ta tek satır; her kutu arası yatay boşluk aynı (1rem) */}
-        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:flex-nowrap lg:gap-[1rem]">
+      <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8 relative">
+        {/* Mobil: Farklı yerde teslim sağ üst köşede */}
+        <div className="absolute right-4 top-4 z-10 lg:hidden">
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!sameLocation}
+              onChange={(e) => {
+                const farkliLokasyon = e.target.checked;
+                setSameLocation(!farkliLokasyon);
+                if (!farkliLokasyon) {
+                  setDropoffLocation(pickupLocation);
+                  setDropoffQuery(pickupQuery);
+                }
+              }}
+              className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
+            />
+            <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
+          </label>
+        </div>
+        {/* Alanlar: mobilde alt alta, desktop'ta tek satır; mobilde üst boşluk (checkbox için) */}
+        <div className="flex flex-col lg:flex-row lg:items-start gap-4 flex-wrap lg:flex-nowrap lg:gap-[1rem] pt-10 lg:pt-0">
           {/* Alış Lokasyonu */}
           <div className="relative flex-1 min-w-0 lg:min-w-[140px] lg:flex lg:flex-col lg:items-stretch">
-            {/* Üst satır: sol Alış Lokasyonu (desktop), mobilde sağda Farklı yerde teslim */}
+            {/* Üst satır: desktop'ta Alış Lokasyonu etiketi; mobilde etiket yok (checkbox sağ üstte) */}
             <div className="flex items-center justify-between mb-1">
               <span className="hidden lg:block text-xs text-gray-900 ml-1 font-semibold">Alış Lokasyonu</span>
-              <label className="flex lg:hidden items-center gap-1.5 cursor-pointer mr-1">
-                <input
-                  type="checkbox"
-                  checked={!sameLocation}
-                  onChange={(e) => {
-                    const farkliLokasyon = e.target.checked;
-                    setSameLocation(!farkliLokasyon);
-                    if (!farkliLokasyon) {
-                      setDropoffLocation(pickupLocation);
-                      setDropoffQuery(pickupQuery);
-                    }
-                  }}
-                  className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
-                />
-                <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
-              </label>
             </div>
             <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex-shrink-0">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
