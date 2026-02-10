@@ -25,6 +25,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
   const [selected, setSelected] = useState(value);
   const inputRef = useRef<HTMLDivElement>(null);
   const [popupRect, setPopupRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSelected(value);
@@ -43,6 +44,18 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
       if (el) {
         const r = el.getBoundingClientRect();
         setPopupRect({ top: r.bottom + 8, left: r.left, width: r.width });
+
+        // Seçili saati kaydırmalı liste içinde ortalamaya çalış
+        const listEl = listRef.current;
+        if (listEl) {
+          const index = TIME_OPTIONS.indexOf(selected || value || '10:00');
+          if (index >= 0) {
+            const optionHeight = 40; // buton yüksekliği tahmini (py-2 ile uyumlu)
+            const targetCenter = index * optionHeight;
+            const offset = targetCenter - listEl.clientHeight / 2 + optionHeight / 2;
+            listEl.scrollTop = Math.max(0, offset);
+          }
+        }
       }
     } else {
       setPopupRect(null);
@@ -63,28 +76,38 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
   const popupContent = show && popupRect && typeof document !== 'undefined' && (
     <div
       data-time-popup
-      className="fixed z-[9999] bg-white rounded-2xl shadow-xl border border-gray-200 p-4 min-w-[280px]"
+      className="fixed z-[9999] bg-white rounded-2xl shadow-xl border border-gray-200 p-4 min-w-[220px]"
       style={{
         top: popupRect.top,
         left: popupRect.left,
+        width: popupRect.width,
       }}
     >
       <p className="text-sm font-medium text-gray-700 mb-3">Saat seçin</p>
-      <div className="grid grid-cols-4 gap-1.5 max-h-[220px] overflow-y-auto overflow-x-visible">
-        {TIME_OPTIONS.map((time) => (
-          <button
-            key={time}
-            type="button"
-            onClick={() => setSelected(time)}
-            className={`py-2 px-2 rounded-lg text-sm font-medium transition-colors ${
-              selected === time
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {time}
-          </button>
-        ))}
+      <div className="relative">
+        {/* Orta satırı vurgulayan şerit */}
+        <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 h-9 rounded-lg border border-green-400/70 bg-green-50/40" />
+
+        {/* Kayar saat listesi */}
+        <div
+          ref={listRef}
+          className="relative max-h-48 overflow-y-auto py-4 scroll-smooth snap-y snap-mandatory"
+        >
+          {TIME_OPTIONS.map((time) => (
+            <button
+              key={time}
+              type="button"
+              onClick={() => setSelected(time)}
+              className={`w-full h-9 flex items-center justify-center text-sm font-semibold snap-center transition-colors ${
+                selected === time
+                  ? 'text-green-600'
+                  : 'text-gray-700 hover:text-black'
+              }`}
+            >
+              {time}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
         <button
