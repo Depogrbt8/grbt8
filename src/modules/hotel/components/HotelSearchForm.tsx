@@ -457,13 +457,13 @@ export default function HotelSearchForm({
             </div>
           </div>
 
-          {/* Giriş Tarihi - tarih takvim ikonunun yanında */}
+          {/* Giriş Tarihi - tek yazı ikon yanında (ince çift yazı kaldırıldı) */}
           <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Giriş Tarihi</label>
             <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                 <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-sm text-gray-500 font-light">
+                <span className="text-[15px] text-gray-900 font-semibold">
                   {checkInDate ? format(checkInDate, 'd MMM yyyy', { locale: tr }) : 'Giriş tarihi'}
                 </span>
               </div>
@@ -475,20 +475,21 @@ export default function HotelSearchForm({
                   }
                   setCheckInDate(date || undefined);
                 }}
-                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
+                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
                 placeholder="Giriş tarihi"
                 showPrices={false}
+                hideTriggerContent
               />
             </div>
           </div>
 
-          {/* Çıkış Tarihi - tarih takvim ikonunun yanında */}
+          {/* Çıkış Tarihi - tek yazı ikon yanında (ince çift yazı kaldırıldı) */}
           <div className="flex flex-col md:col-span-1">
             <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Çıkış Tarihi</label>
             <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                 <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-sm text-gray-500 font-light">
+                <span className="text-[15px] text-gray-900 font-semibold">
                   {checkOutDate ? format(checkOutDate, 'd MMM yyyy', { locale: tr }) : 'Çıkış tarihi'}
                 </span>
               </div>
@@ -500,9 +501,10 @@ export default function HotelSearchForm({
                   }
                   setCheckOutDate(date || undefined);
                 }}
-                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 leading-[44px] py-0 text-sm text-transparent placeholder-transparent focus:outline-none focus:border-none focus:ring-0 bg-transparent border-0 rounded-xl [&_button]:text-transparent [&_button]:justify-start"
+                className="w-full h-full min-h-0 pl-9 pr-4 bg-transparent border-0 rounded-xl focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
                 placeholder="Çıkış tarihi"
                 showPrices={false}
+                hideTriggerContent
               />
             </div>
           </div>
