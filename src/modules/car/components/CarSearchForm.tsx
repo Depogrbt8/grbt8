@@ -338,21 +338,16 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           )}
           
-          {/* Alış Tarihi - otel ile aynı takvim popup (DateInput) */}
+          {/* Alış Tarihi - otel takvim popup tasarımı ile aynı */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
-            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
-                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-500 font-light">
-                  {pickupDateObj ? format(pickupDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
-                </span>
-              </div>
+            <div className="relative w-full flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
               <DateInput
                 value={pickupDateObj}
                 onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                hideTriggerContent
-                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-0"
+                className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                placeholder="Tarih seçin"
                 showPrices={false}
               />
             </div>
@@ -377,21 +372,16 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           </div>
           
-          {/* Teslim Tarihi - otel ile aynı takvim popup */}
+          {/* Teslim Tarihi - otel takvim popup tasarımı ile aynı */}
           <div className="w-full lg:w-auto lg:min-w-[130px]">
             <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
-            <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
-                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span className="text-sm text-gray-500 font-light">
-                  {dropoffDateObj ? format(dropoffDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
-                </span>
-              </div>
+            <div className="relative w-full flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
               <DateInput
                 value={dropoffDateObj}
                 onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                hideTriggerContent
-                className="w-full h-full min-h-0 pl-[7.5rem] pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-0"
+                className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                placeholder="Tarih seçin"
                 showPrices={false}
               />
             </div>
