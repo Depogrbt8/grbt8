@@ -339,7 +339,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           )}
           
           {/* Tarih + Saat + Buton alanları */}
-          <div className="w-full mt-2">
+          <div className="w-full mt-2 lg:mt-0 lg:flex-1">
             {/* Mobil / tablet düzeni (alış ve teslim grupları alt alta) */}
             <div className="flex flex-col gap-3 lg:hidden">
               {/* Alış Tarihi + Saat */}
