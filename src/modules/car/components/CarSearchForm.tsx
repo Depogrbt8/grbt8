@@ -338,17 +338,17 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           )}
           
-          {/* Alış Tarihi + Saat (mobilde yan yana, iki grup alt alta) */}
+          {/* Alış Tarihi + Saat (mobilde uçuş/otel ile benzer ölçüler) */}
           <div className="w-full flex flex-row flex-wrap gap-3">
             {/* Alış Tarihi */}
             <div className="flex-1 min-w-[150px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Alış Tarihi</label>
-              <div className="relative w-full flex items-center">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <div className="relative w-full flex items-center h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
                 <DateInput
                   value={pickupDateObj}
                   onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                  className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                  className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
                   placeholder="Tarih seçin"
                   showPrices={false}
                 />
@@ -357,10 +357,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             {/* Alış Saati */}
             <div className="flex-1 min-w-[110px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
-              <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+              <div className="relative w-full h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                   <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-sm text-gray-500 font-light">
+                  <span className="text-[15px] text-gray-500 font-light">
                     {pickupTime || '10:00'}
                   </span>
                 </div>
@@ -375,17 +375,17 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             </div>
           </div>
           
-          {/* Teslim Tarihi + Saat (mobilde yan yana, ikinci grup) */}
+          {/* Teslim Tarihi + Saat (mobilde uçuş/otel ile benzer ölçüler, ikinci grup) */}
           <div className="w-full flex flex-row flex-wrap gap-3">
             {/* Teslim Tarihi */}
             <div className="flex-1 min-w-[150px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Teslim Tarihi</label>
-              <div className="relative w-full flex items-center">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <div className="relative w-full flex items-center h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+                <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
                 <DateInput
                   value={dropoffDateObj}
                   onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                  className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                  className="w-full h-full pl-9 pr-2 text-[15px] text-gray-500 placeholder-gray-400 bg-transparent border-none outline-none text-left font-light focus:outline-none focus:ring-0"
                   placeholder="Tarih seçin"
                   showPrices={false}
                 />
@@ -394,10 +394,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
             {/* Teslim Saati */}
             <div className="flex-1 min-w-[110px]">
               <label className="block text-xs text-gray-500 mb-1 ml-1 font-medium">Saat</label>
-              <div className="relative w-full h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+              <div className="relative w-full h-10 lg:h-12 border border-gray-300 rounded-lg lg:rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
+                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                   <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-sm text-gray-500 font-light">
+                  <span className="text-[15px] text-gray-500 font-light">
                     {dropoffTime || '10:00'}
                   </span>
                 </div>
