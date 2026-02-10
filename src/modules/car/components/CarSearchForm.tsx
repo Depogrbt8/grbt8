@@ -357,13 +357,19 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="flex-1 min-w-[150px]">
                   <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Tarihi</label>
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-                    <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                      <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-[15px] text-gray-900 font-semibold">
+                        {pickupDateObj ? format(pickupDateObj, 'd MMM', { locale: tr }) : (isMobile ? 'Alış Tarihi' : 'Tarih seçin')}
+                      </span>
+                    </div>
                     <DateInput
                       value={pickupDateObj}
                       onChange={(d) => setPickupDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                      className="w-full h-full pl-9 pr-2 text-[15px] text-gray-900 placeholder-gray-700 bg-transparent border-none outline-none text-left font-semibold focus:outline-none focus:ring-0"
+                      className="w-full h-full pl-9 pr-2 bg-transparent border-none outline-none text-left focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
                       placeholder={isMobile ? 'Alış Tarihi' : 'Tarih seçin'}
                       showPrices={false}
+                      hideTriggerContent
                     />
                   </div>
                 </div>
@@ -394,13 +400,19 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="flex-1 min-w-[150px]">
                   <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Tarihi</label>
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
-                    <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+                    <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
+                      <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-[15px] text-gray-900 font-semibold">
+                        {dropoffDateObj ? format(dropoffDateObj, 'd MMM', { locale: tr }) : (isMobile ? 'Teslim Tarihi' : 'Tarih seçin')}
+                      </span>
+                    </div>
                     <DateInput
                       value={dropoffDateObj}
                       onChange={(d) => setDropoffDate(d ? format(d, 'yyyy-MM-dd') : '')}
-                      className="w-full h-full pl-9 pr-2 text-[15px] text-gray-900 placeholder-gray-700 bg-transparent border-none outline-none text-left font-semibold focus:outline-none focus:ring-0"
+                      className="w-full h-full pl-9 pr-2 bg-transparent border-none outline-none text-left focus:outline-none focus:ring-0 text-transparent placeholder-transparent [&_button]:text-transparent [&_button]:placeholder-transparent"
                       placeholder={isMobile ? 'Teslim Tarihi' : 'Tarih seçin'}
                       showPrices={false}
+                      hideTriggerContent
                     />
                   </div>
                 </div>
