@@ -2,13 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { format, parse } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CarList, CarFilters, CarSearchForm } from '@/modules/car/components';
 import { searchCars } from '@/modules/car/services';
 import { initCarRentalModule } from '@/modules/car/init';
 import type { Car, CarFiltersType, CarSearchResult } from '@/modules/car/types';
-import { Loader2, SlidersHorizontal } from 'lucide-react';
+import { Loader2, SlidersHorizontal, Pencil, ArrowUpDown } from 'lucide-react';
 
 // Initialize module
 if (typeof window !== 'undefined') {
@@ -26,7 +28,9 @@ function CarSearchContent() {
   const dropoffDate = searchParams.get('dropoffDate') || '';
   const dropoffTime = searchParams.get('dropoffTime') || '10:00';
   const driverAge = parseInt(searchParams.get('driverAge') || '30');
-  
+  const pickupName = searchParams.get('pickupName') || '';
+  const dropoffName = searchParams.get('dropoffName') || '';
+
   // State
   const [searchResult, setSearchResult] = useState<CarSearchResult | null>(null);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
@@ -35,6 +39,10 @@ function CarSearchContent() {
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'rating'>('price_asc');
   const [showFilters, setShowFilters] = useState(false);
+  /** Mobil: arama özeti mi gösterilecek (false) yoksa form düzenleme mi (true) */
+  const [showEditForm, setShowEditForm] = useState(false);
+  /** Mobil: sıralama dropdown açık mı */
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   
   // İlk arama
   useEffect(() => {
@@ -170,14 +178,31 @@ function CarSearchContent() {
     min: Math.min(...searchResult.data.map(c => c.totalPrice)),
     max: Math.max(...searchResult.data.map(c => c.totalPrice))
   } : { min: 0, max: 1000 };
-  
+
+  // Özet satırı için tarih metni (11 Şub 01:00 - 19 Şub 10:00)
+  const summaryDateText = (() => {
+    if (!pickupDate || !dropoffDate || pickupDate.length !== 10 || dropoffDate.length !== 10) return '';
+    try {
+      const p = parse(pickupDate, 'yyyy-MM-dd', new Date());
+      const d = parse(dropoffDate, 'yyyy-MM-dd', new Date());
+      const pt = `${format(p, 'd MMM', { locale: tr })} ${pickupTime}`;
+      const dt = `${format(d, 'd MMM', { locale: tr })} ${dropoffTime}`;
+      return `${pt} - ${dt}`;
+    } catch {
+      return `${pickupDate} ${pickupTime} - ${dropoffDate} ${dropoffTime}`;
+    }
+  })();
+  const summaryLocationText = pickupName && dropoffName
+    ? (pickupLocationId === dropoffLocationId ? pickupName : `${pickupName} - ${dropoffName}`)
+    : '';
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Arama formu (küçük) */}
-        <div className="mb-6">
+      <main className="container mx-auto px-4 py-4 md:py-8">
+        {/* Masaüstü: her zaman arama formu */}
+        <div className="mb-6 hidden lg:block">
           <CarSearchForm
             initialValues={{
               pickupLocationId,
@@ -190,7 +215,113 @@ function CarSearchContent() {
             }}
           />
         </div>
-        
+
+        {/* Mobil: arama sonrası özet veya form (Düzenle ile geçiş) */}
+        <div className="lg:hidden mb-4">
+          {showEditForm ? (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-sm font-medium text-gray-700">Aramayı düzenle</span>
+                <button
+                  type="button"
+                  onClick={() => setShowEditForm(false)}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  İptal
+                </button>
+              </div>
+              <CarSearchForm
+                initialValues={{
+                  pickupLocationId,
+                  dropoffLocationId,
+                  pickupDate,
+                  pickupTime,
+                  dropoffDate,
+                  dropoffTime,
+                  driverAge
+                }}
+              />
+            </div>
+          ) : (
+            <>
+              {/* Arama özeti: lokasyon + tarih + Düzenle */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    {summaryLocationText ? (
+                      <p className="text-base font-semibold text-gray-900 truncate">{summaryLocationText}</p>
+                    ) : (
+                      <p className="text-base font-semibold text-gray-900">Araç kiralama</p>
+                    )}
+                    {summaryDateText ? (
+                      <p className="text-sm text-gray-500 mt-0.5">{summaryDateText}</p>
+                    ) : (
+                      <p className="text-sm text-gray-500 mt-0.5">{pickupDate} - {dropoffDate}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowEditForm(true)}
+                    className="flex items-center gap-1.5 text-green-600 hover:text-green-700 font-medium text-sm shrink-0"
+                  >
+                    <Pencil className="w-4 h-4" />
+                    Düzenle
+                  </button>
+                </div>
+                {/* Filtrele / Sırala */}
+                <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    Filtrele
+                  </button>
+                  <div className="relative flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowSortDropdown(!showSortDropdown)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50"
+                    >
+                      <ArrowUpDown className="w-4 h-4" />
+                      Sırala
+                    </button>
+                    {showSortDropdown && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} aria-hidden />
+                        <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-1">
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('price_asc'); setShowSortDropdown(false); }}
+                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_asc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                          >
+                            Fiyat (Düşük → Yüksek)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('price_desc'); setShowSortDropdown(false); }}
+                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_desc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                          >
+                            Fiyat (Yüksek → Düşük)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('rating'); setShowSortDropdown(false); }}
+                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'rating' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                          >
+                            Puan
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
@@ -206,8 +337,8 @@ function CarSearchContent() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Filtreler (sol taraf) */}
             <div className="lg:col-span-1">
-              {/* Mobil: Filtre butonu */}
-              <div className="lg:hidden mb-4">
+              {/* Mobil: Filtre butonu (sadece form düzenleme görünümünde; özet görünümünde Filtrele özet kartında) */}
+              <div className={`lg:hidden mb-4 ${!showEditForm ? 'hidden' : ''}`}>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-lg"

@@ -159,7 +159,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
     
     setIsSearching(true);
     
-    // Arama parametrelerini oluştur
+    // Arama parametrelerini oluştur (sonuç sayfasında özet göstermek için isimler de eklenir)
     const params = new URLSearchParams({
       pickupLocationId: pickupLocation.id,
       dropoffLocationId: sameLocation ? pickupLocation.id : dropoffLocation!.id,
@@ -169,8 +169,9 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
       dropoffTime,
       driverAge: '30'
     });
-    
-    // Arama sayfasına yönlendir
+    params.set('pickupName', pickupLocation.name);
+    params.set('dropoffName', sameLocation ? pickupLocation.name : dropoffLocation!.name);
+
     router.push(`/cars/search?${params.toString()}`);
   };
   
