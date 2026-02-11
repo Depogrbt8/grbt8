@@ -199,70 +199,54 @@ function CarSearchContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <main className="container mx-auto px-4 py-4 md:py-8">
-        {/* Masaüstü: her zaman arama formu */}
-        <div className="mb-6 hidden lg:block">
-          <CarSearchForm
-            initialValues={{
-              pickupLocationId,
-              dropoffLocationId,
-              pickupDate,
-              pickupTime,
-              dropoffDate,
-              dropoffTime,
-              driverAge
-            }}
-          />
-        </div>
 
-        {/* Mobil: otel sayfası ile aynı özet yapısı (sticky bar, Düzenle, Filtrele, Sırala - Harita yok) */}
-        <div className="lg:hidden">
-          {showEditForm ? (
-            <div className="bg-white border-b border-gray-200 p-4 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-gray-700">Aramayı düzenle</span>
-                <button
-                  type="button"
-                  onClick={() => setShowEditForm(false)}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  İptal
-                </button>
-              </div>
-              <CarSearchForm
-                initialValues={{
-                  pickupLocationId,
-                  dropoffLocationId,
-                  pickupDate,
-                  pickupTime,
-                  dropoffDate,
-                  dropoffTime,
-                  driverAge
-                }}
-              />
+      {/* Mobil: özet barı Header hemen altında, tam genişlik, çerçeve yok, sol köşeye yakın */}
+      <div className="lg:hidden">
+        {showEditForm ? (
+          <div className="bg-white border-b border-gray-100 px-3 py-3">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-gray-700">Aramayı düzenle</span>
+              <button
+                type="button"
+                onClick={() => setShowEditForm(false)}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                İptal
+              </button>
             </div>
-          ) : (
-            <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
-              <div className="flex items-center justify-between px-4 py-3">
-                <div className="min-w-0 flex-1">
-                  <div className="font-bold text-lg text-gray-900 tracking-tight truncate">
-                    {summaryLocationText || 'Araç kiralama'}
-                  </div>
-                  <div className="text-gray-500 text-sm mt-0.5">
-                    {summaryDateText || `${pickupDate} - ${dropoffDate}`}
-                  </div>
+            <CarSearchForm
+              initialValues={{
+                pickupLocationId,
+                dropoffLocationId,
+                pickupDate,
+                pickupTime,
+                dropoffDate,
+                dropoffTime,
+                driverAge
+              }}
+            />
+          </div>
+        ) : (
+          <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
+            <div className="flex items-center justify-between px-3 pt-2.5 pb-2">
+              <div className="min-w-0 flex-1 pr-2">
+                <div className="font-bold text-lg text-gray-900 tracking-tight truncate">
+                  {summaryLocationText || 'Araç kiralama'}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowEditForm(true)}
-                  className="text-green-700 underline font-semibold text-base shrink-0"
-                >
-                  Düzenle
-                </button>
+                <div className="text-gray-500 text-sm mt-0.5">
+                  {summaryDateText || `${pickupDate} - ${dropoffDate}`}
+                </div>
               </div>
-              {/* Filtrele, Sırala (otel ile aynı stil; Harita yok) */}
-              <div className="flex gap-2 px-4 pb-2">
+              <button
+                type="button"
+                onClick={() => setShowEditForm(true)}
+                className="text-green-700 underline font-semibold text-base shrink-0"
+              >
+                Düzenle
+              </button>
+            </div>
+            {/* Filtrele, Sırala (çerçeve yok; Harita yok) */}
+            <div className="flex gap-2 px-3 pb-2">
                 <button
                   type="button"
                   onClick={() => setShowFilters(!showFilters)}
@@ -316,6 +300,22 @@ function CarSearchContent() {
               </div>
             </div>
           )}
+        </div>
+
+      <main className="container mx-auto px-4 max-lg:pt-0 py-4 md:py-8">
+        {/* Masaüstü: her zaman arama formu */}
+        <div className="mb-6 hidden lg:block">
+          <CarSearchForm
+            initialValues={{
+              pickupLocationId,
+              dropoffLocationId,
+              pickupDate,
+              pickupTime,
+              dropoffDate,
+              dropoffTime,
+              driverAge
+            }}
+          />
         </div>
 
         {loading ? (
