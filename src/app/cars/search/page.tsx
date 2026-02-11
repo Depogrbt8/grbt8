@@ -10,7 +10,7 @@ import { CarList, CarFilters, CarSearchForm } from '@/modules/car/components';
 import { searchCars } from '@/modules/car/services';
 import { initCarRentalModule } from '@/modules/car/init';
 import type { Car, CarFiltersType, CarSearchResult } from '@/modules/car/types';
-import { Loader2, SlidersHorizontal, Filter, ArrowUpDown } from 'lucide-react';
+import { Loader2, Filter, ArrowUpDown } from 'lucide-react';
 
 // Initialize module
 if (typeof window !== 'undefined') {
@@ -356,18 +356,7 @@ function CarSearchContent() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Filtreler (sol taraf) */}
             <div className="lg:col-span-1">
-              {/* Mobil: Filtre butonu (sadece form düzenleme görünümünde; özet görünümünde Filtrele özet kartında) */}
-              <div className={`lg:hidden mb-4 ${!showEditForm ? 'hidden' : ''}`}>
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-lg"
-                >
-                  <SlidersHorizontal className="w-5 h-5" />
-                  <span>Filtreler</span>
-                </button>
-              </div>
-              
-              {/* Filtre paneli */}
+              {/* Filtre paneli (mobilde üstteki Filtrele butonu ile açılır) */}
               <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
                 <CarFilters
                   filters={filters}
@@ -380,8 +369,8 @@ function CarSearchContent() {
             
             {/* Araç listesi (sağ taraf) */}
             <div className="lg:col-span-3">
-              {/* Başlık ve sıralama */}
-              <div className="flex justify-between items-center mb-4">
+              {/* Başlık ve sıralama: sadece masaüstü (mobilde üstte Filtrele/Sırala var) */}
+              <div className="hidden lg:flex justify-between items-center mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
                     {filteredCars.length} Araç Bulundu
@@ -392,7 +381,6 @@ function CarSearchContent() {
                     </p>
                   )}
                 </div>
-                
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-gray-600">Sırala:</label>
                   <select
