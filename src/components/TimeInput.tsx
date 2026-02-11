@@ -24,7 +24,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(value);
   const inputRef = useRef<HTMLDivElement>(null);
-  const [popupRect, setPopupRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const [popupRect, setPopupRect] = useState<{ top: number; left: number; width: number; maxListHeight?: number } | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,14 +43,40 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
       const el = inputRef.current;
       if (el) {
         const r = el.getBoundingClientRect();
-        setPopupRect({ top: r.bottom + 8, left: r.left, width: r.width });
+        const vw = typeof window !== 'undefined' ? window.innerWidth : 800;
+        const vh = typeof window !== 'undefined' ? window.innerHeight : 600;
+        const padding = 12;
+        const popupMinWidth = 220;
+        const popupListMaxHeight = 192; // max-h-48
+        const popupApproxHeight = 56 + popupListMaxHeight + 52; // başlık + liste + butonlar
+
+        let left = r.left;
+        let width = Math.max(r.width, popupMinWidth);
+        width = Math.min(width, vw - 2 * padding);
+        if (left + width > vw - padding) left = vw - width - padding;
+        if (left < padding) left = padding;
+
+        let top = r.bottom + 8;
+        const headerAndFooter = 56 + 52;
+        let maxListHeight: number | undefined;
+        if (top + popupApproxHeight > vh - padding) {
+          top = r.top - popupApproxHeight - 8;
+          if (top < padding) {
+            top = padding;
+            maxListHeight = Math.max(120, vh - padding - top - headerAndFooter - 16);
+          }
+        } else {
+          const availableBelow = vh - padding - top - headerAndFooter - 16;
+          if (availableBelow < popupListMaxHeight) maxListHeight = Math.max(120, availableBelow);
+        }
+        setPopupRect({ top, left, width, maxListHeight });
 
         // Seçili saati kaydırmalı liste içinde ortalamaya çalış
         const listEl = listRef.current;
         if (listEl) {
           const index = TIME_OPTIONS.indexOf(selected || value || '10:00');
           if (index >= 0) {
-            const optionHeight = 40; // buton yüksekliği tahmini (py-2 ile uyumlu)
+            const optionHeight = 40;
             const targetCenter = index * optionHeight;
             const offset = targetCenter - listEl.clientHeight / 2 + optionHeight / 2;
             listEl.scrollTop = Math.max(0, offset);
@@ -91,7 +117,8 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
         {/* Kayar saat listesi */}
         <div
           ref={listRef}
-          className="relative max-h-48 overflow-y-auto py-4 scroll-smooth snap-y snap-mandatory"
+          className="relative overflow-y-auto py-4 scroll-smooth snap-y snap-mandatory"
+          style={{ maxHeight: popupRect.maxListHeight ?? 192 }}
         >
           {TIME_OPTIONS.map((time) => (
             <button
