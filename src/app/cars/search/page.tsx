@@ -10,7 +10,7 @@ import { CarList, CarFilters, CarSearchForm } from '@/modules/car/components';
 import { searchCars } from '@/modules/car/services';
 import { initCarRentalModule } from '@/modules/car/init';
 import type { Car, CarFiltersType, CarSearchResult } from '@/modules/car/types';
-import { Loader2, SlidersHorizontal, Pencil, ArrowUpDown } from 'lucide-react';
+import { Loader2, SlidersHorizontal, Filter, ArrowUpDown } from 'lucide-react';
 
 // Initialize module
 if (typeof window !== 'undefined') {
@@ -216,10 +216,10 @@ function CarSearchContent() {
           />
         </div>
 
-        {/* Mobil: arama sonrası özet veya form (Düzenle ile geçiş) */}
-        <div className="lg:hidden mb-4">
+        {/* Mobil: otel sayfası ile aynı özet yapısı (sticky bar, Düzenle, Filtrele, Sırala - Harita yok) */}
+        <div className="lg:hidden">
           {showEditForm ? (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <div className="bg-white border-b border-gray-200 p-4 mb-4">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm font-medium text-gray-700">Aramayı düzenle</span>
                 <button
@@ -243,82 +243,78 @@ function CarSearchContent() {
               />
             </div>
           ) : (
-            <>
-              {/* Arama özeti: lokasyon + tarih + Düzenle */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    {summaryLocationText ? (
-                      <p className="text-base font-semibold text-gray-900 truncate">{summaryLocationText}</p>
-                    ) : (
-                      <p className="text-base font-semibold text-gray-900">Araç kiralama</p>
-                    )}
-                    {summaryDateText ? (
-                      <p className="text-sm text-gray-500 mt-0.5">{summaryDateText}</p>
-                    ) : (
-                      <p className="text-sm text-gray-500 mt-0.5">{pickupDate} - {dropoffDate}</p>
-                    )}
+            <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
+              <div className="flex items-center justify-between px-4 py-3">
+                <div className="min-w-0 flex-1">
+                  <div className="font-bold text-lg text-gray-900 tracking-tight truncate">
+                    {summaryLocationText || 'Araç kiralama'}
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowEditForm(true)}
-                    className="flex items-center gap-1.5 text-green-600 hover:text-green-700 font-medium text-sm shrink-0"
-                  >
-                    <Pencil className="w-4 h-4" />
-                    Düzenle
-                  </button>
+                  <div className="text-gray-500 text-sm mt-0.5">
+                    {summaryDateText || `${pickupDate} - ${dropoffDate}`}
+                  </div>
                 </div>
-                {/* Filtrele / Sırala */}
-                <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowEditForm(true)}
+                  className="text-green-700 underline font-semibold text-base shrink-0"
+                >
+                  Düzenle
+                </button>
+              </div>
+              {/* Filtrele, Sırala (otel ile aynı stil; Harita yok) */}
+              <div className="flex gap-2 px-4 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border transition-colors ${
+                    Object.values(filters).some(v => v !== undefined && (Array.isArray(v) ? v.length > 0 : v !== ''))
+                      ? 'bg-green-50 border-green-500 text-green-700'
+                      : 'bg-white border-gray-300 text-gray-700'
+                  }`}
+                >
+                  <Filter className="w-4 h-4" />
+                  <span className="text-xs font-medium">Filtrele</span>
+                </button>
+                <div className="relative flex-1">
                   <button
                     type="button"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50"
+                    onClick={() => setShowSortDropdown(!showSortDropdown)}
+                    className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border bg-white border-gray-300 text-gray-700 transition-colors"
                   >
-                    <SlidersHorizontal className="w-4 h-4" />
-                    Filtrele
+                    <ArrowUpDown className="w-4 h-4" />
+                    <span className="text-xs font-medium">Sırala</span>
                   </button>
-                  <div className="relative flex-1">
-                    <button
-                      type="button"
-                      onClick={() => setShowSortDropdown(!showSortDropdown)}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50"
-                    >
-                      <ArrowUpDown className="w-4 h-4" />
-                      Sırala
-                    </button>
-                    {showSortDropdown && (
-                      <>
-                        <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} aria-hidden />
-                        <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-1">
-                          <button
-                            type="button"
-                            onClick={() => { setSortBy('price_asc'); setShowSortDropdown(false); }}
-                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_asc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                          >
-                            Fiyat (Düşük → Yüksek)
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => { setSortBy('price_desc'); setShowSortDropdown(false); }}
-                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_desc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                          >
-                            Fiyat (Yüksek → Düşük)
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => { setSortBy('rating'); setShowSortDropdown(false); }}
-                            className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'rating' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                          >
-                            Puan
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  {showSortDropdown && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} aria-hidden />
+                      <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-1">
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('price_asc'); setShowSortDropdown(false); }}
+                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_asc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                        >
+                          Fiyat (Düşük → Yüksek)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('price_desc'); setShowSortDropdown(false); }}
+                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_desc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                        >
+                          Fiyat (Yüksek → Düşük)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('rating'); setShowSortDropdown(false); }}
+                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'rating' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
+                        >
+                          Puan
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
 
