@@ -590,6 +590,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
             </label>
           </div>
+          </div>
         </div>
       </div>
     </div>
