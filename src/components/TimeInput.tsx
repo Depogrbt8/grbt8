@@ -20,11 +20,16 @@ for (let h = 0; h < 24; h++) {
   }
 }
 
+const OPTION_HEIGHT = 36;
+const POPUP_WIDTH = 88;
+const VISIBLE_ITEMS = 6;
+const POPUP_LIST_HEIGHT = OPTION_HEIGHT * VISIBLE_ITEMS;
+
 const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, className, placeholder = 'Saat seçin', hideTriggerContent = false }) => {
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(value);
   const inputRef = useRef<HTMLDivElement>(null);
-  const [popupRect, setPopupRect] = useState<{ top: number; left: number; width: number; maxListHeight?: number } | null>(null);
+  const [popupRect, setPopupRect] = useState<{ top: number; left: number; maxListHeight?: number } | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,111 +51,79 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, disabled, classN
         const vw = typeof window !== 'undefined' ? window.innerWidth : 800;
         const vh = typeof window !== 'undefined' ? window.innerHeight : 600;
         const padding = 12;
-        const popupMinWidth = 220;
-        const popupListMaxHeight = 192; // max-h-48
-        const popupApproxHeight = 56 + popupListMaxHeight + 52; // başlık + liste + butonlar
 
-        let left = r.left;
-        let width = Math.max(r.width, popupMinWidth);
-        width = Math.min(width, vw - 2 * padding);
-        if (left + width > vw - padding) left = vw - width - padding;
+        let left = r.left + (r.width - POPUP_WIDTH) / 2;
         if (left < padding) left = padding;
+        if (left + POPUP_WIDTH > vw - padding) left = vw - POPUP_WIDTH - padding;
 
-        let top = r.bottom + 8;
-        const headerAndFooter = 56 + 52;
+        let top = r.bottom + 6;
+        const popupApproxHeight = POPUP_LIST_HEIGHT + 16;
         let maxListHeight: number | undefined;
         if (top + popupApproxHeight > vh - padding) {
-          top = r.top - popupApproxHeight - 8;
+          top = r.top - popupApproxHeight - 6;
           if (top < padding) {
             top = padding;
-            maxListHeight = Math.max(120, vh - padding - top - headerAndFooter - 16);
+            maxListHeight = Math.max(OPTION_HEIGHT * 3, vh - padding - top - 16);
           }
         } else {
-          const availableBelow = vh - padding - top - headerAndFooter - 16;
-          if (availableBelow < popupListMaxHeight) maxListHeight = Math.max(120, availableBelow);
+          const availableBelow = vh - padding - top - 16;
+          if (availableBelow < POPUP_LIST_HEIGHT) maxListHeight = Math.max(OPTION_HEIGHT * 3, availableBelow);
         }
-        setPopupRect({ top, left, width, maxListHeight });
+        setPopupRect({ top, left, maxListHeight });
 
-        // Seçili saati kaydırmalı liste içinde ortalamaya çalış
-        const listEl = listRef.current;
-        if (listEl) {
-          const index = TIME_OPTIONS.indexOf(selected || value || '10:00');
-          if (index >= 0) {
-            const optionHeight = 40;
-            const targetCenter = index * optionHeight;
-            const offset = targetCenter - listEl.clientHeight / 2 + optionHeight / 2;
-            listEl.scrollTop = Math.max(0, offset);
+        requestAnimationFrame(() => {
+          const listEl = listRef.current;
+          if (listEl) {
+            const current = selected || value || '10:00';
+            const index = TIME_OPTIONS.indexOf(current);
+            if (index >= 0) {
+              const targetScroll = index * OPTION_HEIGHT - listEl.clientHeight / 2 + OPTION_HEIGHT / 2;
+              listEl.scrollTop = Math.max(0, targetScroll);
+            }
           }
-        }
+        });
       }
     } else {
       setPopupRect(null);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [show]);
+  }, [show, selected, value]);
 
-  const handleApply = () => {
-    onChange(selected);
-    setShow(false);
-  };
-
-  const handleCancel = () => {
-    setSelected(value);
+  const handleSelectTime = (time: string) => {
+    setSelected(time);
+    onChange(time);
     setShow(false);
   };
 
   const popupContent = show && popupRect && typeof document !== 'undefined' && (
     <div
       data-time-popup
-      className="fixed z-[9999] bg-white rounded-2xl shadow-xl border border-gray-200 p-4 min-w-[220px]"
+      className="fixed z-[9999] bg-white rounded-xl shadow-lg border border-gray-200 py-2"
       style={{
         top: popupRect.top,
         left: popupRect.left,
-        width: popupRect.width,
+        width: POPUP_WIDTH,
       }}
     >
-      <p className="text-sm font-medium text-gray-700 mb-3">Saat seçin</p>
-      <div className="relative">
-        {/* Orta satırı vurgulayan şerit */}
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 h-9 rounded-lg border border-green-400/70 bg-green-50/40" />
-
-        {/* Kayar saat listesi */}
-        <div
-          ref={listRef}
-          className="relative overflow-y-auto py-4 scroll-smooth snap-y snap-mandatory"
-          style={{ maxHeight: popupRect.maxListHeight ?? 192 }}
-        >
-          {TIME_OPTIONS.map((time) => (
-            <button
-              key={time}
-              type="button"
-              onClick={() => setSelected(time)}
-              className={`w-full h-9 flex items-center justify-center text-sm font-semibold snap-center transition-colors ${
-                selected === time
-                  ? 'text-green-600'
-                  : 'text-gray-700 hover:text-black'
-              }`}
-            >
-              {time}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-100">
-        <button
-          type="button"
-          onClick={handleCancel}
-          className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium"
-        >
-          İptal
-        </button>
-        <button
-          type="button"
-          onClick={handleApply}
-          className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 text-sm"
-        >
-          Tamam
-        </button>
+      <div
+        ref={listRef}
+        className="overflow-y-auto overflow-x-hidden scroll-smooth py-1"
+        style={{ maxHeight: popupRect.maxListHeight ?? POPUP_LIST_HEIGHT }}
+      >
+        {TIME_OPTIONS.map((time) => (
+          <button
+            key={time}
+            type="button"
+            onClick={() => handleSelectTime(time)}
+            className={`w-full h-9 flex items-center justify-center text-sm font-medium rounded-md transition-colors ${
+              (selected || value) === time
+                ? 'bg-green-100 text-green-800'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            {time}
+          </button>
+        ))}
       </div>
     </div>
   );
