@@ -43,7 +43,22 @@ function CarSearchContent() {
   const [showEditForm, setShowEditForm] = useState(false);
   /** Mobil: sıralama dropdown açık mı */
   const [showSortDropdown, setShowSortDropdown] = useState(false);
-  
+  /** Mobil: Düzenle modalı açılış animasyonu (yukarıdan kayma) */
+  const [editModalMounted, setEditModalMounted] = useState(false);
+
+  // Düzenle modalı açıldığında yukarıdan kayma animasyonu
+  useEffect(() => {
+    if (showEditForm) {
+      setEditModalMounted(false);
+      const t = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setEditModalMounted(true));
+      });
+      return () => cancelAnimationFrame(t);
+    } else {
+      setEditModalMounted(false);
+    }
+  }, [showEditForm]);
+
   // İlk arama
   useEffect(() => {
     if (!pickupLocationId || !dropoffLocationId || !pickupDate || !dropoffDate) {
@@ -202,32 +217,8 @@ function CarSearchContent() {
 
       {/* Mobil: özet barı Header hemen altında, tam genişlik, çerçeve yok, sol köşeye yakın */}
       <div className="lg:hidden">
-        {showEditForm ? (
-          <div className="bg-white border-b border-gray-100 px-3 py-3">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-gray-700">Aramayı düzenle</span>
-              <button
-                type="button"
-                onClick={() => setShowEditForm(false)}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                İptal
-              </button>
-            </div>
-            <CarSearchForm
-              initialValues={{
-                pickupLocationId,
-                dropoffLocationId,
-                pickupDate,
-                pickupTime,
-                dropoffDate,
-                dropoffTime,
-                driverAge
-              }}
-            />
-          </div>
-        ) : (
-          <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
+        {/* Özet barı (Düzenle’ye basılınca modal açılır, inline form yok) */}
+        <div className="sticky top-0 z-30 bg-white border-b border-gray-100">
             <div className="flex items-center justify-between px-3 pt-2.5 pb-2">
               <div className="min-w-0 flex-1 pr-2">
                 <div className="font-bold text-lg text-gray-900 tracking-tight truncate">
@@ -299,8 +290,40 @@ function CarSearchContent() {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+
+        {/* Mobil: Düzenle modalı – yukarıdan açılan panel (otel ile aynı açılış) */}
+        {showEditForm && (
+          <div className="fixed inset-0 z-50 bg-black/30" onClick={() => setShowEditForm(false)}>
+            <div
+              className={`fixed left-0 right-0 top-0 z-50 transition-transform duration-300 w-full max-w-md mx-auto ${editModalMounted ? 'translate-y-0' : '-translate-y-full'}`}
+              style={{ maxWidth: '100vw' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-white rounded-b-2xl shadow-xl p-4 relative">
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 text-gray-400 text-2xl leading-none"
+                  onClick={() => setShowEditForm(false)}
+                  aria-label="Kapat"
+                >
+                  ×
+                </button>
+                <CarSearchForm
+                  initialValues={{
+                    pickupLocationId,
+                    dropoffLocationId,
+                    pickupDate,
+                    pickupTime,
+                    dropoffDate,
+                    dropoffTime,
+                    driverAge
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <main className="container mx-auto px-4 max-lg:pt-0 py-4 md:py-8">
         {/* Masaüstü: her zaman arama formu */}
