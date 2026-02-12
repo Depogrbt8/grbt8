@@ -1,13 +1,17 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { format, parse } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Loader2, ArrowLeft, Check, MapPin, Calendar, Clock } from 'lucide-react';
+import { Loader2, ArrowLeft, Check, MapPin, Calendar, Clock, Mail } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ContactForm from '@/components/booking/ContactForm';
+import ValidationPopup from '@/components/ValidationPopup';
+import LoginModal from '@/components/LoginModal';
 import { getCarDetails, createBooking } from '@/modules/car/services';
 import { initCarRentalModule } from '@/modules/car/init';
 import { initiatePayment, completePayment } from '@/modules/car/services/payment';
@@ -17,7 +21,9 @@ import { CAR_CATEGORY_LABELS } from '@/modules/car/types';
 function CarBookingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+  const { data: session, status } = useSession();
+  const formRef = React.useRef<HTMLFormElement>(null);
+
   const carId = searchParams.get('carId') || '';
   const searchToken = searchParams.get('token') || '';
   const pickupDate = searchParams.get('pickupDate') || '';
@@ -42,8 +48,19 @@ function CarBookingContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentStep, setPaymentStep] = useState<'form' | 'payment' | 'processing'>('form');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showValidationPopup, setShowValidationPopup] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [specialRequest, setSpecialRequest] = useState('');
+
+  // İletişim bilgileri (ContactForm ile senkron)
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactCountryCode, setContactCountryCode] = useState('+90');
+  const [marketingConsent, setMarketingConsent] = useState(false);
   
-  // Form state
+  // Form state (sürücü – e-posta/telefon submit sırasında contact’tan alınacak)
   const [driver, setDriver] = useState<Partial<Driver>>({
     firstName: '',
     lastName: '',
@@ -64,6 +81,13 @@ function CarBookingContent() {
       issueCountry: 'TR'
     }
   });
+
+  // Session’dan iletişim bilgilerini doldur
+  useEffect(() => {
+    if (session?.user?.email) setContactEmail(session.user.email);
+    const phone = (session?.user as { phone?: string })?.phone;
+    if (phone) setContactPhone(phone);
+  }, [session]);
   
   // Araç kiralama API'sini başlat (doğrudan bu sayfaya gelindiyse)
   useEffect(() => {
@@ -93,18 +117,52 @@ function CarBookingContent() {
     loadCarDetails();
   }, [carId, searchToken]);
   
+  const validateForm = (): string[] => {
+    const errs: string[] = [];
+    if (!contactEmail?.trim()) errs.push('E-posta adresi zorunludur.');
+    if (!contactPhone?.trim()) errs.push('Cep telefonu zorunludur.');
+    if (!driver.firstName?.trim()) errs.push('Ad zorunludur.');
+    if (!driver.lastName?.trim()) errs.push('Soyad zorunludur.');
+    if (!driver.dateOfBirth) errs.push('Doğum tarihi zorunludur.');
+    if (!driver.license?.number?.trim()) errs.push('Ehliyet numarası zorunludur.');
+    if (!driver.license?.issueDate) errs.push('Ehliyet verilme tarihi zorunludur.');
+    if (!driver.license?.expiryDate) errs.push('Ehliyet geçerlilik tarihi zorunludur.');
+    if (!driver.identity?.number?.trim()) errs.push('Kimlik numarası zorunludur.');
+    if (!agreedToTerms) errs.push('Rezervasyon koşullarını kabul etmeniz gerekmektedir.');
+    return errs;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!car) return;
-    
-    // Basit validasyon
-    if (!driver.firstName || !driver.lastName || !driver.email || !driver.phone) {
-      alert('Lütfen tüm zorunlu alanları doldurun');
+
+    if (status === 'unauthenticated') {
+      setShowLoginModal(true);
+      return;
+    }
+
+    const errs = validateForm();
+    if (errs.length > 0) {
+      setValidationErrors(errs);
+      setShowValidationPopup(true);
       return;
     }
     
     setSubmitting(true);
+    
+    const fullDriver: Driver = {
+      ...driver,
+      firstName: driver.firstName!,
+      lastName: driver.lastName!,
+      email: contactEmail.trim(),
+      phone: contactPhone.trim(),
+      countryCode: contactCountryCode,
+      dateOfBirth: driver.dateOfBirth!,
+      age: driver.age ?? 30,
+      license: driver.license!,
+      identity: driver.identity!
+    } as Driver;
     
     try {
       // Rezervasyon verisi
@@ -121,7 +179,7 @@ function CarBookingContent() {
             datetime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // Mock
           }
         },
-        driver: driver as Driver,
+        driver: fullDriver,
         payment: {
           method: 'credit_card',
           timing: 'pay_online_now'
@@ -352,195 +410,10 @@ function CarBookingContent() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Mobilde altta: Form | Masaüstünde solda */}
-          <div className="order-2 lg:order-1 lg:col-span-2">
-            <div className="bg-white rounded-xl p-6">
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">Sürücü Bilgileri</h1>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Kişisel Bilgiler */}
-                <div>
-                  <h3 className="font-medium text-lg mb-4">Kişisel Bilgiler</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Ad *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={driver.firstName}
-                        onChange={(e) => setDriver({ ...driver, firstName: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Soyad *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={driver.lastName}
-                        onChange={(e) => setDriver({ ...driver, lastName: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        E-posta *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={driver.email}
-                        onChange={(e) => setDriver({ ...driver, email: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Telefon *
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={driver.countryCode}
-                          onChange={(e) => setDriver({ ...driver, countryCode: e.target.value })}
-                          className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                        <input
-                          type="tel"
-                          required
-                          value={driver.phone}
-                          onChange={(e) => setDriver({ ...driver, phone: e.target.value })}
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Doğum Tarihi *
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={driver.dateOfBirth}
-                        onChange={(e) => {
-                          const birthDate = new Date(e.target.value);
-                          const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-                          setDriver({ ...driver, dateOfBirth: e.target.value, age });
-                        }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Ehliyet Bilgileri */}
-                <div>
-                  <h3 className="font-medium text-lg mb-4">Ehliyet Bilgileri</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Ehliyet No *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={driver.license?.number}
-                        onChange={(e) => setDriver({
-                          ...driver,
-                          license: { ...driver.license!, number: e.target.value }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Verilme Tarihi *
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={driver.license?.issueDate}
-                        onChange={(e) => setDriver({
-                          ...driver,
-                          license: { ...driver.license!, issueDate: e.target.value }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Geçerlilik Tarihi *
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={driver.license?.expiryDate}
-                        onChange={(e) => setDriver({
-                          ...driver,
-                          license: { ...driver.license!, expiryDate: e.target.value }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Kimlik Bilgileri */}
-                <div>
-                  <h3 className="font-medium text-lg mb-4">Kimlik Bilgileri</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Kimlik Tipi *
-                      </label>
-                      <select
-                        required
-                        value={driver.identity?.type}
-                        onChange={(e) => setDriver({
-                          ...driver,
-                          identity: { ...driver.identity!, type: e.target.value as any }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      >
-                        <option value="id_card">T.C. Kimlik Kartı</option>
-                        <option value="passport">Pasaport</option>
-                        <option value="driving_license">Ehliyet</option>
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Kimlik No *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={driver.identity?.number}
-                        onChange={(e) => setDriver({
-                          ...driver,
-                          identity: { ...driver.identity!, number: e.target.value }
-                        })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-                </div>
-                
+              <div className="p-4 border-t border-gray-100">
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => formRef.current?.requestSubmit()}
                   disabled={submitting}
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
@@ -556,11 +429,160 @@ function CarBookingContent() {
                     </>
                   )}
                 </button>
-              </form>
+              </div>
             </div>
+          </div>
+
+          {/* Mobilde altta: Form | Masaüstünde solda */}
+          <div className="order-2 lg:order-1 lg:col-span-2 space-y-6">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" id="car-booking-form">
+              {/* Kart: İletişim Bilgileri */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="flex items-center gap-2 font-bold text-gray-900 mb-4">
+                  <Mail className="w-5 h-5 text-green-600" />
+                  İletişim Bilgileri
+                </h2>
+                <ContactForm
+                  userEmail={contactEmail}
+                  userPhone={contactPhone}
+                  onEmailChange={setContactEmail}
+                  onPhoneChange={setContactPhone}
+                  onCountryCodeChange={setContactCountryCode}
+                  marketingConsent={marketingConsent}
+                  onMarketingConsentChange={setMarketingConsent}
+                />
+              </div>
+
+              {/* Kart: Sürücü Bilgileri */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="font-bold text-gray-900 mb-4">Sürücü Bilgileri</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ad *</label>
+                    <input
+                      type="text"
+                      value={driver.firstName}
+                      onChange={(e) => setDriver({ ...driver, firstName: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Soyad *</label>
+                    <input
+                      type="text"
+                      value={driver.lastName}
+                      onChange={(e) => setDriver({ ...driver, lastName: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Doğum Tarihi *</label>
+                  <input
+                    type="date"
+                    value={driver.dateOfBirth}
+                    onChange={(e) => {
+                      const birthDate = new Date(e.target.value);
+                      const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+                      setDriver({ ...driver, dateOfBirth: e.target.value, age });
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-3">Ehliyet Bilgileri</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ehliyet No *</label>
+                    <input
+                      type="text"
+                      value={driver.license?.number}
+                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, number: e.target.value } })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Verilme Tarihi *</label>
+                    <input
+                      type="date"
+                      value={driver.license?.issueDate}
+                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, issueDate: e.target.value } })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Geçerlilik Tarihi *</label>
+                    <input
+                      type="date"
+                      value={driver.license?.expiryDate}
+                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, expiryDate: e.target.value } })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <h3 className="font-medium text-gray-900 mb-3">Kimlik Bilgileri</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kimlik Tipi *</label>
+                    <select
+                      value={driver.identity?.type}
+                      onChange={(e) => setDriver({ ...driver, identity: { ...driver.identity!, type: e.target.value as 'id_card' | 'passport' | 'driving_license' } })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      <option value="id_card">T.C. Kimlik Kartı</option>
+                      <option value="passport">Pasaport</option>
+                      <option value="driving_license">Ehliyet</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kimlik No *</label>
+                    <input
+                      type="text"
+                      value={driver.identity?.number}
+                      onChange={(e) => setDriver({ ...driver, identity: { ...driver.identity!, number: e.target.value } })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Kart: Özel İstek (opsiyonel) */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 className="font-bold text-gray-900 mb-4">Özel İstekler</h2>
+                <textarea
+                  value={specialRequest}
+                  onChange={(e) => setSpecialRequest(e.target.value)}
+                  placeholder="Varsa ek isteklerinizi yazabilirsiniz (opsiyonel)"
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Kart: Şartlar */}
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    <a href="/gizlilik" className="text-green-600 hover:underline">Gizlilik politikası</a> ve{' '}
+                    <a href="/kullanim-kosullari" className="text-green-600 hover:underline">kullanım koşullarını</a> okudum, araç kiralama rezervasyon koşullarını kabul ediyorum.
+                  </span>
+                </label>
+              </div>
+            </form>
           </div>
         </div>
       </main>
+
+      <ValidationPopup
+        isOpen={showValidationPopup}
+        onClose={() => setShowValidationPopup(false)}
+        errors={validationErrors}
+      />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       
       <Footer />
     </div>
