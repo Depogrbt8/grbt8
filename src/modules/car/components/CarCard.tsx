@@ -3,14 +3,21 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Users, Briefcase, Fuel, Gauge, Check, Info } from 'lucide-react';
+import { Users, Briefcase, Fuel, Gauge, Check, Info, DoorOpen } from 'lucide-react';
 import type { Car } from '../types';
 import {
   TRANSMISSION_LABELS,
   FUEL_TYPE_LABELS,
   MILEAGE_TYPE_LABELS,
-  CANCELLATION_TYPE_LABELS
+  CANCELLATION_TYPE_LABELS,
+  CAR_CATEGORY_LABELS
 } from '../types';
+
+const FUEL_POLICY_LABELS: Record<string, string> = {
+  same_to_same: 'aynı seviyede',
+  full_to_full: 'dolu-dolu',
+  pre_purchase: 'ön satın alma'
+};
 
 interface CarCardProps {
   car: Car;
@@ -19,15 +26,115 @@ interface CarCardProps {
 
 export default function CarCard({ car, searchToken }: CarCardProps) {
   const [imgError, setImgError] = useState(false);
-  
-  // Detay sayfası URL'i
   const detailUrl = `/cars/${car.id}?token=${searchToken}`;
-  
+
+  const fuelPolicyLabel = FUEL_POLICY_LABELS[car.fuelPolicy] || car.fuelPolicy;
+  const categoryLabel = CAR_CATEGORY_LABELS[car.category] || car.category;
+
   return (
     <Link href={detailUrl} className="block">
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer">
-        <div className="flex flex-col md:flex-row">
-          {/* Araç Görseli */}
+        {/* Mobil: kompakt layout (resim solda, bilgi sağda + alt gri bar) */}
+        <div className="md:hidden">
+          <div className="flex">
+            {/* Sol: küçük görsel */}
+            <div className="relative w-28 h-24 flex-shrink-0 bg-gray-100">
+              {!imgError ? (
+                <Image
+                  src={car.imageUrl}
+                  alt={car.name}
+                  fill
+                  className="object-cover"
+                  sizes="112px"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl">🚗</div>
+              )}
+              <div className="absolute top-1 left-1 bg-blue-500 text-white px-1.5 py-0.5 rounded text-[10px] font-medium">
+                {car.category.toUpperCase()}
+              </div>
+              {car.cancellation.type === 'free_cancellation' && (
+                <div className="absolute top-1 right-1 bg-green-500 text-white px-1.5 py-0.5 rounded flex items-center gap-0.5 text-[10px]">
+                  <Check className="w-2.5 h-2.5" />
+                  Ücretsiz İptal
+                </div>
+              )}
+            </div>
+            {/* Sağ: isim, özellikler, tedarikçi */}
+            <div className="flex-1 min-w-0 p-2.5 flex flex-col justify-center">
+              <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{car.name}</h3>
+              <p className="text-xs text-gray-500 mt-0.5">veya benzeri · {categoryLabel}</p>
+              <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-600">
+                <span className="flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5 text-gray-400" />
+                  {car.seats}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Briefcase className="w-3.5 h-3.5 text-gray-400" />
+                  {car.largeBags}B+{car.smallBags}K
+                </span>
+                <span className="flex items-center gap-1">
+                  <DoorOpen className="w-3.5 h-3.5 text-gray-400" />
+                  {car.doors}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-1">
+                {car.supplierLogo && (
+                  <div className="relative w-12 h-4">
+                    <Image src={car.supplierLogo} alt="" fill className="object-contain" sizes="48px" />
+                  </div>
+                )}
+                <span className="text-xs text-gray-600">{car.supplierName}</span>
+                {car.supplierRating != null && (
+                  <span className="text-xs text-gray-500">⭐ {car.supplierRating.toFixed(1)}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500">
+                <span>{TRANSMISSION_LABELS[car.transmission]}</span>
+                <span>·</span>
+                <span>{MILEAGE_TYPE_LABELS[car.mileage.type]} KM</span>
+                {car.airConditioning && <><span>·</span><span>Klimalı</span></>}
+              </div>
+            </div>
+          </div>
+          {/* Alt bar: bilgi + fiyat */}
+          <div className="flex justify-between items-center px-2.5 py-2 bg-gray-50 border-t border-gray-100">
+            <div className="text-xs text-gray-600 space-y-0.5">
+              {car.supplierRating != null && (
+                <div>
+                  <span className="inline-block bg-gray-800 text-white font-bold px-1.5 py-0.5 rounded text-[10px] mr-1">
+                    {car.supplierRating.toFixed(1)}
+                  </span>
+                  <span className="text-gray-600">Teklif mükemmel</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1 flex-wrap">
+                <Info className="w-3 h-3 shrink-0" />
+                <span>{CANCELLATION_TYPE_LABELS[car.cancellation.type]}</span>
+                {car.depositAmount != null && (
+                  <span>· Depozito: {car.depositAmount} {car.currency}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-1 text-gray-500">
+                <Fuel className="w-3 h-3 shrink-0" />
+                <span>Yakıt: {fuelPolicyLabel}</span>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-[10px] text-gray-500">Toplam fiyat</div>
+              <div className="text-lg font-bold text-green-600">
+                {car.totalPrice.toLocaleString('tr-TR')} {car.currency}
+              </div>
+              <div className="text-[10px] text-gray-400">
+                ({car.pricePerDay.toLocaleString('tr-TR')} {car.currency}/gün)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Masaüstü: mevcut geniş layout */}
+        <div className="hidden md:flex flex-col md:flex-row">
           <div className="relative w-full md:w-72 h-48 md:h-auto flex-shrink-0 bg-gray-100">
             {!imgError ? (
               <Image
@@ -39,17 +146,11 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">
-                🚗
-              </div>
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">🚗</div>
             )}
-            
-            {/* Kategori badge */}
             <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-medium">
               {car.category.toUpperCase()}
             </div>
-            
-            {/* Ücretsiz iptal badge */}
             {car.cancellation.type === 'free_cancellation' && (
               <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
                 <Check className="w-3 h-3" />
@@ -57,105 +158,70 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
               </div>
             )}
           </div>
-
-          {/* Araç Bilgileri */}
           <div className="flex-1 p-4 flex flex-col justify-between">
             <div>
-              {/* Üst kısım: İsim ve tedarikçi */}
               <div className="flex justify-between items-start gap-2 mb-3">
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg text-gray-900 line-clamp-1">
-                    {car.name}
-                  </h3>
+                  <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{car.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     {car.supplierLogo && (
                       <div className="relative w-16 h-6">
-                        <Image
-                          src={car.supplierLogo}
-                          alt={car.supplierName}
-                          fill
-                          className="object-contain"
-                          sizes="64px"
-                        />
+                        <Image src={car.supplierLogo} alt={car.supplierName} fill className="object-contain" sizes="64px" />
                       </div>
                     )}
                     <span className="text-sm text-gray-600">{car.supplierName}</span>
-                    {car.supplierRating && (
-                      <span className="text-xs text-gray-500">
-                        ⭐ {car.supplierRating.toFixed(1)}
-                      </span>
+                    {car.supplierRating != null && (
+                      <span className="text-xs text-gray-500">⭐ {car.supplierRating.toFixed(1)}</span>
                     )}
                   </div>
                 </div>
               </div>
-
-              {/* Araç özellikleri */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                {/* Yolcu sayısı */}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Users className="w-4 h-4 text-gray-400" />
                   <span>{car.seats} Kişi</span>
                 </div>
-                
-                {/* Bagaj */}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Briefcase className="w-4 h-4 text-gray-400" />
                   <span>{car.largeBags}B + {car.smallBags}K</span>
                 </div>
-                
-                {/* Vites */}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Gauge className="w-4 h-4 text-gray-400" />
                   <span>{TRANSMISSION_LABELS[car.transmission]}</span>
                 </div>
-                
-                {/* Yakıt */}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Fuel className="w-4 h-4 text-gray-400" />
                   <span>{FUEL_TYPE_LABELS[car.fuelType]}</span>
                 </div>
               </div>
-
-              {/* Özellikler (badges) */}
               <div className="flex flex-wrap gap-2 mt-3">
                 {car.airConditioning && (
-                  <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs">
-                    ❄️ Klima
-                  </span>
+                  <span className="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs">❄️ Klima</span>
                 )}
                 <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-xs">
                   {MILEAGE_TYPE_LABELS[car.mileage.type]} KM
                 </span>
-                {car.mileage.type === 'limited' && car.mileage.distance && (
-                  <span className="text-xs text-gray-500">
-                    ({car.mileage.distance} km/gün)
-                  </span>
+                {car.mileage.type === 'limited' && car.mileage.distance != null && (
+                  <span className="text-xs text-gray-500">({car.mileage.distance} km/gün)</span>
                 )}
               </div>
             </div>
-
-            {/* Alt kısım: Fiyat ve buton */}
             <div className="flex justify-between items-end mt-4 pt-3 border-t border-gray-100">
               <div className="text-sm text-gray-600">
                 <div className="flex items-center gap-1 text-xs">
                   <Info className="w-3 h-3" />
                   <span>{CANCELLATION_TYPE_LABELS[car.cancellation.type]}</span>
                 </div>
-                {car.depositAmount && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    Depozito: {car.depositAmount} {car.currency}
-                  </div>
+                {car.depositAmount != null && (
+                  <div className="text-xs text-gray-500 mt-1">Depozito: {car.depositAmount} {car.currency}</div>
                 )}
               </div>
-              
               <div className="text-right">
                 <div className="text-xs text-gray-500">Toplam fiyat</div>
                 <div className="text-2xl font-bold text-green-600">
                   {car.totalPrice.toLocaleString('tr-TR')} {car.currency}
                 </div>
-                <div className="text-xs text-gray-400">
-                  ({car.pricePerDay.toLocaleString('tr-TR')} {car.currency}/gün)
-                </div>
+                <div className="text-xs text-gray-400">({car.pricePerDay.toLocaleString('tr-TR')} {car.currency}/gün)</div>
               </div>
             </div>
           </div>

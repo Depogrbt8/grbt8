@@ -53,7 +53,7 @@ export default function CarList({ cars, searchToken, loading }: CarListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2 md:space-y-4">
       {cars.map(car => (
         <CarCard key={car.id} car={car} searchToken={searchToken} />
       ))}
