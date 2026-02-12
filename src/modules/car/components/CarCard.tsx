@@ -72,7 +72,7 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
           </div>
           {/* Alt bar: bilgi + fiyat */}
           <div className="flex justify-between items-center px-2.5 py-2 bg-gray-50 border-t border-gray-100">
-            <div className="text-xs text-gray-600 space-y-0.5">
+            <div className="text-xs text-gray-600 space-y-1.5">
               {car.supplierRating != null && (
                 <div>
                   <span className="inline-block bg-gray-800 text-white font-bold px-1.5 py-0.5 rounded text-[10px] mr-1">
@@ -81,13 +81,15 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                   <span className="text-gray-600">Teklif mükemmel</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 flex-wrap">
+              <div className="flex items-center gap-1">
                 <Info className="w-3 h-3 shrink-0" />
                 <span>{CANCELLATION_TYPE_LABELS[car.cancellation.type]}</span>
-                {car.depositAmount != null && (
-                  <span>· Depozito: {car.depositAmount} {car.currency}</span>
-                )}
               </div>
+              {car.depositAmount != null && (
+                <div className="text-gray-500">
+                  Depozito: {car.depositAmount} {car.currency}
+                </div>
+              )}
               <div className="text-gray-500">
                 <span>{car.supplierName}</span>
               </div>
