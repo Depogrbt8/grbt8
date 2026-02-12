@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Users, Briefcase, Fuel, Gauge, Check, Info, DoorOpen } from 'lucide-react';
+import { Users, Briefcase, Fuel, Gauge, Info, DoorOpen } from 'lucide-react';
 import type { Car } from '../types';
 import {
   TRANSMISSION_LABELS,
@@ -42,15 +42,6 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl">🚗</div>
-              )}
-              <div className="absolute top-1 left-1 bg-blue-500 text-white px-1.5 py-0.5 rounded text-[10px] font-medium">
-                {car.category.toUpperCase()}
-              </div>
-              {car.cancellation.type === 'free_cancellation' && (
-                <div className="absolute top-1 right-1 bg-green-500 text-white px-1.5 py-0.5 rounded flex items-center gap-0.5 text-[10px]">
-                  <Check className="w-2.5 h-2.5" />
-                  Ücretsiz İptal
-                </div>
               )}
             </div>
             {/* Sağ: isim, özellikler */}
@@ -127,15 +118,6 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl">🚗</div>
-            )}
-            <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-medium">
-              {car.category.toUpperCase()}
-            </div>
-            {car.cancellation.type === 'free_cancellation' && (
-              <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
-                <Check className="w-3 h-3" />
-                Ücretsiz İptal
-              </div>
             )}
           </div>
           <div className="flex-1 p-4 flex flex-col justify-between">
