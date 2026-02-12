@@ -45,10 +45,10 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
               )}
             </div>
             {/* Sağ: isim, özellikler */}
-            <div className="flex-1 min-w-0 p-2.5 flex flex-col justify-center">
+            <div className="flex-1 min-w-0 p-2.5 flex flex-col justify-center space-y-2">
               <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{car.name}</h3>
-              <p className="text-xs text-gray-500 mt-0.5">veya benzeri · {categoryLabel}</p>
-              <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-600">
+              <p className="text-xs text-gray-500">veya benzeri · {categoryLabel}</p>
+              <div className="flex items-center gap-3 text-xs text-gray-600">
                 <span className="flex items-center gap-1">
                   <Users className="w-3.5 h-3.5 text-gray-400" />
                   {car.seats}
@@ -62,7 +62,7 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                   {car.doors}
                 </span>
               </div>
-              <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500">
+              <div className="flex items-center gap-2 text-[11px] text-gray-500">
                 <span>{TRANSMISSION_LABELS[car.transmission]}</span>
                 <span>·</span>
                 <span>{MILEAGE_TYPE_LABELS[car.mileage.type]} KM</span>
