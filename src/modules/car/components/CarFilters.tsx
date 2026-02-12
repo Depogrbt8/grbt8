@@ -14,15 +14,23 @@ interface CarFiltersProps {
   onFiltersChange: (filters: CarFiltersType) => void;
   suppliers?: { id: number; name: string; count: number }[];
   priceRange?: { min: number; max: number };
+  /**
+   * Mobilde üstte ekstra bir "Filtreler" butonu göstermeden
+   * panel içeriğini doğrudan açık göstermek için.
+   * Araç arama sayfasında, sayfanın kendi Filtrele butonu kullanılıyor.
+   */
+  hideMobileToggle?: boolean;
 }
 
 export default function CarFilters({
   filters,
   onFiltersChange,
   suppliers = [],
-  priceRange = { min: 0, max: 1000 }
+  priceRange = { min: 0, max: 1000 },
+  hideMobileToggle = false
 }: CarFiltersProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  // Eğer hideMobileToggle true ise, mobilde içerik varsayılan olarak açık gelsin
+  const [isOpen, setIsOpen] = useState(!hideMobileToggle);
   
   const handleCategoryToggle = (category: CarCategory) => {
     const current = filters.carCategories || [];
@@ -75,29 +83,35 @@ export default function CarFilters({
     (filters.airConditioning !== undefined ? 1 : 0) +
     (filters.priceRange ? 1 : 0);
   
+  // Mobilde içerik görünürlüğü: toggle gizliyse her zaman açık
+  const isContentVisibleOnMobile = hideMobileToggle ? true : isOpen;
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
-      {/* Mobil: Filtre butonu */}
-      <div className="md:hidden">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 rounded-lg"
-        >
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            <span className="font-medium">Filtreler</span>
-            {activeFilterCount > 0 && (
-              <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded-full">
-                {activeFilterCount}
-              </span>
-            )}
-          </div>
-          <X className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-0' : 'rotate-45'}`} />
-        </button>
-      </div>
+      {/* Mobil: Filtre butonu (isteğe bağlı). Araç arama sayfasında,
+          sayfanın kendi Filtrele butonu kullanıldığı için gizlenebilir. */}
+      {!hideMobileToggle && (
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 rounded-lg"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              <span className="font-medium">Filtreler</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded-full">
+                  {activeFilterCount}
+                </span>
+              )}
+            </div>
+            <X className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-0' : 'rotate-45'}`} />
+          </button>
+        </div>
+      )}
       
       {/* Filtre içeriği */}
-      <div className={`${isOpen ? 'block' : 'hidden'} md:block mt-4 md:mt-0 space-y-6`}>
+      <div className={`${isContentVisibleOnMobile ? 'block' : 'hidden'} md:block mt-4 md:mt-0 space-y-6`}>
         {/* Başlık ve temizle butonu */}
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-lg">Filtreler</h3>

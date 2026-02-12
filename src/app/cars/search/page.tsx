@@ -356,13 +356,14 @@ function CarSearchContent() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Filtreler (sol taraf) */}
             <div className="lg:col-span-1">
-              {/* Filtre paneli (mobilde üstteki Filtrele butonu ile açılır) */}
+              {/* Filtre paneli (mobilde üstteki Filtrele butonu ile açılır; CarFilters kendi mobil toggle'ını göstermez) */}
               <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
                 <CarFilters
                   filters={filters}
                   onFiltersChange={setFilters}
                   suppliers={supplierStats}
                   priceRange={priceRange}
+                  hideMobileToggle
                 />
               </div>
             </div>
