@@ -219,9 +219,9 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           </label>
         </div>
         {/* Alanlar: mobilde alt alta, desktop'ta tek satır; tüm inputlar aynı hizada */}
-        <div className="flex flex-col gap-4 pt-6 lg:pt-0">
+        <div className="flex flex-col gap-2 lg:gap-4 pt-6 lg:pt-0">
           {/* Desktop: tek satır, tüm kutular items-end ile hizalı; checkbox ayrı satırda */}
-          <div className="flex flex-col lg:flex-row lg:items-end gap-4 lg:gap-[1rem] flex-wrap lg:flex-nowrap">
+          <div className="flex flex-col lg:flex-row lg:items-end gap-2 lg:gap-[1rem] flex-wrap lg:flex-nowrap">
             {/* Alış Lokasyonu - desktop'ta sadece etiket + kutu (checkbox aşağıda) */}
             <div className="relative flex-1 min-w-0 lg:min-w-[140px] flex flex-col lg:items-stretch">
               <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Lokasyonu</label>
@@ -351,10 +351,10 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
           
           {/* Tarih + Saat + Buton alanları (mobilde üst boşluk ana gap ile aynı) */}
           <div className="w-full lg:flex-1">
-            {/* Mobil / tablet düzeni (alış ve teslim grupları alt alta); kutular arası boşluk eşit (gap-4) */}
-            <div className="flex flex-col gap-4 lg:hidden">
+            {/* Mobil / tablet düzeni (otel arama formu ile aynı yatay/dikey boşluk: gap-2) */}
+            <div className="flex flex-col gap-2 lg:hidden">
               {/* Alış Tarihi + Saat */}
-              <div className="w-full flex flex-row flex-wrap gap-3">
+              <div className="w-full flex flex-row flex-wrap gap-2">
                 {/* Alış Tarihi */}
                 <div className="flex-1 min-w-[150px]">
                   <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Alış Tarihi</label>
@@ -397,7 +397,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               </div>
 
               {/* Teslim Tarihi + Saat */}
-              <div className="w-full flex flex-row flex-wrap gap-3">
+              <div className="w-full flex flex-row flex-wrap gap-2">
                 {/* Teslim Tarihi */}
                 <div className="flex-1 min-w-[150px]">
                   <label className="hidden lg:block text-xs text-gray-900 mb-1 ml-1 font-semibold">Teslim Tarihi</label>
