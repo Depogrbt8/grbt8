@@ -13,12 +13,6 @@ import {
   CAR_CATEGORY_LABELS
 } from '../types';
 
-const FUEL_POLICY_LABELS: Record<string, string> = {
-  same_to_same: 'aynı seviyede',
-  full_to_full: 'dolu-dolu',
-  pre_purchase: 'ön satın alma'
-};
-
 interface CarCardProps {
   car: Car;
   searchToken: string;
@@ -27,8 +21,6 @@ interface CarCardProps {
 export default function CarCard({ car, searchToken }: CarCardProps) {
   const [imgError, setImgError] = useState(false);
   const detailUrl = `/cars/${car.id}?token=${searchToken}`;
-
-  const fuelPolicyLabel = FUEL_POLICY_LABELS[car.fuelPolicy] || car.fuelPolicy;
   const categoryLabel = CAR_CATEGORY_LABELS[car.category] || car.category;
 
   return (
@@ -116,9 +108,8 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                   <span>· Depozito: {car.depositAmount} {car.currency}</span>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <Fuel className="w-3 h-3 shrink-0" />
-                <span>Yakıt: {fuelPolicyLabel}</span>
+              <div className="text-gray-500">
+                <span>{car.supplierName}</span>
               </div>
             </div>
             <div className="text-right shrink-0">
