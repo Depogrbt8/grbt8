@@ -53,7 +53,7 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                 </div>
               )}
             </div>
-            {/* Sağ: isim, özellikler, tedarikçi */}
+            {/* Sağ: isim, özellikler */}
             <div className="flex-1 min-w-0 p-2.5 flex flex-col justify-center">
               <h3 className="font-bold text-sm text-gray-900 line-clamp-1">{car.name}</h3>
               <p className="text-xs text-gray-500 mt-0.5">veya benzeri · {categoryLabel}</p>
@@ -70,17 +70,6 @@ export default function CarCard({ car, searchToken }: CarCardProps) {
                   <DoorOpen className="w-3.5 h-3.5 text-gray-400" />
                   {car.doors}
                 </span>
-              </div>
-              <div className="flex items-center gap-1.5 mt-1">
-                {car.supplierLogo && (
-                  <div className="relative w-12 h-4">
-                    <Image src={car.supplierLogo} alt="" fill className="object-contain" sizes="48px" />
-                  </div>
-                )}
-                <span className="text-xs text-gray-600">{car.supplierName}</span>
-                {car.supplierRating != null && (
-                  <span className="text-xs text-gray-500">⭐ {car.supplierRating.toFixed(1)}</span>
-                )}
               </div>
               <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500">
                 <span>{TRANSMISSION_LABELS[car.transmission]}</span>
