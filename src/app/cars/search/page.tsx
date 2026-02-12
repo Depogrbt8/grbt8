@@ -410,6 +410,14 @@ function CarSearchContent() {
                 cars={filteredCars}
                 searchToken={searchResult?.metadata.searchToken || ''}
                 loading={false}
+                searchParams={{
+                  pickupDate,
+                  pickupTime,
+                  dropoffDate,
+                  dropoffTime,
+                  pickupName: pickupName || undefined,
+                  dropoffName: dropoffName || undefined
+                }}
               />
             </div>
           </div>

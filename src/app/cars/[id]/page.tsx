@@ -64,9 +64,22 @@ function CarDetailContent() {
     loadCarDetails();
   }, [carId, searchToken]);
 
-  // Rezervasyon yap
+  // Rezervasyon yap (tarih/lokasyon varsa booking özetinde gösterilsin diye query ile geçir)
   const handleBooking = () => {
-    router.push(`/cars/booking?carId=${carId}&token=${searchToken}`);
+    const q = new URLSearchParams({ carId, token: searchToken });
+    const pickupDate = searchParams.get('pickupDate');
+    const pickupTime = searchParams.get('pickupTime');
+    const dropoffDate = searchParams.get('dropoffDate');
+    const dropoffTime = searchParams.get('dropoffTime');
+    const pickupName = searchParams.get('pickupName');
+    const dropoffName = searchParams.get('dropoffName');
+    if (pickupDate) q.set('pickupDate', pickupDate);
+    if (pickupTime) q.set('pickupTime', pickupTime);
+    if (dropoffDate) q.set('dropoffDate', dropoffDate);
+    if (dropoffTime) q.set('dropoffTime', dropoffTime);
+    if (pickupName) q.set('pickupName', pickupName);
+    if (dropoffName) q.set('dropoffName', dropoffName);
+    router.push(`/cars/booking?${q.toString()}`);
   };
 
   // Geri git

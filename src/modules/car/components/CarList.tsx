@@ -7,9 +7,17 @@ interface CarListProps {
   cars: Car[];
   searchToken: string;
   loading?: boolean;
+  searchParams?: {
+    pickupDate?: string;
+    pickupTime?: string;
+    dropoffDate?: string;
+    dropoffTime?: string;
+    pickupName?: string;
+    dropoffName?: string;
+  };
 }
 
-export default function CarList({ cars, searchToken, loading }: CarListProps) {
+export default function CarList({ cars, searchToken, loading, searchParams }: CarListProps) {
   if (loading) {
     return (
       <div className="space-y-4">
@@ -55,7 +63,7 @@ export default function CarList({ cars, searchToken, loading }: CarListProps) {
   return (
     <div className="space-y-2 md:space-y-4">
       {cars.map(car => (
-        <CarCard key={car.id} car={car} searchToken={searchToken} />
+        <CarCard key={car.id} car={car} searchToken={searchToken} searchParams={searchParams} />
       ))}
     </div>
   );

@@ -16,11 +16,27 @@ import {
 interface CarCardProps {
   car: Car;
   searchToken: string;
+  /** Rezervasyon özetinde göstermek için detay/booking sayfalarına taşınır */
+  searchParams?: {
+    pickupDate?: string;
+    pickupTime?: string;
+    dropoffDate?: string;
+    dropoffTime?: string;
+    pickupName?: string;
+    dropoffName?: string;
+  };
 }
 
-export default function CarCard({ car, searchToken }: CarCardProps) {
+export default function CarCard({ car, searchToken, searchParams }: CarCardProps) {
   const [imgError, setImgError] = useState(false);
-  const detailUrl = `/cars/${car.id}?token=${searchToken}`;
+  const params = new URLSearchParams({ token: searchToken });
+  if (searchParams?.pickupDate) params.set('pickupDate', searchParams.pickupDate);
+  if (searchParams?.pickupTime) params.set('pickupTime', searchParams.pickupTime);
+  if (searchParams?.dropoffDate) params.set('dropoffDate', searchParams.dropoffDate);
+  if (searchParams?.dropoffTime) params.set('dropoffTime', searchParams.dropoffTime);
+  if (searchParams?.pickupName) params.set('pickupName', searchParams.pickupName);
+  if (searchParams?.dropoffName) params.set('dropoffName', searchParams.dropoffName);
+  const detailUrl = `/cars/${car.id}?${params.toString()}`;
   const categoryLabel = CAR_CATEGORY_LABELS[car.category] || car.category;
 
   return (
