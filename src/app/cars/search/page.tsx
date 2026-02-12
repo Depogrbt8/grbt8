@@ -262,28 +262,37 @@ function CarSearchContent() {
                   {showSortDropdown && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} aria-hidden />
-                      <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-1">
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('price_asc'); setShowSortDropdown(false); }}
-                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_asc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                        >
-                          Fiyat (Düşük → Yüksek)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('price_desc'); setShowSortDropdown(false); }}
-                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'price_desc' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                        >
-                          Fiyat (Yüksek → Düşük)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('rating'); setShowSortDropdown(false); }}
-                          className={`w-full px-4 py-2.5 text-left text-sm ${sortBy === 'rating' ? 'text-green-600 font-medium bg-green-50' : 'text-gray-700'}`}
-                        >
-                          Puan
-                        </button>
+                      <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-2">
+                        <label className="flex items-center gap-2 w-full px-4 py-2 cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="carSort"
+                            checked={sortBy === 'price_asc'}
+                            onChange={() => { setSortBy('price_asc'); setShowSortDropdown(false); }}
+                            className="w-4 h-4 text-green-600 focus:ring-green-500"
+                          />
+                          <span className={`text-sm whitespace-nowrap ${sortBy === 'price_asc' ? 'text-green-600 font-medium' : 'text-gray-700'}`}>Düşük fiyat</span>
+                        </label>
+                        <label className="flex items-center gap-2 w-full px-4 py-2 cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="carSort"
+                            checked={sortBy === 'price_desc'}
+                            onChange={() => { setSortBy('price_desc'); setShowSortDropdown(false); }}
+                            className="w-4 h-4 text-green-600 focus:ring-green-500"
+                          />
+                          <span className={`text-sm whitespace-nowrap ${sortBy === 'price_desc' ? 'text-green-600 font-medium' : 'text-gray-700'}`}>Yüksek fiyat</span>
+                        </label>
+                        <label className="flex items-center gap-2 w-full px-4 py-2 cursor-pointer hover:bg-gray-50">
+                          <input
+                            type="radio"
+                            name="carSort"
+                            checked={sortBy === 'rating'}
+                            onChange={() => { setSortBy('rating'); setShowSortDropdown(false); }}
+                            className="w-4 h-4 text-green-600 focus:ring-green-500"
+                          />
+                          <span className={`text-sm whitespace-nowrap ${sortBy === 'rating' ? 'text-green-600 font-medium' : 'text-gray-700'}`}>Puan</span>
+                        </label>
                       </div>
                     </>
                   )}
@@ -389,8 +398,8 @@ function CarSearchContent() {
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="price_asc">Fiyat (Düşük → Yüksek)</option>
-                    <option value="price_desc">Fiyat (Yüksek → Düşük)</option>
+                    <option value="price_asc">Düşük fiyat</option>
+                    <option value="price_desc">Yüksek fiyat</option>
                     <option value="rating">Puan</option>
                   </select>
                 </div>
