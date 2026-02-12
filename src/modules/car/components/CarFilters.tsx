@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, ChevronDown } from 'lucide-react';
 import type { CarFiltersType, CarCategory } from '../types';
 import {
   CAR_CATEGORY_LABELS,
@@ -31,7 +31,11 @@ export default function CarFilters({
 }: CarFiltersProps) {
   // Eğer hideMobileToggle true ise, mobilde içerik varsayılan olarak açık gelsin
   const [isOpen, setIsOpen] = useState(!hideMobileToggle);
-  
+  /** Filtre başlıklarına tıklanınca ilgili bölüm açılsın (akordeon) */
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const toggleSection = (key: string) =>
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+
   const handleCategoryToggle = (category: CarCategory) => {
     const current = filters.carCategories || [];
     const updated = current.includes(category)
@@ -126,29 +130,46 @@ export default function CarFilters({
         </div>
         
         {/* Araç Kategorisi */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Araç Kategorisi</h4>
-          <div className="space-y-2">
-            {(Object.keys(CAR_CATEGORY_LABELS) as CarCategory[]).map(category => (
-              <label key={category} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={filters.carCategories?.includes(category) || false}
-                  onChange={() => handleCategoryToggle(category)}
-                  className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-                />
-                <span className="text-sm text-gray-700">
-                  {CAR_CATEGORY_LABELS[category]}
-                </span>
-              </label>
-            ))}
-          </div>
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('category')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Araç Kategorisi</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.category ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.category && (
+            <div className="space-y-2 pt-1">
+              {(Object.keys(CAR_CATEGORY_LABELS) as CarCategory[]).map(category => (
+                <label key={category} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.carCategories?.includes(category) || false}
+                    onChange={() => handleCategoryToggle(category)}
+                    className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    {CAR_CATEGORY_LABELS[category]}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
-        
+
         {/* Vites Tipi */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Vites Tipi</h4>
-          <div className="space-y-2">
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('transmission')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Vites Tipi</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.transmission ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.transmission && (
+          <div className="space-y-2 pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -184,12 +205,21 @@ export default function CarFilters({
               </span>
             </label>
           </div>
+          )}
         </div>
-        
+
         {/* Kilometre */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Kilometre</h4>
-          <div className="space-y-2">
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('mileage')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Kilometre</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.mileage ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.mileage && (
+          <div className="space-y-2 pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -225,12 +255,21 @@ export default function CarFilters({
               </span>
             </label>
           </div>
+          )}
         </div>
-        
+
         {/* Koltuk Sayısı */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Minimum Koltuk</h4>
-          <div className="space-y-2">
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('seats')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Minimum Koltuk</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.seats ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.seats && (
+          <div className="space-y-2 pt-1">
             {[null, 5, 7, 9].map(seats => (
               <label key={seats || 'all'} className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -246,12 +285,21 @@ export default function CarFilters({
               </label>
             ))}
           </div>
+          )}
         </div>
-        
-        {/* Klima */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Özellikler</h4>
-          <div className="space-y-2">
+
+        {/* Özellikler */}
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('features')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Özellikler</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.features ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.features && (
+          <div className="space-y-2 pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -262,13 +310,22 @@ export default function CarFilters({
               <span className="text-sm text-gray-700">Klimalı</span>
             </label>
           </div>
+          )}
         </div>
-        
+
         {/* Tedarikçiler */}
         {suppliers.length > 0 && (
-          <div>
-            <h4 className="font-medium text-gray-900 mb-3">Tedarikçi</h4>
-            <div className="space-y-2">
+          <div className="border-b border-gray-100 pb-2">
+            <button
+              type="button"
+              onClick={() => toggleSection('suppliers')}
+              className="w-full flex items-center justify-between py-2 text-left"
+            >
+              <h4 className="font-medium text-gray-900">Tedarikçi</h4>
+              <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.suppliers ? 'rotate-180' : ''}`} />
+            </button>
+            {openSections.suppliers && (
+            <div className="space-y-2 pt-1">
               {suppliers.map(supplier => (
                 <label key={supplier.id} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -284,13 +341,22 @@ export default function CarFilters({
                 </label>
               ))}
             </div>
+            )}
           </div>
         )}
-        
+
         {/* Fiyat Aralığı */}
-        <div>
-          <h4 className="font-medium text-gray-900 mb-3">Fiyat Aralığı</h4>
-          <div className="space-y-3">
+        <div className="border-b border-gray-100 pb-2">
+          <button
+            type="button"
+            onClick={() => toggleSection('price')}
+            className="w-full flex items-center justify-between py-2 text-left"
+          >
+            <h4 className="font-medium text-gray-900">Fiyat Aralığı</h4>
+            <ChevronDown className={`w-5 h-5 text-gray-500 shrink-0 transition-transform ${openSections.price ? 'rotate-180' : ''}`} />
+          </button>
+          {openSections.price && (
+          <div className="space-y-3 pt-1">
             <input
               type="range"
               min={priceRange.min}
@@ -307,6 +373,7 @@ export default function CarFilters({
               <span>{filters.priceRange?.max || priceRange.max} EUR</span>
             </div>
           </div>
+          )}
         </div>
       </div>
     </div>
