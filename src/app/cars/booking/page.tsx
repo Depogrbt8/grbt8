@@ -243,9 +243,120 @@ function CarBookingContent() {
           <span>Geri Dön</span>
         </button>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Sol: Form */}
-          <div className="lg:col-span-2">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6">
+          {/* Mobilde üstte: Rezervasyon Özeti | Masaüstünde sağda */}
+          <div className="order-1 lg:order-2 lg:col-span-1">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden lg:sticky lg:top-4">
+              <h3 className="font-bold text-base text-gray-900 px-4 py-3 border-b border-gray-100">
+                Rezervasyon Özeti
+              </h3>
+              <div className="p-4 space-y-4">
+                {/* Alış / Teslim tarih–saat–yer */}
+                <div className="space-y-3 text-sm">
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center gap-0.5 shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                      <div className="w-px flex-1 min-h-[1rem] bg-gray-200" />
+                    </div>
+                    <div className="flex-1 min-w-0 pb-1">
+                      <div className="font-medium text-gray-900">Alış</div>
+                      {pickupDate && (
+                        <>
+                          <div className="flex items-center gap-1.5 text-gray-600 mt-0.5">
+                            <Calendar className="w-3.5 h-3.5 shrink-0" />
+                            {formatDate(pickupDate) || pickupDate}
+                            <span className="text-gray-400">·</span>
+                            <Clock className="w-3.5 h-3.5 shrink-0" />
+                            {pickupTime}
+                          </div>
+                          {(pickupName || car.pickupDepot) && (
+                            <div className="flex items-center gap-1.5 text-gray-500 mt-0.5">
+                              <MapPin className="w-3.5 h-3.5 shrink-0" />
+                              <span className="line-clamp-2">{pickupName || `Lokasyon #${car.pickupDepot.id}`}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {!pickupDate && <span className="text-gray-400">—</span>}
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center shrink-0">
+                      <div className="w-px min-h-[0.5rem] bg-gray-200" />
+                      <div className="w-2 h-2 rounded-full bg-gray-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900">Teslim</div>
+                      {dropoffDate && (
+                        <>
+                          <div className="flex items-center gap-1.5 text-gray-600 mt-0.5">
+                            <Calendar className="w-3.5 h-3.5 shrink-0" />
+                            {formatDate(dropoffDate) || dropoffDate}
+                            <span className="text-gray-400">·</span>
+                            <Clock className="w-3.5 h-3.5 shrink-0" />
+                            {dropoffTime}
+                          </div>
+                          {(dropoffName || car.dropoffDepot) && (
+                            <div className="flex items-center gap-1.5 text-gray-500 mt-0.5">
+                              <MapPin className="w-3.5 h-3.5 shrink-0" />
+                              <span className="line-clamp-2">{dropoffName || `Lokasyon #${car.dropoffDepot.id}`}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {!dropoffDate && <span className="text-gray-400">—</span>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Araç: ufak resim + bilgi */}
+                <div className="flex gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <div className="relative w-20 h-14 shrink-0 rounded-md overflow-hidden bg-gray-200">
+                    {(car.images && car.images[0]) || car.imageUrl ? (
+                      <Image
+                        src={(car.images && car.images[0]) || car.imageUrl}
+                        alt={car.name}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    ) : (
+                      <span className="absolute inset-0 flex items-center justify-center text-2xl">🚗</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-900 text-sm line-clamp-1">{car.name}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      {CAR_CATEGORY_LABELS[car.category] || car.category} · {car.supplierName}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fiyat özeti */}
+                <div className="border-t border-gray-100 pt-3 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Günlük</span>
+                    <span className="font-medium">{car.pricePerDay.toLocaleString('tr-TR')} {car.currency}</span>
+                  </div>
+                  {car.depositAmount != null && car.depositAmount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Depozito</span>
+                      <span className="font-medium">{car.depositAmount} {car.currency}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between pt-2 border-t border-gray-100">
+                    <span className="font-bold text-gray-900">Toplam</span>
+                    <span className="font-bold text-green-600">
+                      {car.totalPrice.toLocaleString('tr-TR')} {car.currency}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobilde altta: Form | Masaüstünde solda */}
+          <div className="order-2 lg:order-1 lg:col-span-2">
             <div className="bg-white rounded-xl p-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-6">Sürücü Bilgileri</h1>
               
@@ -446,117 +557,6 @@ function CarBookingContent() {
                   )}
                 </button>
               </form>
-            </div>
-          </div>
-          
-          {/* Sağ: Rezervasyon özeti – alış/teslim tarifleri, araç (ufak resim + bilgi), fiyat */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-4">
-              <h3 className="font-bold text-base text-gray-900 px-4 py-3 border-b border-gray-100">
-                Rezervasyon Özeti
-              </h3>
-              <div className="p-4 space-y-4">
-                {/* Alış / Teslim tarih–saat–yer */}
-                <div className="space-y-3 text-sm">
-                  <div className="flex gap-3">
-                    <div className="flex flex-col items-center gap-0.5 shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-green-500" />
-                      <div className="w-px flex-1 min-h-[1rem] bg-gray-200" />
-                    </div>
-                    <div className="flex-1 min-w-0 pb-1">
-                      <div className="font-medium text-gray-900">Alış</div>
-                      {pickupDate && (
-                        <>
-                          <div className="flex items-center gap-1.5 text-gray-600 mt-0.5">
-                            <Calendar className="w-3.5 h-3.5 shrink-0" />
-                            {formatDate(pickupDate) || pickupDate}
-                            <span className="text-gray-400">·</span>
-                            <Clock className="w-3.5 h-3.5 shrink-0" />
-                            {pickupTime}
-                          </div>
-                          {(pickupName || car.pickupDepot) && (
-                            <div className="flex items-center gap-1.5 text-gray-500 mt-0.5">
-                              <MapPin className="w-3.5 h-3.5 shrink-0" />
-                              <span className="line-clamp-2">{pickupName || `Lokasyon #${car.pickupDepot.id}`}</span>
-                            </div>
-                          )}
-                        </>
-                      )}
-                      {!pickupDate && <span className="text-gray-400">—</span>}
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="flex flex-col items-center shrink-0">
-                      <div className="w-px min-h-[0.5rem] bg-gray-200" />
-                      <div className="w-2 h-2 rounded-full bg-gray-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900">Teslim</div>
-                      {dropoffDate && (
-                        <>
-                          <div className="flex items-center gap-1.5 text-gray-600 mt-0.5">
-                            <Calendar className="w-3.5 h-3.5 shrink-0" />
-                            {formatDate(dropoffDate) || dropoffDate}
-                            <span className="text-gray-400">·</span>
-                            <Clock className="w-3.5 h-3.5 shrink-0" />
-                            {dropoffTime}
-                          </div>
-                          {(dropoffName || car.dropoffDepot) && (
-                            <div className="flex items-center gap-1.5 text-gray-500 mt-0.5">
-                              <MapPin className="w-3.5 h-3.5 shrink-0" />
-                              <span className="line-clamp-2">{dropoffName || `Lokasyon #${car.dropoffDepot.id}`}</span>
-                            </div>
-                          )}
-                        </>
-                      )}
-                      {!dropoffDate && <span className="text-gray-400">—</span>}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Araç: ufak resim + bilgi */}
-                <div className="flex gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <div className="relative w-20 h-14 shrink-0 rounded-md overflow-hidden bg-gray-200">
-                    {(car.images && car.images[0]) || car.imageUrl ? (
-                      <Image
-                        src={(car.images && car.images[0]) || car.imageUrl}
-                        alt={car.name}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    ) : (
-                      <span className="absolute inset-0 flex items-center justify-center text-2xl">🚗</span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-gray-900 text-sm line-clamp-1">{car.name}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {CAR_CATEGORY_LABELS[car.category] || car.category} · {car.supplierName}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Fiyat özeti */}
-                <div className="border-t border-gray-100 pt-3 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Günlük</span>
-                    <span className="font-medium">{car.pricePerDay.toLocaleString('tr-TR')} {car.currency}</span>
-                  </div>
-                  {car.depositAmount != null && car.depositAmount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Depozito</span>
-                      <span className="font-medium">{car.depositAmount} {car.currency}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between pt-2 border-t border-gray-100">
-                    <span className="font-bold text-gray-900">Toplam</span>
-                    <span className="font-bold text-green-600">
-                      {car.totalPrice.toLocaleString('tr-TR')} {car.currency}
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

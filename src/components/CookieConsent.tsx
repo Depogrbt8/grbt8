@@ -87,9 +87,9 @@ const CookieConsent = () => {
   };
 
   if (!showBanner) {
-    // Ayarlar butonu (sayfanın altında sabit)
+    // Ayarlar çubuğu: sadece masaüstünde sabit alt bar (mobilde sürekli kalmasın; tercihler Footer → Çerez Politikası üzerinden)
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg p-2">
+      <div className="hidden md:block fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg p-2">
         <div className="container mx-auto flex justify-between items-center">
           <span className="text-sm text-gray-600">
             Çerez tercihlerinizi yönetmek için{' '}
