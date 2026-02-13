@@ -130,11 +130,10 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
       <div className={className || 'w-full h-full'}>
         <button
           type="button"
-          className="relative w-full h-full min-h-[3rem] text-center focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-center text-[15px] font-semibold text-gray-900 flight-search-input transition-all duration-200 cursor-pointer"
+          className="relative w-full h-full min-h-[3rem] text-left focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-start text-[15px] font-semibold text-gray-900 flight-search-input transition-all duration-200 cursor-pointer"
           onClick={() => setShow(!show)}
           disabled={disabled}
           style={{
-            textAlign: 'center',
             outline: 'none !important',
             color: hideTriggerContent ? 'transparent' : undefined
           }}
