@@ -1,6 +1,6 @@
 # GRBT8 Seyahat Sitesi Projesi - Deployment Dokümantasyonu
 
-**Not (kullanıcı talebi):** İş bitince mutlaka commit edip `git push` yap.
+**Not (kullanıcı talebi):** Her iş/komut sonrası direkt commit edip `git push` yap; sorma.
 
 ## Proje Genel Bilgileri
 
