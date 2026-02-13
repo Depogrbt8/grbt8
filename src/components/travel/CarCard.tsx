@@ -21,32 +21,46 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
   const isOpen = openDetailId === car.id;
 
   return (
-    <div className="border rounded-xl p-4 bg-gray-50">
-      <div className="flex justify-between items-center">
-        <div>
-          <div className="font-semibold text-lg text-orange-700">{car.car}</div>
-          <div className="text-sm text-gray-500">{car.type}</div>
-          <div className="text-sm text-gray-500">
-            Alış: {car.pickupLocation} ({car.pickupCity}) {formatDate(car.pickupDate)} {car.pickupTime}
-          </div>
-          <div className="text-sm text-gray-500">
-            Bırakış: {car.dropoffLocation} ({car.dropoffCity}) {formatDate(car.dropoffDate)} {car.dropoffTime}
-          </div>
-          <div className="text-sm text-gray-500">Kiralayan: {car.renter}</div>
+    <div className="border rounded-xl sm:p-4 p-2 bg-gray-50">
+      <div className="flex gap-3 sm:gap-4 items-stretch">
+        {/* Sol: araç ikonu / görsel alanı */}
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-white flex items-center justify-center text-3xl">
+          <span role="img" aria-hidden>
+            🚗
+          </span>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <div className="text-lg font-bold text-gray-800">{car.price}</div>
-          <div className="text-xs text-green-600">{car.status}</div>
-          <button
-            type="button"
-            className="mt-2 px-4 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
-            onClick={() => onToggleDetail(car.id)}
-          >
-            {isOpen ? 'Kapat' : 'Detay'}
-          </button>
+
+        {/* Sağ: araç özet bilgileri */}
+        <div className="flex-1 flex justify-between">
+          <div className="min-w-0">
+            <div className="font-semibold sm:text-lg text-base text-gray-900">{car.car}</div>
+            <div className="text-xs text-gray-500 mt-0.5">Rez. No: {car.reservationNo}</div>
+
+            <div className="mt-1 text-sm text-gray-600">
+              Alış: {car.pickupLocation} ({car.pickupCity}) {formatDate(car.pickupDate)} {car.pickupTime}
+            </div>
+            <div className="text-sm text-gray-600">
+              Bırakış: {car.dropoffLocation} ({car.dropoffCity}) {formatDate(car.dropoffDate)} {car.dropoffTime}
+            </div>
+            <div className="text-sm text-gray-500 mt-1">
+              Kiralayan: {car.renter}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-end gap-2 ml-2">
+            <div className="sm:text-lg text-base font-bold text-gray-800">{car.price}</div>
+            <div className="text-xs text-green-600">{car.status}</div>
+            <button
+              type="button"
+              className="mt-2 px-4 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
+              onClick={() => onToggleDetail(car.id)}
+            >
+              {isOpen ? 'Kapat' : 'Detay'}
+            </button>
+          </div>
         </div>
       </div>
-      
+
       {isOpen && (
         <div className="mt-4 p-4 bg-white rounded-xl border text-left">
           <div className="mb-2 text-base font-semibold text-gray-700">Araç Bilgileri</div>
