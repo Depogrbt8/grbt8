@@ -7,7 +7,7 @@ import { format, parse } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import type { LocationSearchResult } from '../types';
 import { searchLocations, getPopularLocations } from '../services';
-import { setLastCarSearch } from '@/lib/lastSearch';
+import { getLastCarSearch, setLastCarSearch } from '@/lib/lastSearch';
 import { initCarRentalModule } from '../init';
 import DateInput from '@/components/DateInput';
 import TimeInput from '@/components/TimeInput';
@@ -76,6 +76,36 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   useEffect(() => {
     initCarRentalModule();
   }, []);
+
+  // Ana sayfa: initialValues yoksa son aramayı formda doldur (giriş yapmış/yapmamış fark etmez)
+  useEffect(() => {
+    if (initialValues?.pickupDate && initialValues?.dropoffDate) return;
+    const last = getLastCarSearch();
+    if (!last) return;
+    const pickup: LocationSearchResult = {
+      id: last.pickupLocationId,
+      name: last.pickupName || '',
+      type: 'city',
+      city: '',
+      country: ''
+    };
+    const dropoff: LocationSearchResult = {
+      id: last.dropoffLocationId,
+      name: last.dropoffName || '',
+      type: 'city',
+      city: '',
+      country: ''
+    };
+    setPickupLocation(pickup);
+    setPickupQuery(pickup.name);
+    setDropoffLocation(dropoff);
+    setDropoffQuery(dropoff.name);
+    setPickupDate(last.pickupDate);
+    setPickupTime(last.pickupTime);
+    setDropoffDate(last.dropoffDate);
+    setDropoffTime(last.dropoffTime);
+    setSameLocation(last.pickupLocationId === last.dropoffLocationId);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Popüler lokasyonları yükle
   useEffect(() => {

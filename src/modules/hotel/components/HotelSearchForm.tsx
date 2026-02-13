@@ -8,7 +8,7 @@ import { tr } from 'date-fns/locale';
 import { searchLocations } from '../services';
 import { buildSearchUrl } from '../utils';
 import type { LocationSuggestion } from '../types';
-import { setLastHotelSearch } from '@/lib/lastSearch';
+import { getLastHotelSearch, setLastHotelSearch } from '@/lib/lastSearch';
 import DateInput from '@/components/DateInput';
 
 interface HotelSearchFormProps {
@@ -69,6 +69,22 @@ export default function HotelSearchForm({
   const locationInputRef = useRef<HTMLInputElement>(null);
   const locationContainerRef = useRef<HTMLDivElement>(null);
   const guestSelectorRef = useRef<HTMLDivElement>(null);
+
+  // Ana sayfa vb.: initial değer yoksa son aramayı formda doldur (giriş yapmış/yapmamış fark etmez)
+  useEffect(() => {
+    if (initialLocation || initialCheckIn || initialCheckOut) return;
+    const last = getLastHotelSearch();
+    if (!last) return;
+    setLocation(last.location);
+    setCheckInDate(new Date(last.checkIn));
+    setCheckOutDate(new Date(last.checkOut));
+    setAdults(last.adults);
+    setChildren(last.children);
+    setRooms(last.rooms);
+    setChildAges(Array.isArray(last.childAges) && last.childAges.length >= last.children
+      ? last.childAges.slice(0, last.children)
+      : Array.from({ length: last.children }, () => 7));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Konum arama
   useEffect(() => {
