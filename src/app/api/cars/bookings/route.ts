@@ -7,59 +7,75 @@ import prisma from '@/lib/prisma';
 
 /**
  * GET /api/cars/bookings
- * Kullanıcının araç rezervasyonlarını listele
+ * Kullanıcının araç rezervasyonlarını listele.
+ * Admin: x-admin-panel-token ile tüm rezervasyonlar (userId, status filtresi destekli).
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
-    // Kullanıcıyı bul
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-    
-    // Query parametreleri
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = parseInt(searchParams.get('limit') || '50');
     const status = searchParams.get('status');
+    const userId = searchParams.get('userId');
     const skip = (page - 1) * limit;
-    
-    // Filtreler
-    const where: any = { userId: user.id };
+
+    const adminToken = request.headers.get('x-admin-panel-token');
+    const isAdminPanel = adminToken === process.env.ADMIN_PANEL_SECRET;
+
+    let where: Record<string, unknown> = {};
+
+    if (isAdminPanel) {
+      if (userId) where.userId = userId;
+    } else {
+      const session = await getServerSession(authOptions);
+      if (!session?.user?.email) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email }
+      });
+      if (!user) {
+        return NextResponse.json(
+          { success: false, error: 'User not found' },
+          { status: 404 }
+        );
+      }
+      where.userId = user.id;
+    }
+
     if (status) {
       where.status = status;
     }
-    
-    // Rezervasyonları getir
-    const [bookings, total] = await Promise.all([
+
+    const [bookingsRaw, total] = await Promise.all([
       prisma.carBooking.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         skip,
-        take: limit
+        take: limit,
+        include: isAdminPanel
+          ? {
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true
+                }
+              }
+            }
+          : undefined
       }),
       prisma.carBooking.count({ where })
     ]);
-    
+
     return NextResponse.json({
       success: true,
       data: {
-        bookings,
+        bookings: bookingsRaw,
         pagination: {
           page,
           limit,
