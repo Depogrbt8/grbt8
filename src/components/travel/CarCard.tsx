@@ -55,11 +55,11 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
             <div className="min-w-0">
               <p className="font-semibold text-gray-900 text-sm">Alış</p>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700">
-                <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="w-4 shrink-0 flex justify-center"><Calendar className="w-3.5 h-3.5 text-gray-400" /></span>
                 <span>{formatDate(car.pickupDate)}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 min-w-0">
-                <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="w-4 shrink-0 flex justify-center"><MapPin className="w-3.5 h-3.5 text-gray-400" /></span>
                 <span className="truncate">{car.pickupLocation}</span>
               </div>
             </div>
@@ -69,11 +69,11 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
             <div className="min-w-0">
               <p className="font-semibold text-gray-900 text-sm">Teslim</p>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700">
-                <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="w-4 shrink-0 flex justify-center"><Calendar className="w-3.5 h-3.5 text-gray-400" /></span>
                 <span>{formatDate(car.dropoffDate)}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 min-w-0">
-                <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="w-4 shrink-0 flex justify-center"><MapPin className="w-3.5 h-3.5 text-gray-400" /></span>
                 <span className="truncate">{car.dropoffLocation}</span>
               </div>
             </div>
