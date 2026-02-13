@@ -150,49 +150,92 @@ export default function SeyahatlerimPage() {
     fetchTickets();
   }, []);
 
-  // Araç rezervasyonlarını API'den çek
+  // Araç rezervasyonlarını API'den çek (gerçek veri; boşsa demo örnek gösterilir)
   useEffect(() => {
+    function safeParse(val: any, fallback: any = {}): any {
+      if (val == null) return fallback;
+      if (typeof val === 'object') return val;
+      try {
+        return typeof val === 'string' ? JSON.parse(val) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function mapBookingToCarReservation(b: any): CarReservation {
+      const pickupLoc = safeParse(b.pickupLocation, { name: 'Alış lokasyonu', city: '' });
+      const dropoffLoc = safeParse(b.dropoffLocation, { name: 'Teslim lokasyonu', city: '' });
+      const driver = safeParse(b.driver, { firstName: '', lastName: '' });
+      const extras = b.extras ? safeParse(b.extras, []) : [];
+      const pickupDt = b.pickupDateTime ? new Date(b.pickupDateTime) : new Date();
+      const dropoffDt = b.dropoffDateTime ? new Date(b.dropoffDateTime) : new Date();
+      return {
+        id: b.id,
+        car: b.carName || 'Araç',
+        type: [b.carCategory, b.fuelType, b.transmission].filter(Boolean).join(', ') || 'Kiralık araç',
+        plate: '',
+        pickupLocation: pickupLoc.name || '—',
+        pickupCity: pickupLoc.city || '',
+        pickupDate: pickupDt.toISOString().split('T')[0],
+        pickupTime: pickupDt.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        dropoffLocation: dropoffLoc.name || '—',
+        dropoffCity: dropoffLoc.city || '',
+        dropoffDate: dropoffDt.toISOString().split('T')[0],
+        dropoffTime: dropoffDt.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+        price: `${b.totalPrice ?? 0} ${b.currency ?? 'EUR'}`,
+        status: b.status === 'confirmed' ? 'Onaylandı' : b.status === 'cancelled' ? 'İptal Edildi' : 'Beklemede',
+        reservationNo: b.bookingNumber || b.id,
+        payment: 'Kredi Kartı',
+        services: Array.isArray(extras) ? extras.map((e: any) => e?.name || e).filter(Boolean) : [],
+        renter: [driver.firstName, driver.lastName].filter(Boolean).join(' ') || '—',
+        rules: b.cancellationPolicy || 'İptal koşulları tedarikçiye göre değişir.',
+        officePhone: '',
+        notes: ''
+      };
+    }
+
+    const demoCarReservations: CarReservation[] = [
+      {
+        id: 'demo-car-1',
+        car: 'VW Polo',
+        type: 'Ekonomi, Benzin, Manuel',
+        plate: '',
+        pickupLocation: 'İstanbul Havalimanı',
+        pickupCity: 'İstanbul',
+        pickupDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        pickupTime: '10:00',
+        dropoffLocation: 'İstanbul Havalimanı',
+        dropoffCity: 'İstanbul',
+        dropoffDate: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        dropoffTime: '10:00',
+        price: '420 EUR',
+        status: 'Onaylandı',
+        reservationNo: 'GRB-CAR-DEMO01',
+        payment: 'Kredi Kartı',
+        services: ['Ek sigorta'],
+        renter: 'Demo Kullanıcı',
+        rules: 'Alış tarihinden 48 saat öncesine kadar ücretsiz iptal.',
+        officePhone: '+90 850 XXX XX XX',
+        notes: 'Demo rezervasyon örneği'
+      }
+    ];
+
     async function fetchCarBookings() {
       setLoadingCars(true);
       try {
         const res = await fetch('/api/cars/bookings', { credentials: 'include' });
         if (res.ok) {
           const json = await res.json();
-          const bookings = json?.data?.bookings ?? [];
-          const mapped: CarReservation[] = bookings.map((b: any) => {
-            const pickupLoc = JSON.parse(b.pickupLocation);
-            const dropoffLoc = JSON.parse(b.dropoffLocation);
-            const driver = JSON.parse(b.driver);
-            const extras = b.extras ? JSON.parse(b.extras) : [];
-            
-            return {
-              id: b.id,
-              car: b.carName,
-              type: `${b.carCategory}, ${b.fuelType}, ${b.transmission}`,
-              plate: '',
-              pickupLocation: pickupLoc.name,
-              pickupCity: pickupLoc.city || '',
-              pickupDate: new Date(b.pickupDateTime).toISOString().split('T')[0],
-              pickupTime: new Date(b.pickupDateTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-              dropoffLocation: dropoffLoc.name,
-              dropoffCity: dropoffLoc.city || '',
-              dropoffDate: new Date(b.dropoffDateTime).toISOString().split('T')[0],
-              dropoffTime: new Date(b.dropoffDateTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-              price: `${b.totalPrice} ${b.currency}`,
-              status: b.status === 'confirmed' ? 'Onaylandı' : b.status === 'cancelled' ? 'İptal Edildi' : 'Beklemede',
-              reservationNo: b.bookingNumber,
-              payment: 'Kredi Kartı',
-              services: extras.map((e: any) => e.name),
-              renter: `${driver.firstName} ${driver.lastName}`,
-              rules: b.cancellationPolicy || '',
-              officePhone: '',
-              notes: ''
-            };
-          });
-          setCarReservations(mapped);
+          const raw = json?.data;
+          const bookings = Array.isArray(raw) ? raw : (raw?.bookings ?? []);
+          const mapped: CarReservation[] = bookings.map((b: any) => mapBookingToCarReservation(b));
+          setCarReservations(mapped.length > 0 ? mapped : demoCarReservations);
+        } else {
+          setCarReservations(demoCarReservations);
         }
       } catch (error) {
         console.error('Araç rezervasyonları yüklenirken hata:', error);
+        setCarReservations(demoCarReservations);
       } finally {
         setLoadingCars(false);
       }
@@ -350,10 +393,10 @@ export default function SeyahatlerimPage() {
     </div>
   );
 
-  // Araç içeriği
+  // Araç içeriği (otel ile aynı tasarım: padding, başlık)
   const renderAracContent = () => (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Araç Rezervasyonlarım</h2>
+    <div className="bg-white rounded-lg shadow-sm sm:p-6 p-4">
+      <h2 className="sm:text-xl text-lg font-bold mb-4 text-gray-700">Araç Rezervasyonlarım</h2>
       {loadingCars ? (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
@@ -363,14 +406,14 @@ export default function SeyahatlerimPage() {
         <EmptyState type="car" />
       ) : (
         <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-1">
-          <div className="space-y-4">
+          <div className="sm:space-y-4 space-y-3">
             {carReservations.map(car => (
               <CarCard
-              key={car.id}
-              car={car}
-              openDetailId={openCarDetailId}
-              onToggleDetail={setOpenCarDetailId}
-            />
+                key={car.id}
+                car={car}
+                openDetailId={openCarDetailId}
+                onToggleDetail={(id) => setOpenCarDetailId((prev) => (prev === id ? null : id))}
+              />
             ))}
           </div>
         </div>

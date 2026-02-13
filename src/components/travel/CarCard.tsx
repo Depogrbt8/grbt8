@@ -38,10 +38,11 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
           <div className="text-lg font-bold text-gray-800">{car.price}</div>
           <div className="text-xs text-green-600">{car.status}</div>
           <button
+            type="button"
             className="mt-2 px-4 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600"
             onClick={() => onToggleDetail(car.id)}
           >
-            Detay
+            {isOpen ? 'Kapat' : 'Detay'}
           </button>
         </div>
       </div>
@@ -54,7 +55,7 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
           <div className="mb-2 text-sm text-gray-700"><b>Durum:</b> {car.status}</div>
           <div className="mb-2 text-sm text-gray-700"><b>Ödeme:</b> {car.payment}</div>
           <div className="mb-2 text-sm text-gray-700">
-            <b>Ek Hizmetler:</b> {car.services.join(', ')}
+            <b>Ek Hizmetler:</b> {car.services?.length ? car.services.join(', ') : 'Yok'}
           </div>
           <div className="mb-2 text-sm text-gray-700"><b>Kurallar:</b> {car.rules}</div>
           <div className="mb-2 text-sm text-gray-700"><b>Ofis Tel:</b> {car.officePhone}</div>
