@@ -32,11 +32,7 @@ function PriceDayContent(props: any) {
 function DefaultDayContent(props: any) {
   const date = props.date;
   if (!(date instanceof Date) || isNaN(date.getTime())) return null;
-  return (
-    <div className="flex items-center justify-center min-h-[36px] min-w-[32px] px-0.5 py-0.5 text-sm font-semibold text-gray-800">
-      {date.getDate()}
-    </div>
-  );
+  return <span className="inline-block text-gray-900">{date.getDate()}</span>;
 }
 
 const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, className, placeholder, label, showPrices = true, hideTriggerContent = false }) => {
@@ -144,9 +140,9 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
           selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin')
         )}
       </button>
-      {/* Masaüstü popup */}
+      {/* Masaüstü popup - [date-picker-popup] ile parent [&_button] stilleri takvim butonlarına uygulanmaz */}
       {show && !isMobile && (
-        <div className="absolute z-[9999] mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 min-w-[500px] left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-0">
+        <div className="date-picker-popup absolute z-[9999] mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 min-w-[500px] left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-0 [&_button]:text-gray-900 [&_button]:cursor-pointer [&_button]:pointer-events-auto">
           <DayPicker
             mode="single"
             selected={selected}
