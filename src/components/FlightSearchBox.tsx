@@ -193,12 +193,12 @@ export default function FlightSearchBox({
         {/* Gidiş Tarihi */}
         <div className="flex flex-col min-w-[150px] flex-shrink-0 flex-grow-0">
           <label className="text-xs text-green-700 mb-1 ml-1 font-medium">Gidiş Tarihi</label>
-          <div className="relative w-full h-12 border border-gray-200 rounded-2xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+          <div className="relative w-full h-12 border border-gray-200 rounded-2xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
             <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
             <DateInput
               value={departureDate}
               onChange={setDepartureDate}
-              className="w-full h-full text-center focus:outline-none bg-transparent border-none cursor-pointer text-base text-gray-700 placeholder-gray-400"
+              className="w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-semibold placeholder-gray-500 flex items-center"
               placeholder="gg.aa.yyyy"
             />
           </div>
@@ -217,12 +217,12 @@ export default function FlightSearchBox({
               Tek Yön
             </label>
           </div>
-          <div className={`relative w-full h-12 border border-gray-200 rounded-2xl ${tripType === 'oneWay' ? 'bg-gray-50' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200`}>
+          <div className={`relative w-full h-12 border border-gray-200 rounded-2xl ${tripType === 'oneWay' ? 'bg-gray-50' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center`}>
             <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
             <DateInput
               value={returnDate}
               onChange={setReturnDate}
-              className={`w-full h-full text-center focus:outline-none bg-transparent border-none cursor-pointer text-base text-gray-700 placeholder-gray-400 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-semibold placeholder-gray-500 flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder={tripType === 'oneWay' ? 'Tek Yön' : 'gg.aa.yyyy'}
               disabled={tripType === 'oneWay'}
             />
