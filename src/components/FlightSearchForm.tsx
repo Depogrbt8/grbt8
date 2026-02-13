@@ -133,7 +133,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={departureDate}
                   onChange={onDepartureDateChange}
-                  className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light"
+                  className="w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-[15px] text-gray-900 placeholder-gray-500 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-semibold"
                   placeholder="gg.aa.yyyy"
                 />
               </div>
@@ -146,7 +146,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={returnDate}
                   onChange={onReturnDateChange}
-                  className={`w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-sm text-gray-500 placeholder-gray-400 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-light ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''}`}
+                  className={`w-full pl-10 pr-4 h-12 leading-[44px] py-0 text-[15px] text-gray-900 placeholder-gray-500 focus:outline-none focus:border-none focus:ring-0 bg-white border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 text-left font-semibold ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed bg-gray-100' : ''}`}
                   placeholder="gg.aa.yyyy"
                   disabled={tripType === 'oneWay'}
                 />
@@ -160,7 +160,7 @@ export default function FlightSearchForm({
                 <button
                   type="button"
                   onClick={() => setShowPassengerModal(!showPassengerModal)}
-                  className="w-full pl-10 pr-4 h-12 text-base text-gray-700 text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
+                  className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-semibold text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
                 >
                   {adultCount} Yetişkin{childCount > 0 ? `, ${childCount} Çocuk` : ''}{infantCount > 0 ? `, ${infantCount} Bebek` : ''}
                 </button>
@@ -210,10 +210,10 @@ export default function FlightSearchForm({
               onClick={() => setShowPassengerModal(true)}
               className="flex items-center gap-1 whitespace-nowrap"
             >
-              <span className="text-[14px] font-normal text-[#23272F] underline whitespace-nowrap">
+              <span className="text-[15px] font-semibold text-gray-900 underline whitespace-nowrap">
                 {adultCount + childCount + infantCount} Yolcu
               </span>
-              <ChevronDown className="w-4 h-4 text-[#23272F] flex-shrink-0" />
+              <ChevronDown className="w-4 h-4 text-gray-900 flex-shrink-0" />
             </button>
           </div>
           {/* Nereden-Nereye kutuları ve swap */}
@@ -260,7 +260,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={departureDate}
                   onChange={onDepartureDateChange}
-                  className="w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  className="w-full h-full h-10 pl-8 pr-2 text-center bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0"
                   placeholder="Gidiş Tarihi"
                 />
               </div>
@@ -271,7 +271,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={returnDate}
                   onChange={onReturnDateChange}
-                  className={`w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full h-full h-10 pl-8 pr-2 text-center bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Dönüş Tarihi"
                   disabled={tripType === 'oneWay'}
                 />

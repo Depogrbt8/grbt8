@@ -134,7 +134,7 @@ export default function AirportInput({
             onFocus={handleFocus}
             disabled={disabled}
             placeholder={placeholder}
-            className="w-full pl-10 pr-4 h-12 text-base text-gray-700 placeholder-gray-400 focus:ring-0 outline-none bg-transparent border-none"
+            className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:ring-0 outline-none bg-transparent border-none"
             style={{ outline: 'none !important' }}
           />
           {showSuggestions && suggestions.length > 0 && (
@@ -171,7 +171,7 @@ export default function AirportInput({
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 bg-transparent border-none outline-none text-[15px] font-medium placeholder-gray-600 text-black focus:outline-none focus:ring-0 focus:border-none min-w-0"
+            className="flex-1 bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-none min-w-0"
             placeholder={placeholder}
             value={value}
             disabled={disabled}
