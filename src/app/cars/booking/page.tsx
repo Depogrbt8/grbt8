@@ -52,7 +52,6 @@ function CarBookingContent() {
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [specialRequest, setSpecialRequest] = useState('');
 
   // İletişim bilgileri (ContactForm ile senkron)
   const [contactEmail, setContactEmail] = useState('');
@@ -516,18 +515,6 @@ function CarBookingContent() {
                     />
                   </div>
                 </div>
-              </div>
-
-              {/* Kart: Özel İstek (opsiyonel) */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="font-bold text-gray-900 mb-4">Özel İstekler</h2>
-                <textarea
-                  value={specialRequest}
-                  onChange={(e) => setSpecialRequest(e.target.value)}
-                  placeholder="Varsa ek isteklerinizi yazabilirsiniz (opsiyonel)"
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
               </div>
 
               {/* Kart: Şartlar */}
