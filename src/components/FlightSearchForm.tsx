@@ -255,23 +255,23 @@ export default function FlightSearchForm({
           {/* Tarih kutuları */}
           <div className="flex gap-2 w-full mb-3">
             <div className="flex-1">
-              <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
+              <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
                 <DateInput
                   value={departureDate}
                   onChange={onDepartureDateChange}
-                  className="w-full h-full h-10 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0"
+                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center"
                   placeholder="Gidiş Tarihi"
                 />
               </div>
             </div>
             <div className="flex-1">
-              <div className={`relative w-full h-10 border border-gray-300 rounded-lg ${tripType === 'oneWay' ? 'bg-gray-100' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200`}>
+              <div className={`relative w-full h-10 border border-gray-300 rounded-lg ${tripType === 'oneWay' ? 'bg-gray-100' : 'bg-white'} focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center`}>
                 <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
                 <DateInput
                   value={returnDate}
                   onChange={onReturnDateChange}
-                  className={`w-full h-full h-10 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Dönüş Tarihi"
                   disabled={tripType === 'oneWay'}
                 />
