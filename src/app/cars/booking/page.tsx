@@ -124,9 +124,6 @@ function CarBookingContent() {
     if (!driver.firstName?.trim()) errs.push('Ad zorunludur.');
     if (!driver.lastName?.trim()) errs.push('Soyad zorunludur.');
     if (!driver.dateOfBirth) errs.push('Doğum tarihi zorunludur.');
-    if (!driver.license?.number?.trim()) errs.push('Ehliyet numarası zorunludur.');
-    if (!driver.license?.issueDate) errs.push('Ehliyet verilme tarihi zorunludur.');
-    if (!driver.license?.expiryDate) errs.push('Ehliyet geçerlilik tarihi zorunludur.');
     if (!driver.identity?.number?.trim()) errs.push('Kimlik numarası zorunludur.');
     if (!agreedToTerms) errs.push('Rezervasyon koşullarını kabul etmeniz gerekmektedir.');
     return errs;
@@ -151,6 +148,11 @@ function CarBookingContent() {
     
     setSubmitting(true);
     
+    // Ehliyet alanı gizli; boşsa API için placeholder gönder
+    const license = driver.license?.number?.trim()
+      ? driver.license!
+      : { number: '-', issueDate: '2000-01-01', expiryDate: '2030-12-31', issueCountry: 'TR' as const };
+
     const fullDriver: Driver = {
       ...driver,
       firstName: driver.firstName!,
@@ -160,7 +162,7 @@ function CarBookingContent() {
       countryCode: contactCountryCode,
       dateOfBirth: driver.dateOfBirth!,
       age: driver.age ?? 30,
-      license: driver.license!,
+      license,
       identity: driver.identity!
     } as Driver;
     
@@ -489,36 +491,7 @@ function CarBookingContent() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
-                <h3 className="font-medium text-gray-900 mb-3">Ehliyet Bilgileri</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ehliyet No *</label>
-                    <input
-                      type="text"
-                      value={driver.license?.number}
-                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, number: e.target.value } })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Verilme Tarihi *</label>
-                    <input
-                      type="date"
-                      value={driver.license?.issueDate}
-                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, issueDate: e.target.value } })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Geçerlilik Tarihi *</label>
-                    <input
-                      type="date"
-                      value={driver.license?.expiryDate}
-                      onChange={(e) => setDriver({ ...driver, license: { ...driver.license!, expiryDate: e.target.value } })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
+                {/* Ehliyet bilgileri alanı gizlendi; API için gerekirse placeholder gönderiliyor */}
                 <h3 className="font-medium text-gray-900 mb-3">Kimlik Bilgileri</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
