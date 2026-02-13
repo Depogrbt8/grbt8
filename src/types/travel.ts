@@ -55,6 +55,7 @@ export type HotelReservation = {
 export type CarReservation = {
   id: string;
   car: string;
+  imageUrl?: string;
   type: string;
   plate: string;
   pickupLocation: string;

@@ -172,6 +172,7 @@ export default function SeyahatlerimPage() {
       return {
         id: b.id,
         car: b.carName || 'Araç',
+        imageUrl: b.carImage || undefined,
         type: [b.carCategory, b.fuelType, b.transmission].filter(Boolean).join(', ') || 'Kiralık araç',
         plate: '',
         pickupLocation: pickupLoc.name || '—',
@@ -198,6 +199,7 @@ export default function SeyahatlerimPage() {
       {
         id: 'demo-car-1',
         car: 'VW Polo',
+        imageUrl: undefined,
         type: 'Ekonomi, Benzin, Manuel',
         plate: '',
         pickupLocation: 'İstanbul Havalimanı',
