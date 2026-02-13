@@ -2,7 +2,7 @@
 
 import { CarReservation } from '@/types/travel';
 import { useState } from 'react';
-import { Calendar, Clock, MapPin } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 
 interface CarCardProps {
   car: CarReservation;
@@ -54,12 +54,9 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
             <div className="w-2 h-2 rounded-full bg-green-500 shrink-0 mt-1.5" aria-hidden />
             <div className="min-w-0">
               <p className="font-semibold text-gray-900 text-sm">Alış</p>
-              <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 flex-wrap">
+              <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700">
                 <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 <span>{formatDate(car.pickupDate)}</span>
-                <span className="text-gray-400">·</span>
-                <Clock className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                <span>{car.pickupTime}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 min-w-0">
                 <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -71,12 +68,9 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
             <div className="w-2 h-2 rounded-full bg-gray-400 shrink-0 mt-1.5" aria-hidden />
             <div className="min-w-0">
               <p className="font-semibold text-gray-900 text-sm">Teslim</p>
-              <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 flex-wrap">
+              <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700">
                 <Calendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 <span>{formatDate(car.dropoffDate)}</span>
-                <span className="text-gray-400">·</span>
-                <Clock className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                <span>{car.dropoffTime}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5 text-xs sm:text-sm text-gray-700 min-w-0">
                 <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
