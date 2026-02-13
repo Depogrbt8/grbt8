@@ -221,7 +221,7 @@ export default function HotelSearchForm({
                   value={checkInDate}
                   onChange={(date) => {
                     if (date && checkOutDate && isAfter(date, checkOutDate)) {
-                      setCheckOutDate(addDays(date, 2));
+                      setCheckOutDate(addDays(date, 1));
                     }
                     setCheckInDate(date || undefined);
                   }}
@@ -238,7 +238,7 @@ export default function HotelSearchForm({
                   value={checkOutDate}
                   onChange={(date) => {
                     if (date && checkInDate && isBefore(date, checkInDate)) {
-                      setCheckInDate(addDays(date, -2));
+                      setCheckInDate(addDays(date, -1));
                     }
                     setCheckOutDate(date || undefined);
                   }}
@@ -482,7 +482,7 @@ export default function HotelSearchForm({
                 value={checkInDate}
                 onChange={(date) => {
                   if (date && checkOutDate && isAfter(date, checkOutDate)) {
-                    setCheckOutDate(addDays(date, 2));
+                    setCheckOutDate(addDays(date, 1));
                   }
                   setCheckInDate(date || undefined);
                 }}
@@ -508,7 +508,7 @@ export default function HotelSearchForm({
                 value={checkOutDate}
                 onChange={(date) => {
                   if (date && checkInDate && isBefore(date, checkInDate)) {
-                    setCheckInDate(addDays(date, -2));
+                    setCheckInDate(addDays(date, -1));
                   }
                   setCheckOutDate(date || undefined);
                 }}
