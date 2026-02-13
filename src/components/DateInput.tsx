@@ -93,13 +93,7 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [show, isMobile]);
 
-  // Seçimi uygula
-  const handleApply = () => {
-    onChange(selected);
-    setShow(false);
-  };
-
-  // İptal
+  // İptal (mobil modal kapatma)
   const handleCancel = () => {
     setSelected(value);
     setShow(false);
@@ -116,6 +110,15 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
   const handleMobileSelect = (date: Date | undefined) => {
     setSelected(date);
     if (isMobile && date) {
+      onChange(date);
+      setShow(false);
+    }
+  };
+
+  // Masaüstünde tarihe tıklanınca hemen seç ve kapat (Tamam butonu yok)
+  const handleDesktopSelect = (date: Date | undefined) => {
+    setSelected(date);
+    if (date) {
       onChange(date);
       setShow(false);
     }
@@ -149,10 +152,10 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
           <DayPicker
             mode="single"
             selected={selected}
-            onSelect={setSelected}
+            onSelect={handleDesktopSelect}
             locale={tr}
             numberOfMonths={2}
-            className="mb-4 flex flex-row text-sm font-normal"
+            className="flex flex-row text-sm font-normal"
             showOutsideDays
             components={{
               DayContent: showPrices ? PriceDayContent : DefaultDayContent
@@ -162,10 +165,6 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
               day: `rounded-lg text-sm ${showPrices ? 'font-normal' : 'font-semibold'}`
             }}
           />
-          <div className="flex justify-end gap-2 mt-2">
-            <button onClick={handleCancel} className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50">İptal</button>
-            <button onClick={handleApply} className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600">Tarihi ayarla</button>
-          </div>
         </div>
       )}
       {/* Mobil tam ekran scrollable modal */}
