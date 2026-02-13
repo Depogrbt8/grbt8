@@ -228,7 +228,7 @@ export default function HotelSearchForm({
             )}
           </div>
 
-          {/* Tarih kutuları */}
+          {/* Tarih kutuları - mobil: ikon ile metin yakın */}
           <div className="flex gap-2 w-full mb-2">
             <div className="flex-1">
               <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
@@ -241,7 +241,7 @@ export default function HotelSearchForm({
                     }
                     setCheckInDate(date || undefined);
                   }}
-                  className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  className="w-full h-full pl-8 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
                   placeholder="Giriş tarihi"
                   showPrices={false}
                 />
@@ -258,7 +258,7 @@ export default function HotelSearchForm({
                     }
                     setCheckOutDate(date || undefined);
                   }}
-                  className="w-full h-full pl-10 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+                  className="w-full h-full pl-8 pr-2 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
                   placeholder="Çıkış tarihi"
                   showPrices={false}
                 />
