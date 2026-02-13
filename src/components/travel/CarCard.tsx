@@ -51,26 +51,24 @@ export default function CarCard({ car, openDetailId, onToggleDetail }: CarCardPr
           )}
         </div>
 
-        {/* Sağ: araç özet bilgileri */}
+        {/* İçerik: araç adı, tarih, rez no, fiyat; alt satırda durum + Detay sağda */}
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             <div className="font-bold sm:text-lg text-base text-gray-900 truncate">{car.car}</div>
             <div className="text-sm text-gray-600 mt-0.5">{formatDateRangeOneLine()}</div>
-            <div className="text-xs text-gray-500 mt-1">Rez. No: {car.reservationNo}</div>
+            <div className="text-xs text-gray-500 mt-1 truncate">Rez. No: {car.reservationNo}</div>
+            <div className="sm:text-lg text-base font-bold text-gray-800 mt-1">{car.price}</div>
           </div>
-          <div className="flex items-center justify-between gap-2 mt-2">
-            <span className="text-xs font-medium text-green-600">{car.status}</span>
+          <div className="flex items-center justify-end gap-2 mt-2">
+            <span className="text-xs font-medium text-green-600 mr-auto">{car.status}</span>
             <button
               type="button"
-              className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-300"
+              className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-lg hover:bg-gray-300 shrink-0"
               onClick={() => onToggleDetail(car.id)}
             >
               {isOpen ? 'Kapat' : 'Detay'}
             </button>
           </div>
-        </div>
-        <div className="flex flex-col items-end justify-end shrink-0">
-          <div className="sm:text-lg text-base font-bold text-gray-800">{car.price}</div>
         </div>
       </div>
 
