@@ -359,7 +359,9 @@ function CarSearchContent() {
                     pickupTime,
                     dropoffDate,
                     dropoffTime,
-                    driverAge
+                    driverAge,
+                    pickupName,
+                    dropoffName
                   }}
                 />
               </div>
@@ -379,7 +381,9 @@ function CarSearchContent() {
               pickupTime,
               dropoffDate,
               dropoffTime,
-              driverAge
+              driverAge,
+              pickupName,
+              dropoffName
             }}
           />
         </div>

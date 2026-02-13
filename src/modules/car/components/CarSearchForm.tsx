@@ -21,6 +21,8 @@ interface CarSearchFormProps {
     dropoffDate?: string;
     dropoffTime?: string;
     driverAge?: number; // Formda gösterilmiyor; arama sayfası URL'den geçirebilir
+    pickupName?: string;
+    dropoffName?: string;
   };
   /** Ana sayfada kullanıldığında uçuş/otel formu ile aynı üst boşluk (mt-24) ve container */
   useHomepageSpacing?: boolean;
@@ -106,6 +108,30 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
     setDropoffTime(last.dropoffTime);
     setSameLocation(last.pickupLocationId === last.dropoffLocationId);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sonuç sayfası: URL'den gelen lokasyon id/isimlerini formda göster (Alış/Teslim lokasyonu alanları dolu olsun)
+  useEffect(() => {
+    if (!initialValues?.pickupLocationId) return;
+    const pickup: LocationSearchResult = {
+      id: initialValues.pickupLocationId,
+      name: initialValues.pickupName || initialValues.pickupLocationId,
+      type: 'city',
+      city: '',
+      country: ''
+    };
+    const dropoff: LocationSearchResult = {
+      id: initialValues.dropoffLocationId || initialValues.pickupLocationId,
+      name: initialValues.dropoffName || initialValues.dropoffLocationId || initialValues.pickupLocationId,
+      type: 'city',
+      city: '',
+      country: ''
+    };
+    setPickupLocation(pickup);
+    setPickupQuery(pickup.name);
+    setDropoffLocation(dropoff);
+    setDropoffQuery(dropoff.name);
+    setSameLocation(initialValues.pickupLocationId === (initialValues.dropoffLocationId || initialValues.pickupLocationId));
+  }, [initialValues?.pickupLocationId, initialValues?.dropoffLocationId, initialValues?.pickupName, initialValues?.dropoffName]);
 
   // Popüler lokasyonları yükle
   useEffect(() => {
