@@ -439,10 +439,22 @@ function CarBookingContent() {
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" id="car-booking-form">
               {/* Kart: İletişim Bilgileri */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h2 className="flex items-center gap-2 font-bold text-gray-900 mb-4">
+                <h2 className="flex items-center gap-2 font-bold text-gray-900 mb-3">
                   <Mail className="w-5 h-5 text-green-600" />
                   İletişim Bilgileri
                 </h2>
+                {!session && (
+                  <p className="text-sm text-gray-600 mb-4">
+                    Hızlı rezervasyon için{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowLoginModal(true)}
+                      className="text-green-600 font-semibold underline hover:text-green-700 transition"
+                    >
+                      giriş yap
+                    </button>
+                  </p>
+                )}
                 <ContactForm
                   userEmail={contactEmail}
                   userPhone={contactPhone}
