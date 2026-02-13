@@ -8,6 +8,7 @@ import { tr } from 'date-fns/locale';
 import { searchLocations } from '../services';
 import { buildSearchUrl } from '../utils';
 import type { LocationSuggestion } from '../types';
+import { setLastHotelSearch } from '@/lib/lastSearch';
 import DateInput from '@/components/DateInput';
 
 interface HotelSearchFormProps {
@@ -130,6 +131,16 @@ export default function HotelSearchForm({
       rooms,
       childAges: childAges.slice(0, children)
     };
+
+    setLastHotelSearch({
+      location: params.location,
+      checkIn: params.checkIn,
+      checkOut: params.checkOut,
+      adults: params.adults,
+      children: params.children,
+      rooms: params.rooms,
+      childAges: params.childAges
+    });
 
     if (onSearch) {
       onSearch(params);

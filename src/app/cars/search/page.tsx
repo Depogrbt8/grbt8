@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { format, parse } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import Header from '@/components/Header';
@@ -10,6 +10,7 @@ import { CarList, CarFilters, CarSearchForm } from '@/modules/car/components';
 import { searchCars } from '@/modules/car/services';
 import { initCarRentalModule } from '@/modules/car/init';
 import type { Car, CarFiltersType, CarSearchResult } from '@/modules/car/types';
+import { getLastCarSearch, setLastCarSearch } from '@/lib/lastSearch';
 import { Loader2, Filter, ArrowUpDown } from 'lucide-react';
 
 // Initialize module
@@ -19,7 +20,8 @@ if (typeof window !== 'undefined') {
 
 function CarSearchContent() {
   const searchParams = useSearchParams();
-  
+  const router = useRouter();
+
   // URL'den parametreleri al
   const pickupLocationId = searchParams.get('pickupLocationId') || '';
   const dropoffLocationId = searchParams.get('dropoffLocationId') || '';
@@ -59,14 +61,46 @@ function CarSearchContent() {
     }
   }, [showEditForm]);
 
-  // İlk arama
+  // Eksik parametre varsa son aramayla yönlendir
   useEffect(() => {
     if (!pickupLocationId || !dropoffLocationId || !pickupDate || !dropoffDate) {
+      const last = getLastCarSearch();
+      if (last?.pickupLocationId && last?.pickupDate && last?.dropoffDate) {
+        const q = new URLSearchParams({
+          pickupLocationId: last.pickupLocationId,
+          dropoffLocationId: last.dropoffLocationId,
+          pickupDate: last.pickupDate,
+          pickupTime: last.pickupTime,
+          dropoffDate: last.dropoffDate,
+          dropoffTime: last.dropoffTime,
+          driverAge: String(last.driverAge)
+        });
+        if (last.pickupName) q.set('pickupName', last.pickupName);
+        if (last.dropoffName) q.set('dropoffName', last.dropoffName);
+        router.replace(`/cars/search?${q.toString()}`);
+        return;
+      }
       setError('Eksik arama parametreleri');
       setLoading(false);
       return;
     }
-    
+  }, [pickupLocationId, dropoffLocationId, pickupDate, dropoffDate, router]);
+
+  // İlk arama + son aramayı güncelle
+  useEffect(() => {
+    if (!pickupLocationId || !dropoffLocationId || !pickupDate || !dropoffDate) return;
+
+    setLastCarSearch({
+      pickupLocationId,
+      dropoffLocationId,
+      pickupDate,
+      pickupTime,
+      dropoffDate,
+      dropoffTime,
+      driverAge,
+      pickupName: pickupName || undefined,
+      dropoffName: dropoffName || undefined
+    });
     performSearch();
   }, [pickupLocationId, dropoffLocationId, pickupDate, dropoffDate, pickupTime, dropoffTime, driverAge]);
   

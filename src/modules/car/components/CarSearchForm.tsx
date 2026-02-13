@@ -7,6 +7,7 @@ import { format, parse } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import type { LocationSearchResult } from '../types';
 import { searchLocations, getPopularLocations } from '../services';
+import { setLastCarSearch } from '@/lib/lastSearch';
 import { initCarRentalModule } from '../init';
 import DateInput from '@/components/DateInput';
 import TimeInput from '@/components/TimeInput';
@@ -171,6 +172,18 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
     });
     params.set('pickupName', pickupLocation.name);
     params.set('dropoffName', sameLocation ? pickupLocation.name : dropoffLocation!.name);
+
+    setLastCarSearch({
+      pickupLocationId: pickupLocation.id,
+      dropoffLocationId: sameLocation ? pickupLocation.id : dropoffLocation!.id,
+      pickupDate,
+      pickupTime,
+      dropoffDate,
+      dropoffTime,
+      driverAge: 30,
+      pickupName: pickupLocation.name,
+      dropoffName: sameLocation ? pickupLocation.name : dropoffLocation!.name
+    });
 
     router.push(`/cars/search?${params.toString()}`);
   };

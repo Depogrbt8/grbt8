@@ -15,6 +15,7 @@ import {
 import { useHotelState, useHotelFilters } from '@/modules/hotel/hooks';
 import { parseSearchParams, buildSearchUrl } from '@/modules/hotel/utils';
 import type { HotelFilters as HotelFiltersType } from '@/modules/hotel/types';
+import { getLastHotelSearch, setLastHotelSearch } from '@/lib/lastSearch';
 
 // Sıralama seçenekleri (HotelFilters'ten taşındı)
 const SORT_OPTIONS = [
@@ -42,6 +43,25 @@ function HotelSearchContent() {
   const urlParams = parseSearchParams(searchParams);
   const hasSearchParams = !!(urlParams.location && urlParams.checkIn && urlParams.checkOut);
 
+  // Parametre yoksa son aramayı kullan ve yönlendir
+  useEffect(() => {
+    if (!hasSearchParams) {
+      const last = getLastHotelSearch();
+      if (last?.location && last?.checkIn && last?.checkOut) {
+        router.replace(buildSearchUrl({
+          location: last.location,
+          checkIn: last.checkIn,
+          checkOut: last.checkOut,
+          adults: last.adults,
+          children: last.children,
+          rooms: last.rooms,
+          childAges: last.childAges
+        }));
+        return;
+      }
+    }
+  }, [hasSearchParams, router]);
+
   // Client-side kontrolü
   useEffect(() => {
     setIsClient(true);
@@ -55,9 +75,18 @@ function HotelSearchContent() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // İlk arama
+  // İlk arama + son aramayı güncelle (URL ile gelindiğinde de kaydedilsin)
   useEffect(() => {
     if (urlParams.location && urlParams.checkIn && urlParams.checkOut) {
+      setLastHotelSearch({
+        location: urlParams.location,
+        checkIn: urlParams.checkIn,
+        checkOut: urlParams.checkOut,
+        adults: urlParams.adults,
+        children: urlParams.children,
+        rooms: urlParams.rooms,
+        childAges: urlParams.childAges
+      });
       search({
         location: urlParams.location,
         checkIn: urlParams.checkIn,
