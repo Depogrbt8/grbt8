@@ -122,27 +122,30 @@ const DateInput: React.FC<DateInputProps> = ({ value, onChange, disabled, classN
   };
 
   return (
-    <div className={`relative ${className || ''}`} ref={inputRef}>
-            <button
-        type="button"
-        className="relative w-full h-full min-h-[3rem] text-center focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-center text-[14px] font-normal text-black flight-search-input transition-all duration-200 cursor-pointer"
-        onClick={() => setShow(!show)}
-        disabled={disabled}
-        style={{ 
-          textAlign: 'center', 
-          outline: 'none !important',
-          color: hideTriggerContent ? 'transparent' : (selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)'))
-        }}
-      >
-        {hideTriggerContent ? (
-          <span className="absolute inset-0 block w-full h-full" aria-hidden />
-        ) : (
-          selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin')
-        )}
-      </button>
-      {/* Masaüstü popup - [date-picker-popup] ile parent [&_button] stilleri takvim butonlarına uygulanmaz */}
+    <div className="relative w-full h-full" ref={inputRef}>
+      {/* Parent className (örn. [&_button]:text-transparent) sadece tetikleyiciyi sarsın; takvim popup etkilenmesin */}
+      <div className={className || 'w-full h-full'}>
+        <button
+          type="button"
+          className="relative w-full h-full min-h-[3rem] text-center focus:outline-none focus:border-none focus:ring-0 disabled:opacity-50 flex items-center justify-center text-[14px] font-normal text-black flight-search-input transition-all duration-200 cursor-pointer"
+          onClick={() => setShow(!show)}
+          disabled={disabled}
+          style={{
+            textAlign: 'center',
+            outline: 'none !important',
+            color: hideTriggerContent ? 'transparent' : (selected ? 'rgb(0 0 0)' : (isMobile ? 'rgb(0 0 0)' : 'rgb(0 0 0)'))
+          }}
+        >
+          {hideTriggerContent ? (
+            <span className="absolute inset-0 block w-full h-full" aria-hidden />
+          ) : (
+            selected ? selected.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : (placeholder || label || 'Tarih seçin')
+          )}
+        </button>
+      </div>
+      {/* Masaüstü popup - tetikleyici wrapper dışında, form [&_button] stilleri buraya uygulanmaz */}
       {show && !isMobile && (
-        <div className="date-picker-popup absolute z-[9999] mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 min-w-[500px] left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-0 [&_button]:text-gray-900 [&_button]:cursor-pointer [&_button]:pointer-events-auto">
+        <div className="absolute z-[9999] mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 min-w-[500px] left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-0">
           <DayPicker
             mode="single"
             selected={selected}
