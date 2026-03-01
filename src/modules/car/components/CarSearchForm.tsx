@@ -268,8 +268,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   return (
     <div className={wrapperClass}>
       <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8 relative">
-        {/* Mobil: Farklı yerde teslim sağ üst köşede */}
-        <div className="absolute right-4 top-4 z-10 lg:hidden">
+        {/* Mobil: Farklı yerde teslim üstte ortada */}
+        <div className="absolute left-0 right-0 top-4 z-10 flex justify-center lg:hidden">
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
@@ -284,7 +284,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
               }}
               className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
             />
-            <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
+            <span className="text-xs text-gray-900 font-light whitespace-nowrap">Farklı yerde teslim</span>
           </label>
         </div>
         {/* Alanlar: mobilde alt alta, desktop'ta tek satır; tüm inputlar aynı hizada */}
@@ -657,7 +657,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 }}
                 className="w-[14px] h-[14px] text-green-600 rounded focus:ring-green-500 flex-shrink-0"
               />
-              <span className="text-xs text-gray-900 font-medium whitespace-nowrap">Farklı yerde teslim</span>
+              <span className="text-xs text-gray-900 font-light whitespace-nowrap">Farklı yerde teslim</span>
             </label>
           </div>
           </div>
