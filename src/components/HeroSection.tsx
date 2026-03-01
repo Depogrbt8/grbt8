@@ -22,13 +22,13 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getLabelClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `text-xs sm:text-sm pointer-events-auto font-bold ${
+    return `text-[13px] sm:text-sm pointer-events-auto font-semibold ${
       isActive ? 'text-green-700' : 'text-green-600'
     }`;
   };
 
   return (
-    <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
+    <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px] shadow-[0_4px_14px_0_rgba(0,0,0,0.07)]">
       <div className="container mx-auto px-4">
         {/* Masaüstü Logo ve Slogan */}
         <div className="hidden sm:block sm:relative mb-0 sm:mb-0 z-30">
@@ -44,7 +44,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
       </div>
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
-        <div className="flex gap-8 bg-transparent scale-[0.9] sm:scale-[1.2]">
+        <div className="flex gap-6 sm:gap-8 bg-transparent scale-[0.95] sm:scale-[1.2]">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses()}>
               <Plane className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
