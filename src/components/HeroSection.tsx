@@ -16,10 +16,10 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getIconClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `rounded-full w-20 h-20 flex items-center justify-center shadow-2xl hover:shadow-3xl mb-2 border-4 transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer pointer-events-auto ${
+    return `rounded-full w-20 h-20 flex items-center justify-center shadow-xl mb-2 transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer pointer-events-auto ${
       isActive 
-        ? 'bg-white border-green-500' 
-        : 'bg-gradient-to-br from-green-400 to-green-600 border-white'
+        ? 'bg-white' 
+        : 'bg-gradient-to-br from-green-400 to-green-600'
     }`;
   };
 
