@@ -268,8 +268,8 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
   return (
     <div className={wrapperClass}>
       <div className="bg-white rounded-2xl sm:rounded-[32px] border border-gray-200 shadow-sm sm:shadow-lg p-4 sm:p-8 relative">
-        {/* Mobil: Farklı yerde teslim üstte ortada */}
-        <div className="absolute left-0 right-0 top-4 z-10 flex justify-center lg:hidden">
+        {/* Mobil: Farklı yerde teslim sol üst köşede */}
+        <div className="absolute left-4 top-4 z-10 lg:hidden">
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
