@@ -14,13 +14,8 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
     }
   };
 
-  const getIconClasses = (service: ServiceType) => {
-    const isActive = activeService === service;
-    return `rounded-full w-20 h-20 flex items-center justify-center shadow-xl mb-2 transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer pointer-events-auto ${
-      isActive 
-        ? 'bg-white' 
-        : 'bg-gradient-to-br from-green-400 to-green-600'
-    }`;
+  const getIconClasses = () => {
+    return 'flex items-center justify-center mb-2 transition-all duration-500 hover:scale-110 hover:rotate-3 cursor-pointer pointer-events-auto';
   };
 
   const getIconColor = (service: ServiceType) => {
@@ -53,25 +48,25 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
         <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
-            <div className={getIconClasses('flight')}>
+            <div className={getIconClasses()}>
               <PlaneTakeoff className={`w-7 h-7 ${getIconColor('flight')}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
-            <div className={getIconClasses('hotel')}>
+            <div className={getIconClasses()}>
               <Building className={`w-7 h-7 ${getIconColor('hotel')}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
-            <div className={getIconClasses('car')}>
+            <div className={getIconClasses()}>
               <Car className={`w-8 h-8 ${getIconColor('car')}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
-            <div className={getIconClasses('esim')}>
+            <div className={getIconClasses()}>
               <Wifi className={`w-7 h-7 ${getIconColor('esim')}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('esim')}>E SIM</span>
