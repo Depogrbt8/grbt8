@@ -37,7 +37,7 @@ export default function TripTypeSelector({
             <span className="w-5 h-5 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
               {tripType === 'oneWay' && <span className="w-2.5 h-2.5 rounded-full bg-white"></span>}
             </span>
-            <span className="text-gray-700">Tek yön</span>
+            <span className="text-gray-700 font-light">Tek yön</span>
           </label>
           {/* Gidiş-dönüş */}
           <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -52,7 +52,7 @@ export default function TripTypeSelector({
             <span className="w-5 h-5 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
               {tripType === 'roundTrip' && <span className="w-2.5 h-2.5 rounded-full bg-white"></span>}
             </span>
-            <span className="text-gray-700">Gidiş-dönüş</span>
+            <span className="text-gray-700 font-light">Gidiş-dönüş</span>
           </label>
           {/* Çoklu uçuş */}
           <label className="flex items-center gap-2 cursor-pointer select-none group relative">
@@ -67,7 +67,7 @@ export default function TripTypeSelector({
             <span className="w-5 h-5 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
               {tripType === 'multiCity' && <span className="w-2.5 h-2.5 rounded-full bg-white"></span>}
             </span>
-            <span className="text-gray-700">Çoklu uçuş</span>
+            <span className="text-gray-700 font-light">Çoklu uçuş</span>
           </label>
         </div>
         <div className="flex items-center gap-2 ml-auto">
@@ -78,7 +78,7 @@ export default function TripTypeSelector({
             className="accent-green-500"
             id="directOnly"
           />
-          <label htmlFor="directOnly" className="text-gray-700 cursor-pointer">Aktarmasız</label>
+          <label htmlFor="directOnly" className="text-gray-700 font-light cursor-pointer">Aktarmasız</label>
         </div>
       </div>
     );
@@ -89,7 +89,7 @@ export default function TripTypeSelector({
     <div className={`flex items-center w-full gap-3 mb-0 mt-0 ${className}`}>
       <div className="flex gap-3 flex-shrink-0 items-center">
         {/* Tek yön */}
-        <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-normal">
+        <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-light">
           <input
             type="radio"
             name="tripTypeMobile"
@@ -101,10 +101,10 @@ export default function TripTypeSelector({
           <span className="w-4 h-4 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
             {tripType === 'oneWay' && <span className="w-2 h-2 rounded-full bg-white"></span>}
           </span>
-          <span className="text-[#23272F]">Tek yön</span>
+          <span className="text-[#23272F] font-light">Tek yön</span>
         </label>
         {/* Gidiş-dönüş */}
-        <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-normal">
+        <label className="flex items-center gap-1 cursor-pointer select-none text-[14px] font-light">
           <input
             type="radio"
             name="tripTypeMobile"
@@ -116,7 +116,7 @@ export default function TripTypeSelector({
           <span className="w-4 h-4 rounded-full border-2 border-green-500 flex items-center justify-center peer-checked:bg-green-500 transition">
             {tripType === 'roundTrip' && <span className="w-2 h-2 rounded-full bg-white"></span>}
           </span>
-          <span className="text-[#23272F]">Gidiş-dönüş</span>
+          <span className="text-[#23272F] font-light">Gidiş-dönüş</span>
         </label>
       </div>
     </div>

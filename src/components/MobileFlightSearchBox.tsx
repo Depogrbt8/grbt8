@@ -182,7 +182,7 @@ export default function MobileFlightSearchBox({
             <DateInput
               value={departureDate}
               onChange={setDepartureDate}
-              className="w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0"
+              className="w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-light placeholder:font-light placeholder-black text-black focus:outline-none focus:ring-0"
               placeholder="Gidiş Tarihi"
             />
           </div>
@@ -193,7 +193,7 @@ export default function MobileFlightSearchBox({
             <DateInput
               value={returnDate}
               onChange={setReturnDate}
-              className={`w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-medium placeholder-black text-black focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full h-full h-10 text-center bg-transparent border-none outline-none text-[15px] font-light placeholder:font-light placeholder-black text-black focus:outline-none focus:ring-0 ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="Dönüş Tarihi"
               disabled={tripType === 'oneWay'}
             />

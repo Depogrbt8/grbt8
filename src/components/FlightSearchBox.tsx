@@ -96,7 +96,7 @@ export default function FlightSearchBox({
       <form onSubmit={handleSubmit} className="bg-white rounded-md shadow-lg p-4 border border-gray-200 flex flex-row flex-nowrap gap-4 items-end w-full">
         {/* Nereden */}
         <div className="flex flex-col min-w-[80px] flex-shrink-0 flex-grow-0">
-          <label className="text-xs text-green-700 mb-1 ml-1 font-medium">Nereden</label>
+          <label className="text-xs text-green-700 mb-1 ml-1 font-light">Nereden</label>
           <div className="relative flex-1">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <div className="flex flex-wrap items-center justify-center gap-1 pl-10 pr-4 h-12 border border-gray-200 rounded-2xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 outline-none bg-white transition-all duration-200">
@@ -117,7 +117,7 @@ export default function FlightSearchBox({
                   }}
                   onFocus={() => setShowFromSuggestions(true)}
                   placeholder="Nereden"
-                  className="outline-none border-none text-sm bg-transparent min-w-[40px] flex-1 focus:outline-none focus:border-none focus:ring-0 flight-search-input"
+                  className="outline-none border-none text-sm font-light bg-transparent min-w-[40px] flex-1 focus:outline-none focus:border-none focus:ring-0 flight-search-input placeholder:font-light"
                   style={{ outline: 'none !important' }}
                 />
               )}
@@ -144,7 +144,7 @@ export default function FlightSearchBox({
         </div>
         {/* Nereye */}
         <div className="flex flex-col min-w-[80px] flex-shrink-0 flex-grow-0">
-          <label className="text-xs text-green-700 mb-1 ml-1 font-medium">Nereye</label>
+          <label className="text-xs text-green-700 mb-1 ml-1 font-light">Nereye</label>
           <div className="relative flex-1">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <div className="flex flex-wrap items-center justify-center gap-1 pl-10 pr-4 h-12 border border-gray-200 rounded-2xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 outline-none bg-white transition-all duration-200">
@@ -165,7 +165,7 @@ export default function FlightSearchBox({
                   }}
                   onFocus={() => setShowToSuggestions(true)}
                   placeholder="Nereye"
-                  className="outline-none border-none text-sm bg-transparent min-w-[40px] flex-1 focus:outline-none focus:border-none focus:ring-0 flight-search-input"
+                  className="outline-none border-none text-sm font-light bg-transparent min-w-[40px] flex-1 focus:outline-none focus:border-none focus:ring-0 flight-search-input placeholder:font-light"
                   style={{ outline: 'none !important' }}
                 />
               )}
@@ -192,13 +192,13 @@ export default function FlightSearchBox({
         </div>
         {/* Gidiş Tarihi */}
         <div className="flex flex-col min-w-[150px] flex-shrink-0 flex-grow-0">
-          <label className="text-xs text-green-700 mb-1 ml-1 font-medium">Gidiş Tarihi</label>
+          <label className="text-xs text-green-700 mb-1 ml-1 font-light">Gidiş Tarihi</label>
           <div className="relative w-full h-12 border border-gray-200 rounded-2xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
             <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
             <DateInput
               value={departureDate}
               onChange={setDepartureDate}
-              className="w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-semibold placeholder-gray-500 flex items-center"
+              className="w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light flex items-center"
               placeholder="gg.aa.yyyy"
             />
           </div>
@@ -206,8 +206,8 @@ export default function FlightSearchBox({
         {/* Dönüş Tarihi ve Tek Yön */}
         <div className="flex flex-col min-w-[150px] flex-shrink-0 flex-grow-0">
           <div className="flex items-center mb-1 ml-1 gap-2">
-            <label className="text-xs text-green-700 font-medium">Dönüş Tarihi</label>
-            <label className="flex items-center gap-1 text-xs text-green-700 cursor-pointer select-none">
+            <label className="text-xs text-green-700 font-light">Dönüş Tarihi</label>
+            <label className="flex items-center gap-1 text-xs text-green-700 cursor-pointer select-none font-light">
               <input
                 type="checkbox"
                 checked={tripType === 'oneWay'}
@@ -222,7 +222,7 @@ export default function FlightSearchBox({
             <DateInput
               value={returnDate}
               onChange={setReturnDate}
-              className={`w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-semibold placeholder-gray-500 flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full h-full min-h-0 pl-8 pr-2 text-left focus:outline-none bg-transparent border-none cursor-pointer text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder={tripType === 'oneWay' ? 'Tek Yön' : 'gg.aa.yyyy'}
               disabled={tripType === 'oneWay'}
             />

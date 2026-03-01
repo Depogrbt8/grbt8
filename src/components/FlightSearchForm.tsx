@@ -97,7 +97,7 @@ export default function FlightSearchForm({
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
             {/* Nereden */}
             <div className="md:col-span-1">
-              <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Nereden</label>
+              <label className="text-xs text-gray-500 mb-1 ml-1 font-light">Nereden</label>
               <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <AirportInput
                   label=""
@@ -112,7 +112,7 @@ export default function FlightSearchForm({
             </div>
             {/* Nereye */}
             <div className="md:col-span-1">
-              <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Nereye</label>
+              <label className="text-xs text-gray-500 mb-1 ml-1 font-light">Nereye</label>
               <div className="relative h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                 <AirportInput
                   label=""
@@ -127,7 +127,7 @@ export default function FlightSearchForm({
             </div>
             {/* Gidiş Tarihi */}
             <div className="flex flex-col md:col-span-1">
-              <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Gidiş Tarihi</label>
+              <label className="text-xs text-gray-500 mb-1 ml-1 font-light">Gidiş Tarihi</label>
               <div className="relative w-full flex items-center">
                 <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
                 <DateInput
@@ -140,7 +140,7 @@ export default function FlightSearchForm({
             </div>
             {/* Dönüş Tarihi */}
             <div className="flex flex-col md:col-span-1">
-              <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Dönüş Tarihi</label>
+              <label className="text-xs text-gray-500 mb-1 ml-1 font-light">Dönüş Tarihi</label>
               <div className="relative w-full flex items-center">
                 <CalendarDays className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" strokeWidth={1.5} />
                 <DateInput
