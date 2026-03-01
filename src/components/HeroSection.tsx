@@ -59,7 +59,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses()}>
-              <Car className={`w-8 h-8 ${getIconColor()}`} strokeWidth={2} />
+              <Car className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
