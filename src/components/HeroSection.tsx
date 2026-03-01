@@ -46,7 +46,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
       </div>
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
-        <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
+        <div className="flex gap-8 bg-transparent scale-[0.9] sm:scale-[1.2]">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses()}>
               <PlaneTakeoff className={`w-7 h-7 ${getIconColor('flight')}`} strokeWidth={2} />
