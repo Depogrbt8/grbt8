@@ -154,13 +154,13 @@ export default function FlightSearchForm({
             </div>
             {/* Yolcu */}
             <div className="flex flex-col relative md:col-span-1">
-              <label className="text-xs text-gray-500 mb-1 ml-1 font-medium">Yolcu</label>
+              <label className="text-xs text-gray-500 mb-1 ml-1 font-light">Yolcu</label>
               <div className="relative w-full flex items-center">
                 <User className="absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <button
                   type="button"
                   onClick={() => setShowPassengerModal(!showPassengerModal)}
-                  className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-semibold text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
+                  className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-light text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
                 >
                   {adultCount} Yetişkin{childCount > 0 ? `, ${childCount} Çocuk` : ''}{infantCount > 0 ? `, ${infantCount} Bebek` : ''}
                 </button>
@@ -210,7 +210,7 @@ export default function FlightSearchForm({
               onClick={() => setShowPassengerModal(true)}
               className="flex items-center gap-1 whitespace-nowrap"
             >
-              <span className="text-[15px] font-semibold text-gray-900 underline whitespace-nowrap">
+              <span className="text-[15px] font-light text-gray-900 underline whitespace-nowrap" style={{ fontWeight: 300 }}>
                 {adultCount + childCount + infantCount} Yolcu
               </span>
               <ChevronDown className="w-4 h-4 text-gray-900 flex-shrink-0" />
@@ -260,7 +260,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={departureDate}
                   onChange={onDepartureDateChange}
-                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center"
+                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:outline-none focus:ring-0 flex items-center"
                   placeholder="Gidiş Tarihi"
                 />
               </div>
@@ -271,7 +271,7 @@ export default function FlightSearchForm({
                 <DateInput
                   value={returnDate}
                   onChange={onReturnDateChange}
-                  className={`w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:outline-none focus:ring-0 flex items-center ${tripType === 'oneWay' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Dönüş Tarihi"
                   disabled={tripType === 'oneWay'}
                 />

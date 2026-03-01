@@ -230,13 +230,13 @@ export default function FlightSearchBox({
         </div>
         {/* Yolcu */}
         <div className="flex flex-col min-w-[120px] flex-shrink-0 flex-grow-0">
-          <label className="text-xs text-green-700 mb-1 ml-1 font-medium">Yolcu</label>
+          <label className="text-xs text-green-700 mb-1 ml-1 font-light">Yolcu</label>
           <div className="relative w-full flex items-center">
             <UserCircle2 className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <button
                   type="button"
                   onClick={() => setShowPassengerModal(true)}
-                  className="w-full pl-8 pr-2 h-12 text-base text-gray-700 text-center focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-200 rounded-2xl appearance-none cursor-pointer transition-all duration-200"
+                  className="w-full pl-8 pr-2 h-12 text-base text-gray-700 font-light text-center focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-200 rounded-2xl appearance-none cursor-pointer transition-all duration-200"
                 >
               {adultCount} Yetişkin{childCount > 0 ? `, ${childCount} Çocuk` : ''}{infantCount > 0 ? `, ${infantCount} Bebek` : ''}
             </button>
