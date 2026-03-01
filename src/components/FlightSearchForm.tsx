@@ -210,7 +210,7 @@ export default function FlightSearchForm({
               onClick={() => setShowPassengerModal(true)}
               className="flex items-center gap-1 whitespace-nowrap"
             >
-              <span className="text-[15px] font-light text-gray-900 underline whitespace-nowrap" style={{ fontWeight: 300 }}>
+              <span className="text-[14px] font-light text-[#23272F] underline whitespace-nowrap" style={{ fontWeight: 300 }}>
                 {adultCount + childCount + infantCount} Yolcu
               </span>
               <ChevronDown className="w-4 h-4 text-gray-900 flex-shrink-0" />
