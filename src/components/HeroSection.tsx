@@ -1,4 +1,4 @@
-import { PlaneTakeoff, Building, Car, Wifi } from 'lucide-react';
+import { Plane, Building2, Car, Wifi } from 'lucide-react';
 
 export type ServiceType = 'flight' | 'hotel' | 'car' | 'esim';
 
@@ -47,25 +47,25 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         <div className="flex gap-8 bg-transparent scale-[0.9] sm:scale-[1.2]">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses()}>
-              <PlaneTakeoff className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Plane className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
             <div className={getIconClasses()}>
-              <Building className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Building2 className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses()}>
-              <Car className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Car className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
             <div className={getIconClasses()}>
-              <Wifi className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Wifi className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('esim')}>E SIM</span>
           </div>
