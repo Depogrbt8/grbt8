@@ -1,8 +1,7 @@
 // Araç Rezervasyonları API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getUserIdFromRequest } from '@/lib/jwtAuth';
 import prisma from '@/lib/prisma';
 
 /**
@@ -27,23 +26,14 @@ export async function GET(request: NextRequest) {
     if (isAdminPanel) {
       if (userId) where.userId = userId;
     } else {
-      const session = await getServerSession(authOptions);
-      if (!session?.user?.email) {
+      const userId = await getUserIdFromRequest(request);
+      if (!userId) {
         return NextResponse.json(
           { success: false, error: 'Unauthorized' },
           { status: 401 }
         );
       }
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email }
-      });
-      if (!user) {
-        return NextResponse.json(
-          { success: false, error: 'User not found' },
-          { status: 404 }
-        );
-      }
-      where.userId = user.id;
+      where.userId = userId;
     }
 
     if (status) {
@@ -100,24 +90,12 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-    
-    // Kullanıcıyı bul
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
       );
     }
     
@@ -125,7 +103,7 @@ export async function POST(request: NextRequest) {
     
     // Rezervasyon verisi
     const bookingData = {
-      userId: user.id,
+      userId,
       bookingNumber: body.bookingNumber,
       bookingReference: body.bookingReference,
       

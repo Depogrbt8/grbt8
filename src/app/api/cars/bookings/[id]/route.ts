@@ -1,8 +1,7 @@
 // Tekil Araç Rezervasyonu API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getUserIdFromRequest } from '@/lib/jwtAuth';
 import prisma from '@/lib/prisma';
 
 /**
@@ -14,30 +13,19 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
     
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-    
     const booking = await prisma.carBooking.findFirst({
       where: {
         id: params.id,
-        userId: user.id
+        userId
       }
     });
     
@@ -71,30 +59,19 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getUserIdFromRequest(request);
     
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
     
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
-    });
-    
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-    
     const booking = await prisma.carBooking.findFirst({
       where: {
         id: params.id,
-        userId: user.id
+        userId
       }
     });
     
