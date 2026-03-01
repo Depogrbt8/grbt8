@@ -305,7 +305,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   }}
                   onFocus={() => setShowPickupSuggestions(true)}
                   placeholder={isMobile ? 'Alış Lokasyonu' : 'Havalimanı veya şehir'}
-                  className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
+                  className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:ring-0 outline-none bg-transparent border-none rounded-xl"
                 />
               </div>
               {/* Öneriler */}
@@ -368,7 +368,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   }}
                   onFocus={() => setShowDropoffSuggestions(true)}
                   placeholder={isMobile ? 'Teslim Lokasyonu' : 'Havalimanı veya şehir'}
-                  className="w-full pl-10 pr-4 h-12 text-base text-gray-900 placeholder-gray-700 focus:ring-0 outline-none bg-transparent border-none rounded-xl font-medium"
+                  className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:ring-0 outline-none bg-transparent border-none rounded-xl"
                 />
               </div>
               
@@ -430,7 +430,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                      <span className="text-[15px] text-gray-900 font-semibold">
+                      <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                         {pickupDateObj ? format(pickupDateObj, 'd MMM', { locale: tr }) : (isMobile ? 'Alış Tarihi' : 'Tarih seçin')}
                       </span>
                     </div>
@@ -450,7 +450,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                      <span className="text-[15px] text-gray-900 font-semibold">
+                      <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                         {pickupTime || '10:00'}
                       </span>
                     </div>
@@ -473,7 +473,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   <div className="relative w-full flex items-center h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                      <span className="text-[15px] text-gray-900 font-semibold">
+                      <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                         {dropoffDateObj ? format(dropoffDateObj, 'd MMM', { locale: tr }) : (isMobile ? 'Teslim Tarihi' : 'Tarih seçin')}
                       </span>
                     </div>
@@ -493,7 +493,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                   <div className="relative w-full h-10 border border-gray-300 rounded-lg bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                       <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                      <span className="text-[15px] text-gray-900 font-semibold">
+                      <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                         {dropoffTime || '10:00'}
                       </span>
                     </div>
@@ -540,7 +540,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                     <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-[15px] text-gray-900 font-semibold">
+                    <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                       {pickupDateObj ? format(pickupDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
                     </span>
                   </div>
@@ -561,7 +561,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                     <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-[15px] text-gray-900 font-semibold">
+                    <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                       {pickupTime || '10:00'}
                     </span>
                   </div>
@@ -581,7 +581,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                     <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-[15px] text-gray-900 font-semibold">
+                    <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                       {dropoffDateObj ? format(dropoffDateObj, 'd MMM yyyy', { locale: tr }) : 'Tarih seçin'}
                     </span>
                   </div>
@@ -602,7 +602,7 @@ export default function CarSearchForm({ initialValues, useHomepageSpacing }: Car
                 <div className="relative w-full h-12 border border-gray-300 rounded-xl bg-white focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex items-center">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                     <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="text-[15px] text-gray-900 font-semibold">
+                    <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                       {dropoffTime || '10:00'}
                     </span>
                   </div>

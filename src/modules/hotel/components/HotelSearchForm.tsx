@@ -195,7 +195,7 @@ export default function HotelSearchForm({
                   placeholder="Şehir veya otel adı"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="flex-1 bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-none min-w-0"
+                  className="flex-1 bg-transparent border-none outline-none text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:outline-none focus:ring-0 focus:border-none min-w-0"
                 />
                 {location && (
                   <button 
@@ -241,7 +241,7 @@ export default function HotelSearchForm({
                     }
                     setCheckInDate(date || undefined);
                   }}
-                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center"
+                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:outline-none focus:ring-0 flex items-center"
                   placeholder="Giriş tarihi"
                   showPrices={false}
                 />
@@ -258,7 +258,7 @@ export default function HotelSearchForm({
                     }
                     setCheckOutDate(date || undefined);
                   }}
-                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:outline-none focus:ring-0 flex items-center"
+                  className="w-full h-full min-h-0 pl-8 pr-2 text-left bg-transparent border-none outline-none text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:outline-none focus:ring-0 flex items-center"
                   placeholder="Çıkış tarihi"
                   showPrices={false}
                 />
@@ -270,13 +270,13 @@ export default function HotelSearchForm({
           <div className="relative w-full mb-3">
             <div className="bg-white border border-gray-300 rounded-lg px-2.5 h-10 shadow-none hover:border-green-500 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex flex-col justify-center">
               <div className="flex items-center justify-between w-full">
-                <span className="text-[15px] text-gray-900 font-semibold">
+                <span className="text-[15px] text-gray-900 font-light">
                   {guestSummaryMobile()}
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowGuestSelector(true)}
-                  className="flex items-center gap-1.5 text-[15px] text-gray-900 font-semibold hover:opacity-90"
+                  className="flex items-center gap-1.5 text-[15px] text-gray-900 font-light hover:opacity-90"
                 >
                   <Plus className="w-5 h-5" />
                   <span>Konuk Ekle</span>
@@ -451,7 +451,7 @@ export default function HotelSearchForm({
                     setShowLocationSuggestions(true);
                   }
                 }}
-                className="w-full pl-10 pr-10 h-12 text-[15px] text-gray-900 font-semibold placeholder-gray-500 focus:ring-0 outline-none bg-transparent border-none"
+                className="w-full pl-10 pr-10 h-12 text-[15px] text-gray-900 font-light placeholder-gray-500 placeholder:font-light focus:ring-0 outline-none bg-transparent border-none"
                 style={{ outline: 'none !important' }}
               />
               {location && (
@@ -490,7 +490,7 @@ export default function HotelSearchForm({
             <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                 <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-[15px] text-gray-900 font-semibold">
+                <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                   {checkInDate ? format(checkInDate, 'd MMM yyyy', { locale: tr }) : 'Giriş tarihi'}
                 </span>
               </div>
@@ -516,7 +516,7 @@ export default function HotelSearchForm({
             <div className="relative w-full flex items-center h-12 border border-gray-300 rounded-xl focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
                 <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" strokeWidth={1.5} />
-                <span className="text-[15px] text-gray-900 font-semibold">
+                <span className="text-[15px] text-gray-900 font-light" style={{ fontWeight: 300 }}>
                   {checkOutDate ? format(checkOutDate, 'd MMM yyyy', { locale: tr }) : 'Çıkış tarihi'}
                 </span>
               </div>
@@ -544,7 +544,7 @@ export default function HotelSearchForm({
               <button
                 type="button"
                 onClick={() => setShowGuestSelector(!showGuestSelector)}
-                className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-semibold text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
+                className="w-full pl-10 pr-4 h-12 text-[15px] text-gray-900 font-light text-left focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white border border-gray-300 rounded-xl appearance-none cursor-pointer hover:border-green-500 transition-all duration-200"
               >
                 {guestSummary()}
               </button>
