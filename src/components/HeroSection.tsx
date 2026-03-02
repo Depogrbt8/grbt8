@@ -16,7 +16,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getIconClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 border-green-600 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] ${isActive ? 'ring-2 ring-green-500 ring-offset-1' : ''}`;
+    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] ${isActive ? 'border-green-700' : 'border-green-600'}`;
   };
 
   const getIconColor = () => 'text-green-700';

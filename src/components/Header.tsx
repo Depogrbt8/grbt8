@@ -69,7 +69,7 @@ export default function Header() {
                                 <Menu className="w-6 h-6" />
                             </button>
                         </div>
-                        <div className="flex justify-center items-center -mt-[0.5rem] mb-0">
+                        <div className="flex justify-center items-center -mt-3 mb-0">
                             <Link href="/" className="text-2xl font-bold text-white leading-tight hover:text-gray-100 transition-colors">
                                 <span className="text-white">gurbet</span>
                                 <span className="text-black">biz</span>
