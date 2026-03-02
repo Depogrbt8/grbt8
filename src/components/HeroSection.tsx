@@ -46,6 +46,8 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         {/* H1 SEO için - Desktop ve Mobil */}
         <h1 className="sr-only">Avrupa&apos;dan Türkiye&apos;ye Yol Arkadaşınız</h1>
       </div>
+      {/* Beyaz bant: ikonların arkasındaki yeşili kapatır */}
+      <div className="absolute left-0 right-0 bottom-0 translate-y-[28%] sm:translate-y-[48%] h-28 sm:h-36 bg-white z-[11] rounded-t-2xl rounded-b-[16px] sm:rounded-b-[32px]" aria-hidden />
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
         <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
