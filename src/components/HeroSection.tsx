@@ -16,19 +16,14 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getIconClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    const base = 'rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto';
-    if (isActive) {
-      return `${base} bg-white border-green-700 shadow-[0_2px_8px_rgba(0,0,0,0.08)]`;
-    }
-    return `${base} bg-green-600 border-green-500 shadow-[0_2px_6px_rgba(0,0,0,0.06)] hover:bg-green-700 hover:border-green-600`;
+    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 border-green-600 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] ${isActive ? 'ring-2 ring-green-500 ring-offset-1' : ''}`;
   };
 
-  const getIconColor = (service: ServiceType) =>
-    activeService === service ? 'text-green-800' : 'text-white';
+  const getIconColor = () => 'text-green-700';
 
   const getLabelClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `text-[11px] sm:text-xs pointer-events-auto font-semibold tracking-wide uppercase ${isActive ? 'text-green-900' : 'text-green-700'}`;
+    return `text-[11px] sm:text-xs pointer-events-auto font-semibold tracking-wide uppercase ${isActive ? 'text-green-800' : 'text-green-700'}`;
   };
 
   return (
@@ -53,25 +48,25 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses('flight')}>
-              <PlaneTakeoff className={`w-7 h-7 ${getIconColor('flight')}`} strokeWidth={1.5} />
+              <PlaneTakeoff className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
             <div className={getIconClasses('hotel')}>
-              <Building className={`w-7 h-7 ${getIconColor('hotel')}`} strokeWidth={1.5} />
+              <Building className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses('car')}>
-              <Car className={`w-7 h-7 ${getIconColor('car')}`} strokeWidth={1.5} />
+              <Car className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
             <div className={getIconClasses('esim')}>
-              <Wifi className={`w-7 h-7 ${getIconColor('esim')}`} strokeWidth={1.5} />
+              <Wifi className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('esim')}>e-SIM</span>
           </div>
