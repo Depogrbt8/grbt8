@@ -1,5 +1,5 @@
 // YEDEK: Yuvarlak ikonlu HeroSection tasarımı. Geri dönmek için bu dosyayı HeroSection.tsx olarak kopyalayın.
-import { PlaneTakeoff, Building, Car, Wifi } from 'lucide-react';
+import { PlaneTakeoff, Building, CarFront, Wifi } from 'lucide-react';
 
 export type ServiceType = 'flight' | 'hotel' | 'car' | 'esim';
 
@@ -60,7 +60,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses()}>
-              <Car className={`w-8 h-8 ${getIconColor()}`} strokeWidth={2} />
+              <CarFront className={`w-8 h-8 ${getIconColor()}`} strokeWidth={2} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
