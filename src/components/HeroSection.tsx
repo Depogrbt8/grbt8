@@ -16,7 +16,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getIconClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-green-600 shadow-[0_2px_8px_rgba(0,0,0,0.12)] ${
+    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-green-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] ${
       isActive ? 'border-white' : 'border-white/80'
     }`;
   };
@@ -31,7 +31,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
   };
 
   return (
-    <div className="bg-green-600 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
+    <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
       <div className="container mx-auto px-4">
         {/* Masaüstü Logo ve Slogan */}
         <div className="hidden sm:block sm:relative mb-0 sm:mb-0 z-30">
@@ -45,9 +45,9 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         {/* H1 SEO için - Desktop ve Mobil */}
         <h1 className="sr-only">Avrupa&apos;dan Türkiye&apos;ye Yol Arkadaşınız</h1>
       </div>
-      {/* Yeşil bant: yuvarlak ikonlar ve etiketler için arka plan (proje yeşili) */}
+      {/* Yeşil bant: yuvarlak ikonlar ve etiketler için arka plan (logo ile aynı yeşil) */}
       <div
-        className="absolute left-0 right-0 bottom-0 translate-y-[28%] sm:translate-y-[48%] h-28 sm:h-36 bg-green-600 z-[11]"
+        className="absolute left-0 right-0 bottom-0 translate-y-[28%] sm:translate-y-[48%] h-28 sm:h-36 bg-green-500 z-[11]"
         aria-hidden
       />
       {/* Service Icons - overlap border */}
