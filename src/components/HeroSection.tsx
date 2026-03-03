@@ -16,7 +16,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
   };
 
   const getIconClasses = () => {
-    return 'rounded-full w-20 h-20 flex items-center justify-center shadow-md hover:shadow-lg mb-2 border border-gray-200 bg-white transition-all duration-200 cursor-pointer pointer-events-auto';
+    return 'rounded-full w-20 h-20 flex items-center justify-center shadow-lg hover:shadow-2xl mb-2 border border-gray-200 bg-white transition-all duration-200 cursor-pointer pointer-events-auto';
   };
 
   const getIconColor = () => 'text-black';
