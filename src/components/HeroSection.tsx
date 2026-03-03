@@ -15,7 +15,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
   };
 
   const getIconClasses = () => {
-    return 'flex items-center justify-center mb-1 transition-all duration-150 hover:scale-[1.03] cursor-pointer pointer-events-auto';
+    return 'flex items-center justify-center mb-1 transition-all duration-150 hover:scale-[1.05] cursor-pointer pointer-events-auto';
   };
 
   const getIconColor = () => 'text-white';
@@ -49,28 +49,28 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
       />
       {/* Service Icons - overlap border */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[45%] sm:translate-y-[65%] z-20 flex justify-center w-full">
-        <div className="flex gap-6 sm:gap-8 bg-transparent scale-75 sm:scale-100">
+        <div className="flex gap-6 sm:gap-8 bg-transparent scale-[0.95] sm:scale-100">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses()}>
-              <PlaneTakeoff className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
+              <PlaneTakeoff className={`w-8 h-8 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
             <div className={getIconClasses()}>
-              <Building className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
+              <Building className={`w-8 h-8 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses()}>
-              <Car className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
+              <Car className={`w-8 h-8 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
             <div className={getIconClasses()}>
-              <Wifi className={`w-7 h-7 ${getIconColor()}`} strokeWidth={1.5} />
+              <Wifi className={`w-8 h-8 ${getIconColor()}`} strokeWidth={1.5} />
             </div>
             <span className={getLabelClasses('esim')}>e-SIM</span>
           </div>
