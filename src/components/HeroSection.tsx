@@ -47,7 +47,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
       </div>
       {/* Yeşil bant: yuvarlak ikonlar ve etiketler için arka plan (logo ile aynı yeşil) */}
       <div
-        className="absolute left-0 right-0 bottom-0 translate-y-[28%] sm:translate-y-[48%] h-28 sm:h-36 bg-green-500 z-[11]"
+        className="absolute left-0 right-0 bottom-0 translate-y-[32%] sm:translate-y-[48%] h-32 sm:h-36 bg-green-500 z-[11]"
         aria-hidden
       />
       {/* Service Icons - overlap border */}
