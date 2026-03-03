@@ -29,7 +29,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
   };
 
   return (
-    <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10 rounded-b-[16px] sm:rounded-b-[32px]">
+    <div className="bg-green-500 text-center text-white pb-5 sm:pb-32 pt-[2rem] sm:pt-8 relative z-10">
       <div className="container mx-auto px-4">
         {/* Masaüstü Logo ve Slogan */}
         <div className="hidden sm:block sm:relative mb-0 sm:mb-0 z-30">
