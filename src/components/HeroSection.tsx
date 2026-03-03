@@ -16,7 +16,7 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
 
   const getIconClasses = (service: ServiceType) => {
     const isActive = activeService === service;
-    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-green-600 shadow-[0_2px_8px_rgba(0,0,0,0.18)] ${
+    return `rounded-full w-20 h-20 flex items-center justify-center mb-2 border-2 transition-all duration-200 hover:scale-[1.02] cursor-pointer pointer-events-auto bg-green-500 shadow-[0_2px_8px_rgba(0,0,0,0.12)] ${
       isActive ? 'border-white' : 'border-white/80'
     }`;
   };
@@ -45,9 +45,9 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         {/* H1 SEO için - Desktop ve Mobil */}
         <h1 className="sr-only">Avrupa&apos;dan Türkiye&apos;ye Yol Arkadaşınız</h1>
       </div>
-      {/* Yeşil bant: yuvarlak ikonlar ve etiketler için arka plan (bir ton daha koyu) */}
+      {/* Yeşil bant: yuvarlak ikonlar ve etiketler için arka plan (logo ile aynı yeşil) */}
       <div
-        className="absolute left-0 right-0 bottom-0 translate-y-[32%] sm:translate-y-[48%] h-32 sm:h-36 bg-green-600 z-[11]"
+        className="absolute left-0 right-0 bottom-0 translate-y-[32%] sm:translate-y-[48%] h-32 sm:h-36 bg-green-500 z-[11]"
         aria-hidden
       />
       {/* Service Icons - overlap border */}
