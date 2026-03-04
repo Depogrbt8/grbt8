@@ -12,6 +12,7 @@ import CampaignsSection from '@/components/CampaignsSection';
 import { logger } from '@/lib/logger';
 import Script from 'next/script';
 import { breadcrumbSchema } from '@/lib/schemas';
+import { PlaneTakeoff, Building, CarFront, Wifi } from 'lucide-react';
 
 // Dynamic imports - sadece gerektiğinde yüklensin
 const FlightSearchForm = dynamic(
@@ -241,6 +242,35 @@ export default function Home() {
           {/* İşlem Butonları */}
           <ServiceButtons />
 
+          {/* Yuvarlak servis ikonları - HeroSection ile aynı (masaüstü banner üstü) */}
+          <div className="hidden sm:flex w-full sm:container sm:mx-auto px-4 mt-6 justify-center">
+            <div className="flex gap-8">
+              {[
+                { key: 'flight' as ServiceType, Icon: PlaneTakeoff, label: 'UÇAK', size: 'w-7 h-7' },
+                { key: 'hotel' as ServiceType, Icon: Building, label: 'OTEL', size: 'w-7 h-7' },
+                { key: 'car' as ServiceType, Icon: CarFront, label: 'ARAÇ', size: 'w-8 h-8' },
+                { key: 'esim' as ServiceType, Icon: Wifi, label: 'E SIM', size: 'w-7 h-7' },
+              ].map(({ key, Icon, label, size }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setActiveService(key);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="rounded-full w-20 h-20 flex items-center justify-center shadow-lg hover:shadow-2xl border border-gray-200 bg-white transition-all duration-200 cursor-pointer">
+                    <Icon className={`${size} text-black`} strokeWidth={2} />
+                  </div>
+                  <span className={`text-sm mt-2 ${activeService === key ? 'font-semibold text-gray-900' : 'font-medium text-gray-800'}`}>
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Desktop özel geniş banner - Online check-in alanının altında */}
           <div className="hidden sm:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-6">
             <div className="relative w-full overflow-hidden rounded-xl shadow-lg">
@@ -257,8 +287,34 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Uygulama Banner kaldırıldı (eski mobil reklam) */}
-          {/* <AppBanner /> */}
+          {/* Yuvarlak servis ikonları - mobil görsel üstü (HeroSection ile aynı) */}
+          <div className="sm:hidden flex justify-center px-4 mt-6">
+            <div className="flex gap-4 scale-90">
+              {[
+                { key: 'flight' as ServiceType, Icon: PlaneTakeoff, label: 'UÇAK', size: 'w-7 h-7' },
+                { key: 'hotel' as ServiceType, Icon: Building, label: 'OTEL', size: 'w-7 h-7' },
+                { key: 'car' as ServiceType, Icon: CarFront, label: 'ARAÇ', size: 'w-8 h-8' },
+                { key: 'esim' as ServiceType, Icon: Wifi, label: 'E SIM', size: 'w-7 h-7' },
+              ].map(({ key, Icon, label, size }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setActiveService(key);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="flex flex-col items-center"
+                >
+                  <div className="rounded-full w-20 h-20 flex items-center justify-center shadow-lg hover:shadow-2xl border border-gray-200 bg-white transition-all duration-200 cursor-pointer">
+                    <Icon className={`${size} text-black`} strokeWidth={2} />
+                  </div>
+                  <span className={`text-xs mt-2 ${activeService === key ? 'font-semibold text-gray-900' : 'font-medium text-gray-800'}`}>
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Mobil özel görsel - AppBanner altında */}
           <div className="sm:hidden px-3 mb-4">
