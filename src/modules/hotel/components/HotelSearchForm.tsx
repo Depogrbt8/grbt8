@@ -183,7 +183,7 @@ export default function HotelSearchForm({
     <>
       {/* Mobil görünüm - FlightSearchForm ile aynı breakpoint */}
       <div className={`block sm:hidden w-full px-4 mt-8 ${className}`}>
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 flex flex-col">
           {/* Konum */}
           <div className="relative w-full mb-2" ref={locationContainerRef}>
             <div className="bg-white border border-gray-300 rounded-lg px-2.5 h-10 shadow-none hover:border-green-500 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all duration-200 flex flex-col justify-center">
@@ -433,7 +433,7 @@ export default function HotelSearchForm({
 
       {/* Desktop görünüm - FlightSearchForm ile aynı yapı */}
       <div className={`hidden sm:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24 ${className}`}>
-      <div className="bg-white rounded-[32px] shadow-lg p-8 border border-gray-200">
+      <div className="bg-white rounded-[32px] shadow-xl p-8 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Konum */}
           <div className="md:col-span-1">
