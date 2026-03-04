@@ -1,5 +1,14 @@
-// YEDEK: Yuvarlak ikonlu HeroSection tasarımı. Geri dönmek için bu dosyayı HeroSection.tsx olarak kopyalayın.
-import { PlaneTakeoff, Building, CarFront, Wifi } from 'lucide-react';
+// Yuvarlak ikonlar: grbt8-mobile GlobalHeader ile aynı set (Ionicons: airplane, business, car, wifi)
+import React from 'react';
+import { IoAirplane, IoBusiness, IoCar, IoWifi } from 'react-icons/io5';
+
+type IconProps = { className?: string };
+const Icons = {
+  flight: IoAirplane as React.ComponentType<IconProps>,
+  hotel: IoBusiness as React.ComponentType<IconProps>,
+  car: IoCar as React.ComponentType<IconProps>,
+  esim: IoWifi as React.ComponentType<IconProps>,
+};
 
 export type ServiceType = 'flight' | 'hotel' | 'car' | 'esim';
 
@@ -43,30 +52,30 @@ export default function HeroSection({ activeService = 'flight', onServiceChange 
         {/* H1 SEO için - Desktop ve Mobil */}
         <h1 className="sr-only">Avrupa'dan Türkiye'ye Yol Arkadaşınız</h1>
       </div>
-      {/* Service Icons - overlap border */}
+      {/* Service Icons - grbt8-mobile ile aynı (Ionicons: airplane, business, car, wifi) */}
       <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-[55%] sm:translate-y-[70%] z-20 flex justify-center w-full">
         <div className="flex gap-8 bg-transparent scale-75 sm:scale-100">
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('flight')}>
             <div className={getIconClasses()}>
-              <PlaneTakeoff className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Icons.flight className="w-7 h-7 text-black" />
             </div>
             <span className={getLabelClasses('flight')}>UÇAK</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('hotel')}>
             <div className={getIconClasses()}>
-              <Building className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Icons.hotel className="w-7 h-7 text-black" />
             </div>
             <span className={getLabelClasses('hotel')}>OTEL</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('car')}>
             <div className={getIconClasses()}>
-              <CarFront className={`w-8 h-8 ${getIconColor()}`} strokeWidth={2} />
+              <Icons.car className="w-8 h-8 text-black" />
             </div>
             <span className={getLabelClasses('car')}>ARAÇ</span>
           </div>
           <div className="flex flex-col items-center" onClick={() => handleServiceClick('esim')}>
             <div className={getIconClasses()}>
-              <Wifi className={`w-7 h-7 ${getIconColor()}`} strokeWidth={2} />
+              <Icons.esim className="w-7 h-7 text-black" />
             </div>
             <span className={getLabelClasses('esim')}>E SIM</span>
           </div>
