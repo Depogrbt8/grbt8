@@ -85,7 +85,7 @@ export default function FlightSearchForm({
     <>
       {/* Masaüstü için uçuş arama formu */}
       <div className="hidden sm:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24">
-        <div className="bg-white rounded-[32px] shadow-xl p-8 border border-gray-200">
+        <div className="bg-gray-50 rounded-[32px] shadow-xl p-8 border border-gray-200">
           {/* Uçuş tipi ve aktarmasız seçenekleri */}
           <TripTypeSelector
             tripType={tripType}
@@ -194,7 +194,7 @@ export default function FlightSearchForm({
 
       {/* Mobil için özel uçuş arama kutusu */}
       <div className="block sm:hidden w-full px-4 mt-8">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-4 flex flex-col">
+        <div className="bg-gray-50 rounded-2xl border border-gray-200 shadow-lg p-4 flex flex-col">
           {/* Tek yön / Gidiş-dönüş */}
           <div className="flex items-center w-full gap-3 mb-3 justify-between">
             <TripTypeSelector
