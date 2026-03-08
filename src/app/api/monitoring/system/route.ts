@@ -2,68 +2,70 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
+function getStartTime(timeframe: string): Date {
+  const now = new Date();
+  const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
+  return new Date(now.getTime() - hours * 60 * 60 * 1000);
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const timeframe = searchParams.get('timeframe') || '24h';
-    
-    // Zaman aralığını hesapla
-    const now = new Date();
+    const timeframe = (request.nextUrl.searchParams.get('timeframe') || '24h') as string;
+    const startTime = getStartTime(timeframe);
     const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
-    const startTime = new Date(now.getTime() - (hours * 60 * 60 * 1000));
 
-    // Gerçek sistem verilerini topla
-    const [
-      totalUsers,
-      totalSessions,
-      systemLogs,
-      recentLogs
-    ] = await Promise.all([
-      prisma.user.count(),
+    const [sessionCount, perfMetrics] = await Promise.all([
       prisma.session.count(),
-      prisma.systemLog.count({
-        where: { timestamp: { gte: startTime } }
-      }),
-      prisma.systemLog.findMany({
-        where: { 
-          timestamp: { gte: startTime },
-          level: { in: ['error', 'warn'] }
-        },
-        take: 50
+      prisma.performanceMetric.findMany({
+        where: { timestamp: { gte: startTime } },
+        select: { loadTime: true, timestamp: true }
       })
     ]);
 
-    // Node.js process metrics
     const memUsage = process.memoryUsage();
     const uptime = process.uptime();
-    
-    // Sistem performansını hesapla
+    const memoryPct = memUsage.heapTotal > 0
+      ? Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100)
+      : 0;
+
+    const loadTimes = perfMetrics.map(m => m.loadTime);
+    const avgResponseTime = loadTimes.length
+      ? Math.round(loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length)
+      : 0;
+
+    const requestsPerMinute = hours > 0
+      ? Math.round((perfMetrics.length / (hours * 60)) * 60) || 0
+      : perfMetrics.length;
+
+    const hourlyTrends: Record<number, { cpu: number | null; memory: number; responseTime: number }> = {};
+    for (let i = 0; i < 24; i++) {
+      const hourMetrics = perfMetrics.filter(m => new Date(m.timestamp).getHours() === i);
+      const hourLoadTimes = hourMetrics.map(m => m.loadTime);
+      hourlyTrends[i] = {
+        cpu: null,
+        memory: memoryPct,
+        responseTime: hourLoadTimes.length
+          ? Math.round(hourLoadTimes.reduce((a, b) => a + b, 0) / hourLoadTimes.length)
+          : 0
+      };
+    }
+
     const stats = {
-      totalSamples: systemLogs + totalSessions,
-      averageCpuUsage: Math.round(15 + (totalUsers * 0.1) + (Math.random() * 20)),
-      averageMemoryUsage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100),
-      averageDiskUsage: Math.round(25 + (Math.random() * 15)),
-      averageResponseTime: Math.round(80 + (systemLogs * 0.5) + (Math.random() * 50)),
-      activeConnections: Math.max(totalSessions, Math.floor(Math.random() * 100) + 20),
-      requestsPerMinute: Math.round((systemLogs / hours) * 60) || 50,
+      totalSamples: perfMetrics.length + sessionCount,
+      averageCpuUsage: null as number | null,
+      averageMemoryUsage: memoryPct,
+      averageDiskUsage: null as number | null,
+      averageResponseTime: avgResponseTime,
+      activeConnections: sessionCount,
+      requestsPerMinute,
       currentUptime: Math.round(uptime),
       healthStatus: {
-        cpu: totalUsers < 1000 ? 'HEALTHY' : 'WARNING',
-        memory: memUsage.heapUsed / memUsage.heapTotal < 0.8 ? 'HEALTHY' : 'WARNING',
-        disk: 'HEALTHY',
-        responseTime: systemLogs < 100 ? 'HEALTHY' : 'WARNING'
+        cpu: 'UNKNOWN' as const,
+        memory: memoryPct < 80 ? ('HEALTHY' as const) : ('WARNING' as const),
+        disk: 'UNKNOWN' as const,
+        responseTime: avgResponseTime < 2000 ? ('HEALTHY' as const) : ('WARNING' as const)
       },
-      hourlyTrends: (() => {
-        const hourlyData: Record<number, { cpu: number; memory: number; responseTime: number }> = {};
-        for (let i = 0; i < 24; i++) {
-          hourlyData[i] = {
-            cpu: Math.round(15 + (Math.random() * 25)),
-            memory: Math.round(30 + (Math.random() * 20)),
-            responseTime: Math.round(80 + (Math.random() * 40))
-          };
-        }
-        return hourlyData;
-      })()
+      hourlyTrends
     };
 
     return NextResponse.json({
@@ -79,12 +81,7 @@ export async function GET(request: NextRequest) {
           responseTime: stats.averageResponseTime,
           activeConnections: stats.activeConnections,
           requestsPerMinute: stats.requestsPerMinute,
-          uptime: stats.currentUptime,
-          version: '1.0.0',
-          region: 'eu-central-1',
-          totalUsers,
-          totalSessions,
-          errorCount: recentLogs.length
+          uptime: stats.currentUptime
         }]
       }
     });

@@ -2,93 +2,71 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
+function getStartTime(timeframe: string): Date {
+  const now = new Date();
+  const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
+  return new Date(now.getTime() - hours * 60 * 60 * 1000);
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const timeframe = searchParams.get('timeframe') || '24h';
-    
-    // Zaman aralığını hesapla
-    const now = new Date();
-    const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
-    const startTime = new Date(now.getTime() - (hours * 60 * 60 * 1000));
+    const timeframe = (request.nextUrl.searchParams.get('timeframe') || '24h') as string;
+    const startTime = getStartTime(timeframe);
 
-    // Gerçek sistem verilerini topla
-    const [
-      totalUsers,
-      totalReservations, 
-      totalCampaigns,
-      recentUsers,
-      systemLogs
-    ] = await Promise.all([
-      prisma.user.count(),
-      prisma.reservation.count(),
-      prisma.campaign.count({ where: { status: 'active' } }),
-      prisma.user.count({
-        where: { createdAt: { gte: startTime } }
-      }),
-      prisma.systemLog.findMany({
-        where: { timestamp: { gte: startTime } },
-        orderBy: { timestamp: 'desc' },
-        take: 100
-      })
-    ]);
+    const metrics = await prisma.performanceMetric.findMany({
+      where: { timestamp: { gte: startTime } },
+      orderBy: { timestamp: 'desc' }
+    });
 
-    // Sistem performansını hesapla
-    const baseRequests = totalUsers + totalReservations + (systemLogs.length * 5);
+    const totalRequests = metrics.length;
+
+    const avg = (arr: number[]) =>
+      arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+
+    const loadTimes = metrics.map(m => m.loadTime).filter(Boolean);
+    const fcps = metrics.map(m => m.firstContentfulPaint).filter((v): v is number => v != null);
+    const lcps = metrics.map(m => m.largestContentfulPaint).filter((v): v is number => v != null);
+    const clss = metrics.map(m => m.cumulativeLayoutShift).filter((v): v is number => v != null);
+
+    const pageSums: Record<string, { total: number; count: number }> = {};
+    metrics.forEach(m => {
+      if (!pageSums[m.page]) pageSums[m.page] = { total: 0, count: 0 };
+      pageSums[m.page].total += m.loadTime;
+      pageSums[m.page].count += 1;
+    });
+    const slowestPages = Object.entries(pageSums)
+      .map(([page, { total, count }]) => ({
+        page,
+        totalTime: total,
+        count,
+        avgTime: total / count
+      }))
+      .sort((a, b) => b.avgTime - a.avgTime)
+      .slice(0, 10);
+
     const stats = {
-      totalRequests: baseRequests,
-      averageLoadTime: Math.round(180 + (Math.random() * 100)), 
-      averageFCP: Math.round(120 + (Math.random() * 80)),        
-      averageLCP: Math.round(200 + (Math.random() * 150)),       
-      averageCLS: parseFloat((0.05 + (Math.random() * 0.05)).toFixed(3)),
-      slowestPages: [
-        { 
-          page: '/flights/search', 
-          totalTime: Math.round(2500 + (Math.random() * 1000)), 
-          count: Math.max(10, Math.floor(totalReservations * 0.3)), 
-          avgTime: Math.round(450 + (Math.random() * 200)) 
-        },
-        { 
-          page: '/payment', 
-          totalTime: Math.round(1800 + (Math.random() * 800)), 
-          count: Math.max(5, Math.floor(totalReservations * 0.2)), 
-          avgTime: Math.round(320 + (Math.random() * 150)) 
-        },
-        { 
-          page: '/hesabim', 
-          totalTime: Math.round(1200 + (Math.random() * 600)), 
-          count: Math.max(3, Math.floor(totalUsers * 0.1)), 
-          avgTime: Math.round(280 + (Math.random() * 120)) 
-        },
-        { 
-          page: '/grbt-8', 
-          totalTime: Math.round(900 + (Math.random() * 400)), 
-          count: Math.max(2, systemLogs.length), 
-          avgTime: Math.round(220 + (Math.random() * 100)) 
-        }
-      ]
+      totalRequests,
+      averageLoadTime: Math.round(avg(loadTimes)),
+      averageFCP: fcps.length ? Math.round(avg(fcps)) : 0,
+      averageLCP: lcps.length ? Math.round(avg(lcps)) : 0,
+      averageCLS: clss.length ? parseFloat(avg(clss).toFixed(3)) : 0,
+      slowestPages
     };
+
+    const recentMetrics = metrics.slice(0, 50).map(m => ({
+      timestamp: m.timestamp.toISOString(),
+      page: m.page,
+      loadTime: m.loadTime,
+      firstContentfulPaint: m.firstContentfulPaint ?? undefined,
+      largestContentfulPaint: m.largestContentfulPaint ?? undefined,
+      cumulativeLayoutShift: m.cumulativeLayoutShift ?? undefined,
+      userAgent: m.userAgent ?? undefined,
+      deviceType: m.deviceType ?? undefined
+    }));
 
     return NextResponse.json({
       success: true,
-      data: {
-        timeframe,
-        stats,
-        recentMetrics: [{
-          timestamp: new Date().toISOString(),
-          page: '/dashboard',
-          loadTime: stats.averageLoadTime,
-          firstContentfulPaint: stats.averageFCP,
-          largestContentfulPaint: stats.averageLCP,
-          cumulativeLayoutShift: stats.averageCLS,
-          userAgent: 'Real System Data',
-          connectionType: '4g',
-          deviceType: 'desktop',
-          totalUsers,
-          totalReservations,
-          recentUsers
-        }]
-      }
+      data: { timeframe, stats, recentMetrics }
     });
   } catch (error) {
     logger.error('Performance metrics okuma hatası:', error);
@@ -100,5 +78,34 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return NextResponse.json({ success: true });
+  try {
+    const body = await request.json();
+    const page = typeof body.page === 'string' ? body.page : '/';
+    const loadTime = typeof body.loadTime === 'number' ? Math.round(body.loadTime) : 0;
+    const fcp = body.firstContentfulPaint != null ? Math.round(Number(body.firstContentfulPaint)) : null;
+    const lcp = body.largestContentfulPaint != null ? Math.round(Number(body.largestContentfulPaint)) : null;
+    const cls = body.cumulativeLayoutShift != null ? Number(body.cumulativeLayoutShift) : null;
+    const userAgent = typeof body.userAgent === 'string' ? body.userAgent : null;
+    const deviceType = typeof body.deviceType === 'string' ? body.deviceType : null;
+
+    await prisma.performanceMetric.create({
+      data: {
+        page,
+        loadTime,
+        firstContentfulPaint: fcp,
+        largestContentfulPaint: lcp,
+        cumulativeLayoutShift: cls,
+        userAgent,
+        deviceType
+      }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    logger.error('Performance metric kaydetme hatası:', error);
+    return NextResponse.json(
+      { success: false, error: 'Sunucu hatası' },
+      { status: 500 }
+    );
+  }
 }

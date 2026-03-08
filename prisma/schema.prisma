@@ -333,6 +333,22 @@ model SystemLog {
   @@index([userId, timestamp])
 }
 
+// İstemciden gelen performans metrikleri (Monitor gerçek veri)
+model PerformanceMetric {
+  id                      String   @id @default(cuid())
+  page                    String
+  loadTime                Int      // ms
+  firstContentfulPaint    Int?     // ms
+  largestContentfulPaint  Int?     // ms
+  cumulativeLayoutShift   Float?
+  userAgent               String?
+  deviceType              String?
+  timestamp               DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([page])
+}
+
 // Email Template'leri
 model EmailTemplate {
   id         String   @id @default(cuid())

@@ -2,24 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
+function getStartTime(timeframe: string): Date {
+  const now = new Date();
+  const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
+  return new Date(now.getTime() - hours * 60 * 60 * 1000);
+}
+
+function getPageFromLog(log: { source: string; metadata: string | null }): string {
+  if (log.metadata) {
+    try {
+      const meta = JSON.parse(log.metadata) as Record<string, unknown>;
+      if (typeof meta.page === 'string') return meta.page;
+      if (typeof meta.path === 'string') return meta.path;
+    } catch {
+      // ignore
+    }
+  }
+  return log.source || '/unknown';
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const timeframe = searchParams.get('timeframe') || '24h';
-    
-    // Zaman aralığını hesapla
-    const now = new Date();
-    const hours = timeframe === '1h' ? 1 : timeframe === '7d' ? 168 : 24;
-    const startTime = new Date(now.getTime() - (hours * 60 * 60 * 1000));
+    const timeframe = (request.nextUrl.searchParams.get('timeframe') || '24h') as string;
+    const startTime = getStartTime(timeframe);
 
-    // Gerçek hata verilerini topla
-    const [
-      errorLogs,
-      criticalLogs,
-      allUsers
-    ] = await Promise.all([
+    const [errorLogs, criticalLogs, allUsers] = await Promise.all([
       prisma.systemLog.findMany({
-        where: { 
+        where: {
           timestamp: { gte: startTime },
           level: { in: ['error', 'warn', 'fatal'] }
         },
@@ -27,7 +36,7 @@ export async function GET(request: NextRequest) {
         take: 200
       }),
       prisma.systemLog.findMany({
-        where: { 
+        where: {
           timestamp: { gte: startTime },
           level: 'fatal'
         },
@@ -40,35 +49,41 @@ export async function GET(request: NextRequest) {
       })
     ]);
 
-    // Hata tiplerini analiz et
     const errorsByType: Record<string, number> = {};
     const errorsBySeverity: Record<string, number> = {
-      'CRITICAL': 0,
-      'HIGH': 0,
-      'MEDIUM': 0,
-      'LOW': 0
+      CRITICAL: 0,
+      HIGH: 0,
+      MEDIUM: 0,
+      LOW: 0
     };
+    const pageCounts: Record<string, { count: number; criticalCount: number }> = {};
 
-    // Log'ları analiz et
     errorLogs.forEach(log => {
-      // Hata tiplerini say
       const errorType = log.source || 'Unknown';
       errorsByType[errorType] = (errorsByType[errorType] || 0) + 1;
 
-      // Severity'e göre say
       if (log.level === 'fatal') errorsBySeverity.CRITICAL++;
       else if (log.level === 'error') errorsBySeverity.HIGH++;
       else if (log.level === 'warn') errorsBySeverity.MEDIUM++;
       else errorsBySeverity.LOW++;
+
+      const page = getPageFromLog(log);
+      if (!pageCounts[page]) pageCounts[page] = { count: 0, criticalCount: 0 };
+      pageCounts[page].count++;
+      if (log.level === 'fatal') pageCounts[page].criticalCount++;
     });
 
-    // En çok hata veren sayfalar (simüle)
-    const pageErrors = [
-      { page: '/flights/search', count: Math.floor(errorLogs.length * 0.3), criticalCount: Math.floor(criticalLogs.length * 0.4) },
-      { page: '/payment', count: Math.floor(errorLogs.length * 0.2), criticalCount: Math.floor(criticalLogs.length * 0.3) },
-      { page: '/hesabim', count: Math.floor(errorLogs.length * 0.15), criticalCount: Math.floor(criticalLogs.length * 0.2) },
-      { page: '/grbt-8', count: Math.floor(errorLogs.length * 0.1), criticalCount: Math.floor(criticalLogs.length * 0.1) }
-    ];
+    const topErrorPages = Object.entries(pageCounts)
+      .map(([page, { count, criticalCount }]) => ({ page, count, criticalCount }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const hourlyDistribution: Record<number, number> = {};
+    for (let i = 0; i < 24; i++) {
+      hourlyDistribution[i] = errorLogs.filter(
+        log => new Date(log.timestamp).getHours() === i
+      ).length;
+    }
 
     const stats = {
       totalErrors: errorLogs.length,
@@ -78,24 +93,15 @@ export async function GET(request: NextRequest) {
       lowErrors: errorLogs.filter(log => log.level === 'info').length,
       errorsByType,
       errorsBySeverity,
-      topErrorPages: pageErrors,
-      hourlyDistribution: (() => {
-        const distribution: Record<number, number> = {};
-        for (let i = 0; i < 24; i++) {
-          const hourErrors = errorLogs.filter(log => 
-            new Date(log.timestamp).getHours() === i
-          ).length;
-          distribution[i] = hourErrors;
-        }
-        return distribution;
-      })(),
+      topErrorPages,
+      hourlyDistribution,
       uniqueUsers: allUsers.length,
       recentCriticalErrors: criticalLogs.map(log => ({
         timestamp: log.timestamp.toISOString(),
         errorType: log.source || 'Unknown',
         message: log.message.substring(0, 100),
-        severity: 'CRITICAL',
-        page: '/unknown'
+        severity: 'CRITICAL' as const,
+        page: getPageFromLog(log)
       }))
     };
 

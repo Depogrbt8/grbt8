@@ -44,21 +44,22 @@ export default function MonitorClient() {
     return totalReq > 0 ? (totalErr / totalReq) * 100 : 0;
   }, [perf, errs]);
 
+  const cpuVal = sys?.averageCpuUsage != null ? sys.averageCpuUsage : null;
   const slo = useMemo(() => {
     const lcp = Math.round(perf?.averageLCP || 0);
     const resp = Math.round(sys?.averageResponseTime || 0);
-    const cpu = Math.round(sys?.averageCpuUsage || 0);
+    const cpu = cpuVal != null ? Math.round(cpuVal) : null;
     const mem = Math.round(sys?.averageMemoryUsage || 0);
     const secScore = security?.securityScore || 100;
     return {
       errorRate: { value: errorRate, ok: errorRate < 1 },
       lcp: { value: lcp, ok: lcp < 2500 },
       resp: { value: resp, ok: resp < 2000 },
-      cpu: { value: cpu, ok: cpu < 80 },
+      cpu: { value: cpu, ok: cpu == null ? true : cpu < 80 },
       mem: { value: mem, ok: mem < 85 },
       security: { value: secScore, ok: secScore >= 70 },
     };
-  }, [errorRate, perf, sys, security]);
+  }, [errorRate, perf, sys, security, cpuVal]);
 
   const errTypes = useMemo(() => {
     const map = errs?.errorsByType || {};
@@ -145,7 +146,7 @@ export default function MonitorClient() {
         </div>
         <div className={`border rounded p-2 ${slo.cpu.ok ? 'border-green-300' : 'border-red-300'}`}>
           <div className="text-[10px] text-gray-500">CPU Avg</div>
-          <div className="text-sm">{Math.round(sys?.averageCpuUsage || 0)}% <span className="text-[10px] text-gray-500">(hedef &lt; 80%)</span></div>
+          <div className="text-sm">{cpuVal != null ? `${Math.round(cpuVal)}%` : '—'} <span className="text-[10px] text-gray-500">(hedef &lt; 80%, serverless’ta N/A)</span></div>
         </div>
         <div className={`border rounded p-2 ${slo.mem.ok ? 'border-green-300' : 'border-red-300'}`}>
           <div className="text-[10px] text-gray-500">Memory Avg</div>
@@ -175,7 +176,7 @@ export default function MonitorClient() {
       <div className="grid gap-3 md:grid-cols-3">
         <div className={`border rounded p-3 ${slo.cpu.ok ? 'border-gray-200' : 'border-red-300'}`}>
           <div className="text-xs text-gray-500">Avg CPU</div>
-          <div className="text-lg">{Math.round(sys?.averageCpuUsage || 0)}% <span className="text-[10px] text-gray-500">(hedef &lt; 80%)</span></div>
+          <div className="text-lg">{cpuVal != null ? `${Math.round(cpuVal)}%` : '—'} <span className="text-[10px] text-gray-500">(hedef &lt; 80%)</span></div>
         </div>
         <div className={`border rounded p-3 ${slo.mem.ok ? 'border-gray-200' : 'border-red-300'}`}>
           <div className="text-xs text-gray-500">Avg Memory</div>
