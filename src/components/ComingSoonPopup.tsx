@@ -1,16 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { X } from 'lucide-react';
 
 export default function ComingSoonPopup() {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-
-  // Admin panelde popup gösterme (overlay sayfayı bloklamasın)
-  if (pathname?.startsWith('/grbt-8')) return null;
 
   useEffect(() => {
     // Session başına sadece 1 kez göster

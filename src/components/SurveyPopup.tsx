@@ -44,9 +44,6 @@ export default function SurveyPopup() {
   const [selectedGender, setSelectedGender] = useState<string>('');
   const [selectedAgeRange, setSelectedAgeRange] = useState<string>('');
 
-  // Admin panelde anket gösterme
-  if (pathname?.startsWith('/grbt-8')) return null;
-
   // Türkiye illeri - hem Türkçe hem İngilizce versiyonları ile
   const turkishCities = [
     'ADANA', 'ADIYAMAN', 'AFYONKARAHİSAR', 'AĞRI', 'AMASYA', 'ANKARA', 'ANTALYA', 'ARTVİN', 'AYDIN', 'BALIKESİR',
