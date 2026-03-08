@@ -4,9 +4,14 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Test kullanıcısı oluştur
-  const hashedPassword = await bcrypt.hash('123456', 10);
-  
+  const testPassword = process.env.SEED_TEST_PASSWORD;
+  if (!testPassword || testPassword.length < 6) {
+    console.error('Hata: SEED_TEST_PASSWORD ortam değişkeni gerekli (en az 6 karakter).');
+    console.error('Örnek: SEED_TEST_PASSWORD=test123 node prisma/seed.js');
+    process.exit(1);
+  }
+  const hashedPassword = await bcrypt.hash(testPassword, 10);
+
   const user = await prisma.user.upsert({
     where: { email: 'test@gurbetbiz.app' },
     update: {},
