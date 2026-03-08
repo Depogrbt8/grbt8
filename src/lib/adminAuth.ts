@@ -3,6 +3,21 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+/** Tüm /grbt-8 sayfalarında aynı liste kullanılsın */
+const DEFAULT_ADMIN_EMAILS = 'admin@grbt8.store,manager@grbt8.store';
+
+export function getAdminAllowEmails(): string[] {
+  return (process.env.ADMIN_EMAILS || DEFAULT_ADMIN_EMAILS)
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+export function isAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return getAdminAllowEmails().includes(email.trim().toLowerCase());
+}
+
 /**
  * Admin panel veya normal kullanıcı authentication kontrolü
  * Admin panel'den gelen istekler için token kontrolü yapar

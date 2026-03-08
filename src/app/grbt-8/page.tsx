@@ -2,16 +2,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import AdminSidebar from '@/components/AdminSidebar';
+import { isAdminEmail } from '@/lib/adminAuth';
 
 export default async function GRBT8Dashboard() {
   const bypass = (process.env.ADMIN_BYPASS || '').toLowerCase() === 'true';
   const session = await getServerSession(authOptions);
-  const allow = (process.env.ADMIN_EMAILS || 'admin@grbt8.store')
-    .split(',')
-    .map(s => s.trim().toLowerCase())
-    .filter(Boolean);
 
-  if (!bypass && (!session || !session.user?.email || (allow.length && !allow.includes(session.user.email.toLowerCase())))) {
+  if (!bypass && (!session?.user?.email || !isAdminEmail(session.user.email))) {
     redirect('/grbt-8/giris');
   }
   return (
