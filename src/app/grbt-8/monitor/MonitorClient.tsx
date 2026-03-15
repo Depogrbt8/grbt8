@@ -109,6 +109,12 @@ export default function MonitorClient() {
         </select>
       </div>
 
+      {(perf?.totalRequests === 0 && !errs?.totalErrors) && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <strong>Henüz veri yok.</strong> Performans metrikleri ana sitede sayfa ziyaretleri yapıldıkça toplanır (her yüklemede istemci metrik gönderir). Hata listesi ise uygulama hata logu yazdıkça dolar. Veritabanında <code className="bg-amber-100 px-1 rounded">PerformanceMetric</code> tablosu için migration çalıştırdıysanız, birkaç sayfa ziyaretinden sonra burada sayılar görünmeye başlar.
+        </div>
+      )}
+
       {showAlerts && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setShowAlerts(false)} />

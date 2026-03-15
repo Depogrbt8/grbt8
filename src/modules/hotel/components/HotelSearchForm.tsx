@@ -433,7 +433,7 @@ export default function HotelSearchForm({
 
       {/* Desktop görünüm - FlightSearchForm ile aynı yapı */}
       <div className={`hidden sm:block w-full sm:container sm:mx-auto px-0 sm:px-4 mt-24 ${className}`}>
-      <div className="bg-white rounded-[32px] shadow-xl p-8 border border-gray-200">
+      <div className="bg-gray-50 rounded-[32px] shadow-xl p-8 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           {/* Konum */}
           <div className="md:col-span-1">
