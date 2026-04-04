@@ -25,7 +25,7 @@ export default function Header() {
                 setEuroRate(rate);
             } catch (error) {
                 logger.error('Döviz kuru alınamadı', { error });
-                // Fallback değer kaldırıldı - sadece "Yükleniyor..." gösterilecek
+                setEuroRate(null);
             }
         };
         
@@ -62,7 +62,7 @@ export default function Header() {
                         <div className="flex flex-row justify-end items-center pt-3.5 w-full gap-2">
                             {/* Döviz alanı - Sadece mobilde görünür */}
                             <span className="flex items-center flex-nowrap whitespace-nowrap text-sm mr-auto">
-                                <span className="font-medium">€ = {euroRate?.toFixed(2) || 'Yükleniyor...'} TL</span>
+                                <span className="font-medium">{euroRate != null ? `€ = ${euroRate.toFixed(2)} TL` : 'Yükleniyor'}</span>
                             </span>
                             <LanguageDropdown />
                             <button onClick={() => setIsMenuOpen(true)} style={{ lineHeight: 0 }}>
@@ -82,7 +82,7 @@ export default function Header() {
                             <Link href="/" className="text-sm font-normal text-white leading-tight underline hover:text-gray-100 transition-colors">gurbetbiz.app</Link>
                             {/* Döviz alanı - Sadece masaüstünde görünür */}
                             <span className="sm:ml-6 ml-2 items-center flex-nowrap whitespace-nowrap text-sm sm:text-base flex">
-                                <span className="font-medium">€ = {euroRate?.toFixed(2) || 'Yükleniyor...'} TL</span>
+                                <span className="font-medium">{euroRate != null ? `€ = ${euroRate.toFixed(2)} TL` : 'Yükleniyor'}</span>
                             </span>
                         </div>
                         <div className="flex items-center gap-6 mr-4">

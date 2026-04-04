@@ -96,45 +96,33 @@ export async function GET() {
       }
     }
 
-    // Tüm API'ler başarısız olursa fallback
-    logger.warn('Tüm API\'ler başarısız, fallback değer kullanılıyor');
-    const fallbackData = { 
-      eurTry: 48.50,
-      eurUsd: 1.18,
-      source: 'fallback',
+    // Tüm API'ler başarısız — sabit kur yok; istemci "Yükleniyor" gösterir
+    logger.warn('Tüm döviz API\'leri başarısız, kur dönülmüyor');
+    const unavailable = {
+      eurTry: null as number | null,
+      eurUsd: null as number | null,
+      source: 'unavailable',
       timestamp: new Date().toISOString()
     };
-    
-    // Fallback'i de static cache'e kaydet (kısa süre)
-    staticCache = {
-      data: fallbackData,
-      timestamp: Date.now()
-    };
-    
-    return NextResponse.json(fallbackData, {
+
+    return NextResponse.json(unavailable, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
+        'Cache-Control': 'public, max-age=30, s-maxage=30'
       }
     });
 
   } catch (error) {
     logger.error('Euro kuru çekilemedi', { error });
-    const errorData = { 
-      eurTry: 48.50,
-      eurUsd: 1.18,
+    const unavailable = {
+      eurTry: null as number | null,
+      eurUsd: null as number | null,
       source: 'error',
       timestamp: new Date().toISOString()
     };
-    
-    // Error'u da static cache'e kaydet (kısa süre)
-    staticCache = {
-      data: errorData,
-      timestamp: Date.now()
-    };
-    
-    return NextResponse.json(errorData, {
+
+    return NextResponse.json(unavailable, {
       headers: {
-        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60'
+        'Cache-Control': 'public, max-age=15, s-maxage=15'
       }
     });
   }
