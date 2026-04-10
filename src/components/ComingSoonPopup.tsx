@@ -75,12 +75,12 @@ export default function ComingSoonPopup() {
 
             {/* İçerik */}
             <div className="text-center pt-4">
-              <h2 className="text-xl sm:text-2xl font-semibold text-green-600 mb-3">
+              <p className="text-sm sm:text-base text-gray-600 mb-3 font-medium">
                 Çok yakında hizmetinizdeyiz
-              </h2>
-              <p className="text-gray-700 mb-6 text-base sm:text-lg">
-                Birlikte daha güçlüyüz.
               </p>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-green-600 mb-6 leading-tight">
+                Birlikte daha güçlüyüz.
+              </h2>
 
               <button
                 type="button"
