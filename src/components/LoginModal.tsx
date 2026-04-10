@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -15,12 +15,20 @@ import { monitoringClient } from '@/lib/monitoringClient';
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Modal açıldığında gösterilecek sekme (ör. Coming Soon’dan “Üye ol”) */
+  initialTab?: 'login' | 'register';
 }
 
-const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
+const LoginModal = ({ isOpen, onClose, initialTab }: LoginModalProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab ?? 'login');
+    }
+  }, [isOpen, initialTab]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -192,7 +200,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="fixed inset-0 bg-black/20 z-[100000] flex items-center justify-center p-4" onClick={onClose}>
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-md relative flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="p-8 pb-4 flex-shrink-0">
