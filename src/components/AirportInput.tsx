@@ -51,50 +51,25 @@ export default function AirportInput({
     };
   }, []);
 
-  // Havaalanı arama fonksiyonu (Gerçek API'ye hazır)
+  // Yerel proxy: geniş statik indeks (BiletDukkani client çağrısı kaldırıldı)
   const searchAirports = async (query: string) => {
     if (query.length < 2) {
       setSuggestions([]);
       return;
     }
     try {
-      // TODO: API anahtarını eklemeniz gerekebilir
-      const response = await fetch(`https://api.biletdukkani.com/airports?search=${encodeURIComponent(query)}` /* , {
-        headers: {
-          'Authorization': 'Bearer YOUR_API_KEY', // <-- Buraya API anahtarınızı ekleyin
-        },
-      } */);
-      if (!response.ok) throw new Error('API error');
-      const data = await response.json();
-      setSuggestions(data.airports || data || []);
-    } catch (error) {
-      // Genişletilmiş demo havalimanı listesi
-      const demoAirports: Airport[] = [
-        { code: 'IST', name: 'İstanbul Havalimanı', city: 'İstanbul' },
-        { code: 'SAW', name: 'Sabiha Gökçen', city: 'İstanbul' },
-        { code: 'AYT', name: 'Antalya Havalimanı', city: 'Antalya' },
-        { code: 'ADB', name: 'Adnan Menderes', city: 'İzmir' },
-        { code: 'ESB', name: 'Esenboğa', city: 'Ankara' },
-        { code: 'BRU', name: 'Brussels Airport', city: 'Brüksel' },
-        { code: 'AMS', name: 'Schiphol', city: 'Amsterdam' },
-        { code: 'CDG', name: 'Charles de Gaulle', city: 'Paris' },
-        { code: 'LHR', name: 'Heathrow', city: 'Londra' },
-        { code: 'FRA', name: 'Frankfurt Airport', city: 'Frankfurt' },
-        { code: 'ZRH', name: 'Zürich Airport', city: 'Zürih' },
-        { code: 'VIE', name: 'Vienna International', city: 'Viyana' },
-        { code: 'IST', name: 'İstanbul Havalimanı', city: 'İstanbul' },
-        { code: 'SAW', name: 'Sabiha Gökçen', city: 'İstanbul' },
-      ];
-      // İlk 3 harf eşleşmesi (kod, isim veya şehirde)
-      const q = query.toLowerCase();
-      const filtered = demoAirports.filter(airport =>
-        airport.code.toLowerCase().startsWith(q) ||
-        airport.name.toLowerCase().startsWith(q) ||
-        airport.city.toLowerCase().startsWith(q) ||
-        airport.name.toLowerCase().includes(q) ||
-        airport.city.toLowerCase().includes(q)
+      const response = await fetch(
+        `/api/airports/search?q=${encodeURIComponent(query)}`
       );
-      setSuggestions(filtered);
+      if (!response.ok) throw new Error('Airport search failed');
+      const json = await response.json();
+      if (json.success && Array.isArray(json.data)) {
+        setSuggestions(json.data);
+        return;
+      }
+      setSuggestions([]);
+    } catch {
+      setSuggestions([]);
     }
   };
 
