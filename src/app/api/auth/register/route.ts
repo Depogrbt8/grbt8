@@ -20,9 +20,7 @@ export async function POST(request: Request) {
       birthYear, 
       gender, 
       identityNumber, 
-      isForeigner,
-      kvkkConsent,
-      marketingConsent,
+      isForeigner 
     } = await request.json();
 
     // Validation
@@ -105,9 +103,7 @@ export async function POST(request: Request) {
       email: user.email, 
       userId: user.id,
       firstName: user.firstName,
-      lastName: user.lastName,
-      kvkkConsent: Boolean(kvkkConsent),
-      marketingConsent: Boolean(marketingConsent),
+      lastName: user.lastName
     });
 
     return NextResponse.json({
