@@ -2,23 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Airline } from '@/types/airline';
-
-interface Flight {
-  id: number;
-  airlineName: string;
-  flightNumber: string;
-  origin: string;
-  destination: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration: string;
-  price: number;
-  direct: boolean;
-  baggage: string;
-}
+import type { SearchFlight } from '@/types/searchFlight';
 
 interface UseFilterStateProps {
-  allFlights: Flight[];
+  allFlights: SearchFlight[];
   airlinesList: Airline[];
 }
 

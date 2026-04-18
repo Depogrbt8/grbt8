@@ -10,7 +10,7 @@ import Header from '@/components/Header';
 import FlightSearchBox from '@/components/FlightSearchBox';
 import { useSession } from 'next-auth/react';
 import LoginModal from '@/components/LoginModal';
-import { getAirRulesBiletDukkaniDemo } from '@/services/flightApi';
+import { formatFlightPrice } from '@/lib/formatFlightPrice';
 import { getAirlines } from '@/services/airlineApi';
 import { Airline } from '@/types/airline';
 import MobileFlightSearchBox from '@/components/MobileFlightSearchBox';
@@ -300,9 +300,11 @@ function FlightBrandOptions({ flight, onSelectBrand }: { flight: any, onSelectBr
           ];
           setBrands(demoBrands);
           // Demo: Her brand için kuralı çek
-          demoBrands.forEach(async (brand) => {
-            const ruleList = await getAirRulesBiletDukkaniDemo({ fareId: 'demo-fare-id-12345', flightId: flight.id?.toString() || 'demo-flight-id', brandId: brand.id });
-            setRules(prev => ({ ...prev, [brand.id]: ruleList }));
+          const placeholderRule = [
+            { title: 'Bilgi', detail: 'Canlı fiyat Duffel üzerinden gelmektedir. Kesin bilet kuralları rezervasyon adımında doğrulanır.' },
+          ];
+          demoBrands.forEach((brand) => {
+            setRules(prev => ({ ...prev, [brand.id]: placeholderRule }));
           });
           setLoading(false);
         }, 500);
@@ -341,7 +343,9 @@ function FlightBrandOptions({ flight, onSelectBrand }: { flight: any, onSelectBr
             <div className="text-gray-700 text-sm">{brand.description}</div>
             <div className="text-xs text-gray-500">Bagaj: {brand.baggage}</div>
             <div className="text-xs text-gray-500">Kurallar: {brand.rules}</div>
-            <div className="font-bold text-xl text-green-700 mt-2">{brand.price} EUR</div>
+            <div className="font-bold text-xl text-green-700 mt-2">
+              {formatFlightPrice(Number(brand.price) || 0, flight.currency || 'EUR')}
+            </div>
             {/* Kurallar kutusu ve buton mobilde gizli */}
             {!isMobile && rules[brand.id] && (
               <div className="mt-2 p-2 bg-gray-50 border border-gray-100 rounded text-[11px] text-gray-600 leading-tight">
@@ -438,7 +442,8 @@ export default function FlightSearchPage() {
     destination,
     tripType,
     selectedDeparture,
-    selectedReturn
+    selectedReturn,
+    passengers: Math.min(9, Math.max(1, Number(passengersCount) || 1)),
   });
 
   const {
@@ -547,25 +552,6 @@ export default function FlightSearchPage() {
     airlinesList
   });
 
-  // Step'e göre gösterilecek uçuşları filtrele
-  const displayFlights = useMemo(() => {
-    if (step === 'return' && tripType === 'roundTrip') {
-      // Dönüş uçuşlarını göster
-      return filteredFlights.filter(flight => 
-        returnFlights.some(rf => rf.id === flight.id)
-      );
-    } else {
-      // Gidiş uçuşlarını göster
-      return filteredFlights.filter(flight => 
-        departureFlights.some(df => df.id === flight.id)
-      );
-    }
-  }, [filteredFlights, step, tripType, departureFlights, returnFlights]);
-
-  // Loading ve error state'lerini step'e göre ayarla
-  const isLoading = step === 'return' ? loadingReturn : loadingDeparture;
-  const error = step === 'return' ? errorReturn : errorDeparture;
-
   // Demo: Yolcu listesi (3 yolcu)
   const passengers = [
     { type: 'ADT', name: 'Ali Yılmaz' },
@@ -583,6 +569,27 @@ export default function FlightSearchPage() {
   const [selectedReturnFlight, setSelectedReturnFlight] = useState<any>(null);
   const [showMobileBrandModal, setShowMobileBrandModal] = useState(false);
   const [showReturnBrandModal, setShowReturnBrandModal] = useState(false);
+
+  // Step'e göre gösterilecek uçuşları filtrele
+  const displayFlights = useMemo(() => {
+    if (step === 'return' && tripType === 'roundTrip') {
+      return filteredFlights.filter(flight => {
+        if (!returnFlights.some(rf => rf.id === flight.id)) return false;
+        const oid = selectedDepartureFlight?.duffelOfferId;
+        if (oid && flight?.duffelOfferId) {
+          return flight.duffelOfferId === oid;
+        }
+        return true;
+      });
+    }
+    return filteredFlights.filter(flight =>
+      departureFlights.some(df => df.id === flight.id)
+    );
+  }, [filteredFlights, step, tripType, departureFlights, returnFlights, selectedDepartureFlight]);
+
+  // Loading ve error state'lerini step'e göre ayarla
+  const isLoading = step === 'return' ? loadingReturn : loadingDeparture;
+  const error = step === 'return' ? errorReturn : errorDeparture;
 
   const handleBrandSelect = (flight: any, brand: any, isReturn: boolean = false) => {
     if (isReturn) {
@@ -780,7 +787,7 @@ export default function FlightSearchPage() {
         name: `${originObj.code} - ${destinationObj.code} Uçuş Bileti`,
         description: `${originObj.code} şehrinden ${destinationObj.code} şehrine uçak bileti. En uygun fiyatlar, anında rezervasyon.`,
         price: flight.price || 0,
-        currency: 'EUR', // useFlightState hook'undaki Flight type'ında currency yok, varsayılan EUR kullanıyoruz
+        currency: flight.currency || 'EUR',
         origin: originObj.code || origin,
         destination: destinationObj.code || destination,
         departureDate: format(flightDate, 'yyyy-MM-dd'),
@@ -1048,7 +1055,7 @@ export default function FlightSearchPage() {
                     {selectedReturnFlight.origin} → {selectedReturnFlight.destination}
                   </div>
                   <div className="text-lg font-bold text-blue-600">
-                    {selectedReturnFlight.price}.00 €
+                    {formatFlightPrice(Number(selectedReturnFlight.price) || 0, selectedReturnFlight.currency || 'EUR')}
                   </div>
                 </div>
               ) : (
@@ -1062,7 +1069,7 @@ export default function FlightSearchPage() {
                     {selectedDepartureFlight.origin} → {selectedDepartureFlight.destination}
                   </div>
                   <div className="text-lg font-bold text-blue-600">
-                    {selectedDepartureFlight.price}.00 €
+                    {formatFlightPrice(Number(selectedDepartureFlight.price) || 0, selectedDepartureFlight.currency || 'EUR')}
                   </div>
                 </div>
               ) : (

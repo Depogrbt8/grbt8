@@ -1,27 +1,23 @@
-import { GET, POST } from '@/app/api/airports/search/route.ts';
-import { NextRequest } from 'next/server';
+import { GET } from '@/app/api/airports/search/route.ts';
 
 describe('api/airports/search/route.ts', () => {
-  it('should handle GET request', async () => {
-    try {
-      const request = new NextRequest('http://localhost/api/airports/search/route.ts');
-      const response = await GET(request);
-      expect(response).toBeDefined();
-    } catch (error) {
-      expect(true).toBe(true); // Expected for some APIs
-    }
+  it('should return empty array for short query', async () => {
+    const request = new Request('http://localhost/api/airports/search?q=a');
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.data).toEqual([]);
   });
 
-  it('should handle POST request if available', async () => {
-    try {
-      const request = new NextRequest('http://localhost/api/airports/search/route.ts', {
-        method: 'POST',
-        body: JSON.stringify({})
-      });
-      const response = await POST(request);
-      expect(response).toBeDefined();
-    } catch (error) {
-      expect(true).toBe(true); // POST might not exist
-    }
+  it('should return static matches for IST', async () => {
+    const request = new Request('http://localhost/api/airports/search?q=ist');
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(Array.isArray(json.data)).toBe(true);
+    expect(json.data.length).toBeGreaterThan(0);
+    expect(json.data.some((a: { code: string }) => a.code === 'IST')).toBe(true);
   });
 });

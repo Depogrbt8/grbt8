@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { format } from 'date-fns';
+import { formatFlightPrice } from '@/lib/formatFlightPrice';
 
 interface Airline {
   name: string;
@@ -60,7 +60,7 @@ export default function CompactFlightCard({
         
         {/* Sağ: Fiyat */}
         <div className="text-lg font-bold text-gray-900">
-          {flight.price}.00 €
+          {formatFlightPrice(Number(flight.price) || 0, flight.currency || 'EUR')}
         </div>
       </div>
 

@@ -10,7 +10,7 @@ export function useModalState() {
   const [showSort, setShowSort] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [baggageModalOpen, setBaggageModalOpen] = useState(false);
-  const [openFlightId, setOpenFlightId] = useState<number | null>(null);
+  const [openFlightId, setOpenFlightId] = useState<string | number | null>(null);
 
   // Modal handler'ları
   const openPriceAlert = () => setShowPriceAlert(true);
@@ -31,7 +31,7 @@ export function useModalState() {
   const openBaggageModal = () => setBaggageModalOpen(true);
   const closeBaggageModal = () => setBaggageModalOpen(false);
   
-  const openFlight = (flightId: number) => setOpenFlightId(flightId);
+  const openFlight = (flightId: string | number) => setOpenFlightId(flightId);
   const closeFlight = () => setOpenFlightId(null);
 
   return {
