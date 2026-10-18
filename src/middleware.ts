@@ -74,9 +74,15 @@ export async function middleware(request: NextRequest) {
   // Content Security Policy
   // script-src: Google Tag Manager ve Facebook Pixel (Analytics bileşeninde kullanılıyor)
   // connect-src: Analytics/GTM/Facebook event gönderimi için
+  // Development serves the app over http and webpack needs eval. upgrade-insecure-requests
+  // would rewrite those calls to https and the local dev server would never answer.
+  const devServer = process.env.NODE_ENV === 'development'
+  const scriptSrc = devServer
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel-scripts.com https://www.googletagmanager.com https://connect.facebook.net"
+    : "script-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel-scripts.com https://www.googletagmanager.com https://connect.facebook.net"
   response.headers.set('Content-Security-Policy', `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://vercel.live https://*.vercel-scripts.com https://www.googletagmanager.com https://connect.facebook.net;
+    ${scriptSrc};
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self';
@@ -87,7 +93,7 @@ export async function middleware(request: NextRequest) {
     frame-src 'self' https://www.grbt8.store https://grbt8.store http://localhost:3000 http://localhost:4000;
     frame-ancestors 'none';
     block-all-mixed-content;
-    upgrade-insecure-requests;
+    ${devServer ? '' : 'upgrade-insecure-requests;'}
   `.replace(/\s+/g, ' ').trim());
 
   // API Rate Limiting (CSRF koruması kaldırıldı)
