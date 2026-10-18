@@ -37,10 +37,8 @@ const nextConfig = {
   // SWC minification (Next.js 13+ default)
   swcMinify: true,
   
-  // Experimental features (Next.js 13.5.6 için güvenli)
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'react-hot-toast'], // Tree shaking
-  },
+  // optimizePackageImports on Next.js 13.5.6 makes named exports such as
+  // react-hot-toast's Toaster undefined and crashes the root layout.
   
   // HTTP headers (ekstra güvenlik)
   async headers() {
